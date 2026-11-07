@@ -10,16 +10,16 @@ const POSTS = [
     title: "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions",
     desc: "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang jalan tiap push ke main.",
     date: "28 April 2026",
-    readTime: "12 min read",
+    readTime: "12 menit baca",
     tags: ["Docker","AWS EC2","Go Fiber","GitHub Actions","CI/CD"],
     published: true,
   },
   {
     slug: "/blog/devsecops-pipeline-github-actions/",
     title: "Membangun DevSecOps Pipeline di GitHub Actions: GitLeaks, Semgrep, Trivy, OWASP ZAP",
-    desc: "Shift security left dari hari pertama. Panduan step-by-step mengintegrasikan 4 tools keamanan ke GitHub Actions pipeline.",
-    date: "Coming soon",
-    readTime: "15 min read",
+    desc: "Panduan langkah demi langkah memasang 4 alat pengecekan keamanan di pipeline GitHub Actions.",
+    date: "Segera hadir",
+    readTime: "15 menit baca",
     tags: ["DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP"],
     published: false,
   },
@@ -27,17 +27,17 @@ const POSTS = [
     slug: "/blog/go-fiber-vs-nodejs-performa/",
     title: "Go Fiber vs Node.js Express: Benchmark Performa untuk Backend REST API",
     desc: "Benchmark langsung antara Go Fiber dan Node.js Express — latency, throughput, memory usage, dan kapan harus pilih masing-masing.",
-    date: "Coming soon",
-    readTime: "8 min read",
+    date: "Segera hadir",
+    readTime: "8 menit baca",
     tags: ["Go Fiber","Node.js","Backend","Performance","Benchmark"],
     published: false,
   },
   {
     slug: "/blog/random-forest-sales-prediction-python/",
     title: "Prediksi Penjualan dengan Random Forest di Python: End-to-End ML Pipeline",
-    desc: "Step-by-step membangun ML pipeline untuk prediksi penjualan: data cleaning, feature engineering, training Random Forest, evaluasi, dan deploy ke Streamlit.",
-    date: "Coming soon",
-    readTime: "10 min read",
+    desc: "Langkah demi langkah memprediksi penjualan: membersihkan data, membuat fitur, melatih Random Forest, evaluasi, lalu menampilkannya di Streamlit.",
+    date: "Segera hadir",
+    readTime: "10 menit baca",
     tags: ["Python","Scikit-learn","Random Forest","Streamlit","Data Science"],
     published: false,
   },
@@ -78,8 +78,8 @@ const blogSchema = JSON.stringify({
         <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Artikel teknis</p>
         <h1 class="text-4xl font-extrabold text-slate-900">Blog</h1>
         <p class="text-slate-500 mt-2 text-sm max-w-xl">
-          Sharing pengalaman, tutorial, dan studi kasus nyata dari proyek yang pernah dibangun.
-          Bukan teori — semua based on real implementation.
+          Catatan pengalaman, tutorial, dan studi kasus dari proyek yang pernah saya kerjakan.
+          Semuanya berdasarkan praktik langsung.
         </p>
       </div>
 
@@ -90,7 +90,7 @@ const blogSchema = JSON.stringify({
               <div class="flex-1 flex flex-col gap-3">
                 <div class="flex flex-wrap items-center gap-3">
                   <span class={`text-xs font-semibold px-2.5 py-1 rounded-full ${post.published ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-50 text-slate-400 border border-slate-200"}`}>
-                    {post.published ? "Published" : "Coming Soon"}
+                    {post.published ? "Terbit" : "Draf"}
                   </span>
                   <span class="text-xs text-slate-400">{post.date}</span>
                   <span class="text-xs text-slate-400">· {post.readTime}</span>

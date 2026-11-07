@@ -309,7 +309,7 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">DevOps</span>
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Go Fiber</span>
           <time datetime={datePublished} class="text-xs text-slate-400">28 April 2026</time>
-          <span class="text-xs text-slate-400">· 12 min read</span>
+          <span class="text-xs text-slate-400">· 12 menit baca</span>
         </div>
 
         <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4" itemprop="headline">
@@ -367,7 +367,7 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
           <li>Repository GitHub dengan kode React + Go Fiber</li>
         </ul>
 
-        <h2>Step 1: Setup AWS EC2 Instance</h2>
+        <h2>Langkah 1: Setup AWS EC2 Instance</h2>
         <p>Login ke AWS Console → EC2 → <strong>"Launch Instance"</strong>. Pilih <strong>Ubuntu Server 22.04 LTS</strong>. Instance type <code>t2.micro</code> cukup untuk project kecil-menengah (masuk free tier).</p>
         <p><strong>Security Group</strong> — buka port berikut:</p>
         <ul>
@@ -381,18 +381,18 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeSSH} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Step 2: Install Docker di EC2</h2>
+        <h2>Langkah 2: Install Docker di EC2</h2>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDocker} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Step 3: Dockerize Go Fiber Backend</h2>
+        <h2>Langkah 3: Dockerize Go Fiber Backend</h2>
         <p>Pakai <strong>multi-stage build</strong> untuk meminimalkan ukuran image — dari ~300MB jadi hanya ~15MB:</p>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDockerfileBackend} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Step 4: Dockerize React Frontend</h2>
+        <h2>Langkah 4: Dockerize React Frontend</h2>
         <p>React di-build jadi static files, lalu di-serve Nginx. Jauh lebih efisien dari <code>npm start</code> di production:</p>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDockerfileFrontend} /></pre>
@@ -400,7 +400,7 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeNginxFrontend} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Step 5: Docker Compose</h2>
+        <h2>Langkah 5: Docker Compose</h2>
         <p>Orchestrate semua service (db, backend, frontend, nginx) dalam satu file:</p>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCompose} /></pre>
@@ -408,25 +408,25 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeEnv} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Step 6: Nginx Reverse Proxy + SSL</h2>
+        <h2>Langkah 6: Nginx Reverse Proxy + SSL</h2>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCertbot} /></pre>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeNginxConf} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Step 7: GitHub Actions CI/CD Pipeline</h2>
+        <h2>Langkah 7: GitHub Actions CI/CD Pipeline</h2>
         <p>Buat <code>.github/workflows/deploy.yml</code>. Setiap push ke <code>main</code> → security scan → deploy otomatis:</p>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeGHActions} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
         <p>Tambahkan secrets di GitHub → Settings → Secrets: <code>EC2_HOST</code> dan <code>EC2_SSH_KEY</code>.</p>
-        <h2>Step 8: First Deployment</h2>
+        <h2>Langkah 8: First Deployment</h2>
       </div>
       <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeFirstDeploy} /></pre>
 
       <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Tips Production</h2>
+        <h2>Tips untuk Production</h2>
         <ul>
           <li><strong>Auto-renew SSL:</strong> Setup cron job:</li>
         </ul>

@@ -1,0 +1,153 @@
+<!doctype html>
+<!--
+  Sumber CV. Edit file ini lalu jalankan:  npm run cv
+  Hasilnya ditulis ke public/cv.pdf (dipakai tombol "Unduh CV").
+-->
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>CV — Maulana Nur Anfajm</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    color: #1f2937; font-size: 9.6pt; line-height: 1.45;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; min-height: 297mm; padding: 16mm 17mm 14mm; }
+  header { border-bottom: 1.5px solid #111827; padding-bottom: 10px; margin-bottom: 14px; }
+  h1 { font-size: 22pt; font-weight: 700; letter-spacing: -.3px; color: #111827; }
+  .role { font-size: 10.5pt; color: #4b5563; margin-top: 2px; }
+  .contact { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 8.8pt; color: #374151; }
+  .contact a { color: inherit; text-decoration: none; }
+  .contact span + span::before { content: ""; }
+  h2 {
+    font-size: 8.6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px;
+    color: #111827; margin: 14px 0 7px; padding-bottom: 3px; border-bottom: 1px solid #e5e7eb;
+  }
+  p { color: #374151; }
+  .item { margin-bottom: 9px; break-inside: avoid; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .title { font-weight: 700; color: #111827; font-size: 10pt; }
+  .meta { font-size: 8.6pt; color: #6b7280; white-space: nowrap; }
+  .sub { font-size: 8.8pt; color: #4b5563; font-style: italic; margin-top: 1px; }
+  ul { padding-left: 14px; margin-top: 3px; }
+  li { margin-bottom: 1.5px; color: #374151; }
+  .skills { display: grid; grid-template-columns: 34mm 1fr; gap: 3px 10px; }
+  .skills dt { font-weight: 600; color: #111827; }
+  .skills dd { color: #374151; }
+  .muted { color: #6b7280; }
+  footer { margin-top: 14px; font-size: 7.8pt; color: #9ca3af; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Maulana Nur Anfajm</h1>
+    <div class="role">Mahasiswa Sistem Informasi · Fullstack Web Developer</div>
+    <div class="contact">
+      <span>Jakarta, Indonesia</span>
+      <a href="mailto:lananuranf@gmail.com">lananuranf@gmail.com</a>
+      <a href="tel:+6285960235008">+62 859-6023-5008</a>
+      <a href="https://portfolio.lananuranf.my.id">portfolio.lananuranf.my.id</a>
+      <a href="https://github.com/Lananuranf">github.com/Lananuranf</a>
+      <a href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/">linkedin.com/in/maulana-nur-anfajm</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Profil</h2>
+    <p>
+      Mahasiswa Sistem Informasi semester 6 di Universitas Gunadarma yang senang membangun aplikasi web
+      dari frontend hingga deploy. Terbiasa memakai React, Go, dan PostgreSQL, serta men-deploy aplikasi
+      ke AWS EC2 dengan Docker dan GitHub Actions. Juga mendalami data science dengan Python.
+      Mencari kesempatan magang atau freelance untuk terus belajar di lingkungan kerja nyata.
+    </p>
+  </section>
+
+  <section>
+    <h2>Pendidikan</h2>
+    <div class="item">
+      <div class="row">
+        <span class="title">Universitas Gunadarma</span>
+        <span class="meta">Sedang berjalan · Semester 6</span>
+      </div>
+      <div class="sub">S1 Sistem Informasi — Jakarta</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Proyek</h2>
+
+    <div class="item">
+      <div class="row">
+        <span class="title">Web Management Letta School</span>
+        <span class="meta">React · Go Fiber · PostgreSQL · Docker · AWS EC2</span>
+      </div>
+      <ul>
+        <li>Membangun sistem manajemen sekolah dengan login JWT dan tiga peran pengguna: admin, guru, dan siswa.</li>
+        <li>Men-deploy ke AWS EC2 memakai Docker Compose dan Nginx sebagai reverse proxy dengan SSL.</li>
+        <li>Membuat pipeline GitHub Actions yang menjalankan GitLeaks, Semgrep, Trivy, dan OWASP ZAP sebelum deploy.</li>
+      </ul>
+      <div class="sub">school.lananuranf.my.id</div>
+    </div>
+
+    <div class="item">
+      <div class="row">
+        <span class="title">Sales Data Dashboard</span>
+        <span class="meta">Python · Pandas · scikit-learn · Streamlit</span>
+      </div>
+      <ul>
+        <li>Membersihkan dan menganalisis data penjualan, termasuk penanganan nilai kosong dan outlier (IQR).</li>
+        <li>Melatih model Random Forest untuk memprediksi penjualan periode berikutnya dengan cross-validation.</li>
+        <li>Menyajikan hasil analisis dalam dashboard Streamlit interaktif.</li>
+      </ul>
+    </div>
+
+    <div class="item">
+      <div class="row">
+        <span class="title">Dockerized E-Commerce App</span>
+        <span class="meta">React · Go Gin · GORM · PostgreSQL · Docker</span>
+      </div>
+      <ul>
+        <li>Membuat aplikasi toko online dengan backend berlapis (handler, service, repository).</li>
+        <li>Menjalankan seluruh service dengan Docker Compose di AWS EC2 di balik Nginx.</li>
+      </ul>
+    </div>
+
+    <div class="item">
+      <div class="row">
+        <span class="title">Bot Asisten Pribadi di Telegram</span>
+        <span class="meta">Python · Groq API · Railway</span>
+      </div>
+      <ul>
+        <li>Bot yang memakai LLaMA 3.3 untuk tanya-jawab, Whisper untuk transkripsi suara, dan integrasi Google Calendar.</li>
+        <li>Otomatis deploy ke Railway setiap push; API key disimpan sebagai environment variable.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Keahlian</h2>
+    <dl class="skills">
+      <dt>Frontend</dt>       <dd>JavaScript, TypeScript, React, Tailwind CSS, Vite, Astro</dd>
+      <dt>Backend</dt>        <dd>Go (Fiber, Gin), REST API, PostgreSQL, GORM, Postman</dd>
+      <dt>Deploy &amp; DevOps</dt> <dd>Git, Docker, Docker Compose, Linux (Ubuntu), Nginx, GitHub Actions, AWS EC2</dd>
+      <dt>Data</dt>           <dd>Python, Pandas, NumPy, scikit-learn, Matplotlib, Streamlit, Jupyter</dd>
+      <dt>Keamanan</dt>       <dd>GitLeaks, Semgrep, Trivy, OWASP ZAP <span class="muted">(dasar, masih belajar)</span></dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Lainnya</h2>
+    <dl class="skills">
+      <dt>Bahasa</dt>   <dd>Indonesia (penutur asli), Inggris (membaca dokumentasi teknis)</dd>
+      <dt>Tulisan</dt>  <dd>Blog teknis: “Cara Deploy React + Go Fiber ke AWS EC2 dengan Docker &amp; GitHub Actions”</dd>
+    </dl>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,8 +1,0 @@
-Taruh file CV PDF lu di sini dengan nama: cv.pdf
-
-Caranya:
-1. Export CV lu dari Canva / Word / Google Docs sebagai PDF
-2. Rename jadi cv.pdf
-3. Taruh di folder public/ ini (gantiin file ini)
-
-Path final: public/cv.pdf

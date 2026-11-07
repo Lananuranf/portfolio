@@ -28,8 +28,8 @@
       <div class="flex gap-4 w-full justify-center">
         {[
           { value: "6th", label: "Semester" },
-          { value: "4+",  label: "Projects" },
-          { value: "3",   label: "Domains"  },
+          { value: "4",   label: "Proyek"   },
+          { value: "3",   label: "Bidang"   },
         ].map(s => (
           <div class="flex flex-col items-center bg-white rounded-2xl px-4 py-3 shadow-sm border border-slate-100 flex-1 hover:-translate-y-1 transition-transform">
             <span class="text-xl font-extrabold text-slate-900">{s.value}</span>
@@ -42,9 +42,9 @@
     <!-- Text -->
     <div class="flex flex-col gap-5 text-center md:text-left">
       <div>
-        <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Who I am</p>
+        <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Siapa saya</p>
         <h2 id="about-heading" class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">
-          About Me
+          Tentang Saya
         </h2>
       </div>
 
@@ -55,15 +55,14 @@
         <strong class="text-slate-800">Lananuranf</strong> — mahasiswa
         <strong class="text-slate-800">Sistem Informasi semester 6</strong> di
         <strong class="text-slate-800">Universitas Gunadarma</strong>, Jakarta.
-        Saya passionate dalam membangun aplikasi web yang secure, scalable, dan data-driven
-        dengan arsitektur bersih dan stack teknologi modern.
+        Saya senang membangun aplikasi web dari frontend sampai deploy, dan mengolah data
+        untuk menjawab pertanyaan nyata.
       </p>
 
       <p class="text-slate-500 leading-relaxed text-sm">
-        Tidak seperti kebanyakan mahasiswa yang hanya belajar secara teoritis, saya aktif membangun
-        aplikasi <em>production-grade</em> yang benar-benar live di internet — dilengkapi pipeline
-        CI/CD dan DevSecOps penuh. Saat ini fokus mengasah kemampuan di tiga domain utama:
-        fullstack web development, data science &amp; ML, dan cloud/DevSecOps engineering.
+        Saya belajar paling banyak lewat praktik: membuat proyek, men-deploy-nya ke server,
+        lalu memperbaiki yang masih kurang. Saat ini saya fokus di tiga bidang:
+        pengembangan web fullstack, data science, dan dasar-dasar DevOps &amp; keamanan aplikasi.
       </p>
 
       <!-- Highlight cards -->
@@ -71,20 +70,20 @@
         {[
           {
             icon: "💻",
-            title: "Web Development",
-            desc: "Fullstack apps dengan React, Go Fiber/Gin, PostgreSQL — deployed ke AWS EC2 via Docker & GitHub Actions CI/CD.",
+            title: "Pengembangan Web",
+            desc: "Aplikasi fullstack dengan React, Go (Fiber/Gin), dan PostgreSQL, di-deploy ke AWS EC2 memakai Docker.",
             color: "bg-cyan-50 text-cyan-700",
           },
           {
             icon: "📊",
-            title: "Data Science & ML",
-            desc: "ML models (Random Forest, Logistic Regression), analytics, dan interactive dashboard dengan Python, Pandas, Streamlit.",
+            title: "Data Science",
+            desc: "Analisis data dan model machine learning dasar (Random Forest, Logistic Regression) dengan Python, Pandas, dan Streamlit.",
             color: "bg-amber-50 text-amber-700",
           },
           {
             icon: "🔐",
-            title: "DevSecOps",
-            desc: "CI/CD pipeline dengan GitLeaks, Semgrep, Trivy, OWASP ZAP, CloudTrail — shift security left dari day one.",
+            title: "DevOps & Keamanan",
+            desc: "Pipeline CI/CD di GitHub Actions dengan security scanning dasar (GitLeaks, Trivy, OWASP ZAP) — masih terus belajar.",
             color: "bg-violet-50 text-violet-700",
           },
         ].map(h => (

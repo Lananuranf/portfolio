@@ -1,5 +1,5 @@
 // src/components/HeroIsland.tsx — React island untuk animasi
-// Foto profil diambil dari /public/profile.jpg (harus lu copy manual dari src/assets/Profile.jpg)
+// Foto profil diambil dari /public/Profile.jpg
 import { type ReactElement } from "react";
 import { TypeAnimation } from "react-type-animation";
 import { motion, type Variants } from "framer-motion";
@@ -57,11 +57,11 @@ export default function HeroIsland(): ReactElement {
             <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-sky-100 via-violet-100 to-pink-100 opacity-80" />
             <img
               src="/Profile.jpg"
-              alt="Foto profil Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer, DevSecOps Engineer, Jakarta"
+              alt="Foto profil Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer, Jakarta"
               className="relative w-48 h-48 md:w-56 md:h-56 rounded-full object-cover shadow-2xl ring-4 ring-white"
               width={224} height={224}
             />
-            <span className="absolute bottom-2 right-2 flex h-5 w-5" title="Available for work">
+            <span className="absolute bottom-2 right-2 flex h-5 w-5" title="Terbuka untuk peluang kerja">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-5 w-5 rounded-full bg-emerald-400 border-2 border-white" />
             </span>
@@ -74,7 +74,7 @@ export default function HeroIsland(): ReactElement {
 
           <motion.span variants={item}
             className="text-xs font-semibold tracking-widest text-slate-400 uppercase border border-slate-200 bg-white/80 rounded-full px-4 py-1.5">
-            Available for Work
+            Terbuka untuk Magang &amp; Freelance
           </motion.span>
 
           <motion.div variants={item}>
@@ -84,7 +84,7 @@ export default function HeroIsland(): ReactElement {
             <p className="text-sm text-slate-400 mt-0.5">alias <strong className="text-slate-600">Lananuranf</strong></p>
             <div className="mt-2 h-7 text-base font-semibold">
               <TypeAnimation
-                sequence={["Fullstack Web Developer 💻",1800,"Data Science Enthusiast 📊",1800,"DevSecOps Engineer 🔐",1800,"React + Go Fiber Builder 🚀",1800]}
+                sequence={["Fullstack Web Developer",1800,"Mahasiswa Sistem Informasi",1800,"Belajar Data Science",1800,"Belajar DevOps & Cloud",1800]}
                 wrapper="span" speed={55} deletionSpeed={70} repeat={Infinity}
                 className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-violet-500 to-pink-500"
               />
