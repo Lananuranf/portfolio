@@ -48,7 +48,7 @@ export default function HeroIsland(): ReactElement {
       <motion.div className="absolute bottom-20 right-10 w-80 h-80 bg-violet-200 rounded-full blur-3xl opacity-50 pointer-events-none"
         animate={{ scale:[1,1.2,1], x:[0,-20,0] }} transition={{ duration:10, repeat:Infinity, ease:"easeInOut", delay:2 }} />
 
-      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 pt-16 pb-10 relative z-10">
+      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 pt-28 md:pt-24 pb-12 relative z-10">
 
         {/* Avatar */}
         <motion.div className="relative flex-shrink-0"
