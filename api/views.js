@@ -10,8 +10,17 @@
 // Penyimpanan: Upstash Redis lewat REST API. Isi env KV_REST_API_URL & KV_REST_API_TOKEN
 // (otomatis dari integrasi Upstash di Vercel) atau UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN.
 
-const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+// Cari variabel Upstash, termasuk yang memakai awalan custom (mis. "PORTFOLIO_KV_REST_API_URL").
+function env(...suffixes) {
+  for (const sfx of suffixes) if (process.env[sfx]) return process.env[sfx];
+  for (const sfx of suffixes) {
+    const key = Object.keys(process.env).find((k) => k.endsWith(`_${sfx}`) && process.env[k]);
+    if (key) return process.env[key];
+  }
+  return undefined;
+}
+const URL_ = env("KV_REST_API_URL", "UPSTASH_REDIS_REST_URL");
+const TOKEN = env("KV_REST_API_TOKEN", "UPSTASH_REDIS_REST_TOKEN");
 const LIVE_WINDOW_MS = 45_000;
 const SLUG_RE = /^[a-z0-9-]{1,80}$/;
 const SID_RE = /^[a-zA-Z0-9-]{8,64}$/;
