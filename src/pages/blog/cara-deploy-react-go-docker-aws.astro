@@ -256,7 +256,7 @@ sudo crontab -e
     <p>Perkiraan waktu: 1–2 jam untuk pertama kali.</p>
   </Callout>
 
-  <h2>Langkah 1 — Membuat server di AWS EC2</h2>
+  <h2>Langkah 1: Membuat server di AWS EC2</h2>
   <p>EC2 adalah komputer virtual milik AWS yang menyala 24 jam. Di sinilah aplikasi kita akan berjalan.</p>
   <ol>
     <li>Buka AWS Console, pilih <strong>EC2</strong>, lalu klik <strong>Launch instance</strong>.</li>
@@ -265,8 +265,8 @@ sudo crontab -e
     <li>Pada <strong>Key pair</strong>, buat kunci baru dan unduh file <code>.pem</code>. Simpan baik-baik, file ini tidak bisa diunduh ulang.</li>
     <li>Pada <strong>Network settings</strong>, izinkan tiga port berikut:
       <ul>
-        <li><code>22</code> (SSH) — pilih <em>My IP</em> agar hanya kamu yang bisa masuk.</li>
-        <li><code>80</code> (HTTP) dan <code>443</code> (HTTPS) — dari mana saja (<em>Anywhere</em>).</li>
+        <li><code>22</code> (SSH): pilih <em>My IP</em> agar hanya kamu yang bisa masuk.</li>
+        <li><code>80</code> (HTTP) dan <code>443</code> (HTTPS): dari mana saja (<em>Anywhere</em>).</li>
       </ul>
     </li>
     <li>Klik <strong>Launch instance</strong>, lalu catat <strong>Public IPv4 address</strong>-nya.</li>
@@ -277,7 +277,7 @@ sudo crontab -e
     <p>Tampilan terminal berubah menjadi <code>ubuntu@ip-...:~$</code>. Artinya kamu sudah berada di dalam server.</p>
   </Callout>
 
-  <h2>Langkah 2 — Memasang Docker di server</h2>
+  <h2>Langkah 2: Memasang Docker di server</h2>
   <p>Docker membuat setiap bagian aplikasi berjalan di "kotak" (container) masing-masing, sehingga hasilnya sama persis di laptop maupun di server.</p>
   <CodeBlock code={codeDocker} label="Terminal (server)" />
   <p>Keluar dari server (<code>exit</code>), lalu masuk lagi dengan perintah SSH di Langkah 1 agar izin grup <code>docker</code> berlaku. Setelah itu jalankan:</p>
@@ -286,11 +286,11 @@ sudo crontab -e
     <p>Muncul nomor versi Docker dan Docker Compose, serta pesan <code>Hello from Docker!</code>.</p>
   </Callout>
 
-  <h2>Langkah 3 — Menyiapkan struktur proyek</h2>
+  <h2>Langkah 3: Menyiapkan struktur proyek</h2>
   <p>Agar semua file mudah ditemukan, susun repository seperti ini:</p>
   <CodeBlock code={codeTree} label="Struktur folder" />
 
-  <h2>Langkah 4 — Membuat Dockerfile</h2>
+  <h2>Langkah 4: Membuat Dockerfile</h2>
   <p>
     Dockerfile adalah "resep" untuk membuat image. Kita memakai <strong>multi-stage build</strong>:
     tahap pertama memakai image besar untuk mengompilasi kode, tahap kedua hanya menyalin hasil jadinya.
@@ -300,14 +300,14 @@ sudo crontab -e
   <p>Sesuaikan <code>./cmd/main.go</code> dengan lokasi file <code>main</code> di proyekmu.</p>
   <CodeBlock code={codeDockerfileBackend} label="backend/Dockerfile" />
   <h3>Frontend (React)</h3>
-  <p>React di-build menjadi file statis, lalu disajikan oleh Nginx. Cara ini jauh lebih ringan daripada menjalankan server development.</p>
+  <p>React di-build menjadi file statis, lalu disajikan oleh Nginx. Cara ini memakai memori jauh lebih kecil daripada menjalankan server development React di produksi.</p>
   <CodeBlock code={codeDockerfileFrontend} label="frontend/Dockerfile" />
   <CodeBlock code={codeNginxFrontend} label="frontend/nginx-frontend.conf" />
   <Callout type="tip">
-    <p>Di frontend, panggil API dengan alamat relatif seperti <code>/api/users</code>, bukan <code>http://localhost:8080/users</code>. Nginx yang akan meneruskannya ke backend.</p>
+    <p>Di frontend, panggil API dengan alamat relatif seperti <code>/api/users</code>. Nginx akan meneruskannya ke backend. Alamat <code>http://localhost:8080</code> hanya berlaku di laptopmu dan akan gagal di browser pengunjung.</p>
   </Callout>
 
-  <h2>Langkah 5 — Menyatukan semuanya dengan Docker Compose</h2>
+  <h2>Langkah 5: Menyatukan semuanya dengan Docker Compose</h2>
   <p>Docker Compose menjalankan keempat container sekaligus dengan satu perintah dan menghubungkan mereka dalam satu jaringan. Di dalam jaringan itu, setiap container bisa dipanggil memakai nama service-nya, misalnya <code>db</code> atau <code>backend</code>.</p>
   <CodeBlock code={codeCompose} label="docker-compose.yml" />
   <p>Nilai rahasia seperti password disimpan terpisah di file <code>.env</code>, di folder yang sama:</p>
@@ -316,13 +316,13 @@ sudo crontab -e
     <p>Tambahkan <code>.env</code> ke <code>.gitignore</code>. File ini hanya dibuat langsung di server dan tidak boleh masuk ke GitHub.</p>
   </Callout>
 
-  <h2>Langkah 6 — Mengarahkan domain dan memasang HTTPS</h2>
+  <h2>Langkah 6: Mengarahkan domain dan memasang HTTPS</h2>
   <p>Di pengelola DNS domainmu, buat dua <strong>A record</strong>: <code>@</code> dan <code>www</code>, keduanya mengarah ke IP publik EC2. Tunggu beberapa menit sampai aktif, lalu minta sertifikat gratis dari Let's Encrypt:</p>
   <CodeBlock code={codeCertbot} label="Terminal (server)" />
   <p>Setelah sertifikat terbit, buat konfigurasi Nginx utama. Ganti <code>domainkamu.com</code> dengan domainmu.</p>
   <CodeBlock code={codeNginxConf} label="nginx/nginx.conf" />
 
-  <h2>Langkah 7 — Deploy pertama kali</h2>
+  <h2>Langkah 7: Deploy pertama kali</h2>
   <CodeBlock code={codeFirstDeploy} label="Terminal (server)" />
   <Callout type="check">
     <p>Buka <code>https://domainkamu.com</code> di browser. Halaman aplikasi tampil dan ada ikon gembok di address bar.</p>
@@ -330,7 +330,7 @@ sudo crontab -e
   <p>Jika ada yang belum berjalan, lihat log service yang bermasalah:</p>
   <CodeBlock code={codeLogs} label="Terminal (server)" />
 
-  <h2>Langkah 8 — Deploy otomatis dengan GitHub Actions</h2>
+  <h2>Langkah 8: Deploy otomatis dengan GitHub Actions</h2>
   <p>Supaya tidak perlu masuk ke server setiap kali ada perubahan, kita minta GitHub yang melakukannya.</p>
   <ol>
     <li>Di repository GitHub, buka <strong>Settings → Secrets and variables → Actions</strong>.</li>
@@ -347,7 +347,7 @@ sudo crontab -e
     <p>Buka tab <strong>Actions</strong> di GitHub. Workflow berwarna hijau, dan perubahanmu muncul di website dalam beberapa menit.</p>
   </Callout>
 
-  <h2>Langkah 9 — Perawatan rutin</h2>
+  <h2>Langkah 9: Perawatan rutin</h2>
   <p>Sertifikat Let's Encrypt berlaku 90 hari. Atur agar diperpanjang otomatis setiap bulan:</p>
   <CodeBlock code={codeRenew} label="Terminal (server)" />
   <ul>
@@ -357,11 +357,11 @@ sudo crontab -e
 
   <h2>Masalah yang sering muncul</h2>
   <ul>
-    <li><strong><code>permission denied</code> saat menjalankan docker</strong> — kamu belum keluar-masuk ulang setelah Langkah 2.</li>
-    <li><strong>Backend gagal terhubung ke database</strong> — pastikan <code>DB_HOST</code> bernilai <code>db</code>, bukan <code>localhost</code>.</li>
-    <li><strong>Certbot gagal</strong> — DNS belum mengarah ke server, atau port 80 sedang dipakai container lain.</li>
-    <li><strong>Halaman React 404 saat di-refresh</strong> — periksa baris <code>try_files</code> di <code>nginx-frontend.conf</code>.</li>
-    <li><strong>Server kehabisan memori saat build</strong> — instance 1 GB cukup sempit; tambahkan swap 1–2 GB.</li>
+    <li><strong><code>permission denied</code> saat menjalankan docker</strong>: kamu belum keluar lalu masuk ulang ke server setelah Langkah 2.</li>
+    <li><strong>Backend gagal terhubung ke database</strong>: pastikan <code>DB_HOST</code> bernilai <code>db</code>. Nilai <code>localhost</code> merujuk ke container backend itu sendiri.</li>
+    <li><strong>Certbot gagal</strong>: DNS belum mengarah ke server, atau port 80 sedang dipakai container lain.</li>
+    <li><strong>Halaman React 404 saat di-refresh</strong>: periksa baris <code>try_files</code> di <code>nginx-frontend.conf</code>.</li>
+    <li><strong>Server kehabisan memori saat build</strong>: RAM 1 GB cukup sempit untuk build, jadi tambahkan swap 1–2 GB.</li>
   </ul>
 
   <h2>Ringkasan</h2>

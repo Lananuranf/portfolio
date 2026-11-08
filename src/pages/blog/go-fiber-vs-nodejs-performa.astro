@@ -99,17 +99,17 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
   <Callout type="info" title="Kenapa saya menulis ini">
     <p>
       Backend proyek saya, <a href="/projects/letta-school/">Letta School</a>, memakai Go Fiber. Saya ingin tahu
-      seberapa besar sebenarnya selisih performanya dengan Express, framework Node.js yang paling umum,
-      dengan mengukurnya sendiri, bukan sekadar mengutip angka dari internet.
+      seberapa besar selisih performanya dengan Express, framework Node.js yang paling umum. Jadi saya
+      mengukurnya sendiri di laptop saya, dengan kode dan cara uji yang bisa kamu ulangi.
     </p>
   </Callout>
 
   <h2>Apa yang diukur?</h2>
   <p>Tiga hal yang paling relevan untuk sebuah REST API:</p>
   <ul>
-    <li><strong>Throughput (req/s)</strong> — berapa permintaan yang bisa dilayani per detik. Makin besar makin baik.</li>
-    <li><strong>Latency p50 dan p99</strong> — waktu tunggu satu permintaan. p50 adalah waktu tunggu umum; p99 adalah waktu tunggu 1% permintaan paling lambat. Makin kecil makin baik.</li>
-    <li><strong>Memori</strong> — RAM yang dipakai proses server saat diam dan saat dibebani.</li>
+    <li><strong>Throughput (req/s)</strong>: berapa permintaan yang bisa dilayani per detik. Makin besar makin baik.</li>
+    <li><strong>Latency p50 dan p99</strong>: waktu tunggu satu permintaan. p50 adalah waktu tunggu umum; p99 adalah waktu tunggu 1% permintaan paling lambat. Makin kecil makin baik.</li>
+    <li><strong>Memori</strong>: RAM yang dipakai proses server saat diam dan saat dibebani.</li>
   </ul>
   <p>Ada dua skenario. <code>/hello</code> mengirim teks pendek, sedangkan <code>/users</code> membuat 50 objek lalu mengirimnya sebagai JSON. Skenario kedua lebih mendekati API sungguhan.</p>
 
@@ -163,10 +163,10 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
 
   <h2>Cara membaca hasil ini</h2>
   <ul>
-    <li><strong>Selisih 2 kali lipat itu nyata, tetapi tidak selalu terasa.</strong> Di aplikasi sungguhan, waktu terbesar biasanya habis untuk menunggu database atau layanan lain. Jika satu query butuh 20 ms, perbedaan 4–5 ms di framework menjadi relatif kecil.</li>
+    <li><strong>Selisih 2 kali lipat belum tentu terasa oleh pengguna.</strong> Di aplikasi sungguhan, waktu terbesar biasanya habis untuk menunggu database atau layanan lain. Jika satu query butuh 20 ms, perbedaan 4–5 ms di framework menjadi relatif kecil.</li>
     <li><strong>Memori adalah keunggulan Fiber yang paling konsisten.</strong> Di server kecil seperti EC2 <code>t2.micro</code> (RAM 1 GB), selisih puluhan MB per proses cukup berarti, terutama jika menjalankan beberapa service sekaligus.</li>
     <li><strong>Express di sini hanya memakai satu thread.</strong> Node.js bisa menjalankan beberapa proses sekaligus (misalnya dengan <code>cluster</code> atau PM2) untuk memakai semua core. Throughput-nya akan naik, tetapi pemakaian memorinya juga ikut berlipat.</li>
-    <li><strong>Ini benchmark sederhana.</strong> Hasilnya menggambarkan biaya dasar framework, bukan performa aplikasi lengkap.</li>
+    <li><strong>Ini benchmark sederhana.</strong> Hasilnya hanya mengukur biaya dasar framework, tanpa database dan logika bisnis.</li>
   </ul>
 
   <h2>Jadi, pilih yang mana?</h2>
@@ -196,7 +196,7 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
   </p>
 
   <h2>Coba ulangi sendiri</h2>
-  <p>Angka di laptopmu pasti berbeda. Yang penting adalah perbandingannya. Berikut langkahnya:</p>
+  <p>Angka di laptopmu pasti berbeda, jadi bandingkan rasio antara keduanya. Berikut langkahnya:</p>
   <ol>
     <li>Pastikan Go dan Node.js sudah terpasang (<code>go version</code> dan <code>node -v</code>).</li>
     <li>Buat dan jalankan kedua server:</li>
@@ -217,8 +217,8 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
   <h2>Kesimpulan</h2>
   <p>
     Dalam pengujian ini, Go Fiber unggul jelas dalam throughput respons JSON (sekitar 2 kali lipat) dan pemakaian
-    memori (sekitar 6 kali lebih hemat). Meski begitu, Express tetap pilihan yang sangat layak, terutama untuk tim
-    JavaScript. Pilih framework berdasarkan kebutuhan proyek dan kemampuan tim, lalu ukur sendiri jika performa
-    memang menjadi pertimbangan utama.
+    memori (sekitar 6 kali lebih hemat). Express tetap pilihan yang masuk akal untuk tim yang sudah terbiasa
+    dengan JavaScript. Kalau performa jadi pertimbangan utama di proyekmu, jalankan pengujian di atas dengan
+    endpoint dan server milikmu sendiri.
   </p>
 </ArticleLayout>

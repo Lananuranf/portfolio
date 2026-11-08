@@ -32,7 +32,7 @@ const RAW: Post[] = [
   {
     slug: "/blog/go-fiber-vs-nodejs-performa/",
     title: "Go Fiber vs Express.js: Benchmark Performa REST API Secara Langsung",
-    desc: "Saya mengukur sendiri throughput, latency, dan pemakaian memori Go Fiber dan Express.js di laptop yang sama — lengkap dengan cara mengulanginya dan kapan sebaiknya memilih masing-masing.",
+    desc: "Saya mengukur sendiri throughput, latency, dan pemakaian memori Go Fiber dan Express.js di laptop yang sama, lengkap dengan cara mengulanginya dan kapan sebaiknya memilih masing-masing.",
     date: "8 November 2026",
     tags: ["Go Fiber","Express.js","Node.js","Backend","Benchmark"],
     accent: "from-emerald-500 to-teal-600",

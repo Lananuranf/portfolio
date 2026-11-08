@@ -95,7 +95,7 @@ export default function HeroIsland(): ReactElement {
             <p className="text-sm text-slate-400 mt-0.5">alias <strong className="text-slate-600">Lananuranf</strong></p>
             <div className="mt-2 h-7 text-base font-semibold">
               <TypeAnimation
-                sequence={["Software Engineer",1800,"Mahasiswa Sistem Informasi",1800,"Frontend & Backend Developer",1800]}
+                sequence={["Software Engineer",1800,"Mahasiswa Sistem Informasi",1800,"Pengembang Frontend & Backend",1800]}
                 wrapper="span" speed={55} deletionSpeed={70} repeat={Infinity}
                 className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-violet-500 to-pink-500"
               />

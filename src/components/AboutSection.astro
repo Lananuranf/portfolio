@@ -16,7 +16,7 @@
         <div class="absolute -inset-2 rounded-3xl bg-gradient-to-br from-cyan-100 to-violet-100 opacity-60"></div>
         <img
           src="/about.png"
-          alt="Maulana Nur Anfajm sedang bekerja — software engineer Universitas Gunadarma"
+          alt="Maulana Nur Anfajm, software engineer dan mahasiswa Universitas Gunadarma, sedang bekerja"
           class="relative w-64 md:w-72 rounded-2xl shadow-xl object-cover ring-4 ring-white"
           width="288"
           height="360"
@@ -29,7 +29,7 @@
         {[
           { value: "7",   label: "Semester" },
           { value: "3",   label: "Proyek"   },
-          { value: "SWE", label: "Fokus"    },
+          { value: "2",   label: "Artikel"  },
         ].map(s => (
           <div class="flex flex-col items-center bg-white rounded-2xl px-3 py-3 shadow-sm ring-1 ring-slate-900/5">
             <span class="text-xl font-extrabold text-slate-900">{s.value}</span>
@@ -51,21 +51,21 @@
       <p class="text-slate-700 leading-relaxed text-base md:text-lg">
         Saya <strong class="text-slate-900">Maulana Nur Anfajm</strong>, Software Engineer dan mahasiswa
         Sistem Informasi semester 7 di Universitas Gunadarma, Jakarta. Saya membangun aplikasi web
-        secara menyeluruh — antarmuka, REST API, hingga database — dengan React, TypeScript, Go, dan PostgreSQL.
+        dari tampilan, REST API, sampai database, memakai React, TypeScript, Go, dan PostgreSQL.
       </p>
 
       <p class="text-slate-500 leading-relaxed text-sm md:text-base">
-        Saya mengutamakan kode yang mudah dibaca, arsitektur yang terstruktur, dan aplikasi yang benar-benar
-        dipakai. Setiap proyek saya kerjakan sampai rilis di server, bukan berhenti di tahap prototipe.
+        Ketiga proyek saya sudah berjalan di server: dua di AWS EC2 dengan Docker, satu di Vercel.
+        Kode backend saya pisahkan per lapisan (handler, service, repository) supaya mudah dibaca dan diubah.
       </p>
 
       <ul class="grid gap-3 text-left">
         {[
-          { title: "Frontend", desc: "Antarmuka responsif dengan React, TypeScript, dan Tailwind CSS.",
+          { title: "Frontend", desc: "Tampilan responsif dengan React, TypeScript, dan Tailwind CSS.",
             d: "M3 5h18v12H3zM8 21h8M12 17v4" },
-          { title: "Backend & Database", desc: "REST API dengan Go (Fiber/Gin) dan skema relasional di PostgreSQL.",
+          { title: "Backend & Database", desc: "REST API dengan Go (Fiber dan Gin) dan tabel relasional di PostgreSQL.",
             d: "M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" },
-          { title: "Rilis Aplikasi", desc: "Container Docker dan deploy ke server AWS EC2.",
+          { title: "Rilis ke Server", desc: "Aplikasi dikemas dalam container Docker lalu dijalankan di AWS EC2.",
             d: "M12 3v12m0-12-4 4m4-4 4 4M5 21h14" },
         ].map(h => (
           <li class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm ring-1 ring-slate-900/5">

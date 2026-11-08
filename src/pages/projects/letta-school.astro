@@ -10,8 +10,8 @@ const sejak = formatBulanTahun(proof.createdAt);
 const projectSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Web Management Letta School",
-  "description": "Sistem manajemen sekolah fullstack dengan JWT auth dan RBAC. React + Go Fiber + PostgreSQL + Docker + AWS EC2.",
+  "name": "Letta School",
+  "description": "Sistem manajemen sekolah dengan login JWT dan hak akses per peran. React + Go Fiber + PostgreSQL + Docker + AWS EC2.",
   "url": "https://school.lananuranf.my.id/",
   "applicationCategory": "WebApplication",
   "programmingLanguage": ["React","TypeScript","Go Fiber","PostgreSQL","Docker"],
@@ -20,8 +20,8 @@ const projectSchema = JSON.stringify({
 ---
 
 <BaseLayout
-  title="Letta School — Fullstack School Management System | Maulana Nur Anfajm (Lananuranf)"
-  description="Studi kasus: sistem manajemen sekolah fullstack dengan React, Go Fiber, PostgreSQL, Docker, AWS EC2, dengan JWT auth dan RBAC. Dibangun oleh Maulana Nur Anfajm (Lananuranf)."
+  title="Letta School: Sistem Manajemen Sekolah | Maulana Nur Anfajm (Lananuranf)"
+  description="Studi kasus sistem manajemen sekolah dengan React, Go Fiber, PostgreSQL, Docker, dan AWS EC2, lengkap dengan login JWT dan hak akses per peran. Dibuat oleh Maulana Nur Anfajm (Lananuranf)."
   canonicalURL="https://lananuranf.my.id/projects/letta-school/"
   extraSchema={projectSchema}
 >
@@ -43,7 +43,7 @@ const projectSchema = JSON.stringify({
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">AWS EC2</span>
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-3">
-          Web Management Letta School
+          Letta School: Sistem Manajemen Sekolah
         </h1>
         <p class="text-slate-500 text-base leading-relaxed">
           Sistem manajemen sekolah dengan login JWT, pembagian hak akses per peran,
@@ -84,8 +84,8 @@ const projectSchema = JSON.stringify({
             Masalah
           </h2>
           <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5 text-slate-600 text-sm leading-relaxed">
-            <p>Sekolah Letta membutuhkan platform digital terpadu untuk mengelola data siswa, guru, absensi, jadwal, dan laporan akademik — sebelumnya semua dikelola manual menggunakan spreadsheet yang rawan error, tidak aman, dan sulit diakses oleh multiple user secara bersamaan.</p>
-            <p class="mt-2">Selain itu, sistem perlu mendukung tiga level pengguna dengan hak akses berbeda: admin (akses penuh), guru (kelola kelas dan nilai), dan siswa (view-only data pribadi).</p>
+            <p>Sekolah Letta mengelola data siswa, guru, absensi, jadwal, dan laporan akademik secara manual di spreadsheet. Data mudah salah ketik, tidak aman, dan sulit dibuka beberapa orang sekaligus.</p>
+            <p class="mt-2">Sistem baru juga harus membedakan tiga jenis pengguna: admin dengan akses penuh, guru yang mengelola kelas dan nilai, dan siswa yang hanya bisa melihat data pribadinya.</p>
           </div>
         </section>
 
@@ -95,8 +95,8 @@ const projectSchema = JSON.stringify({
             Solusi
           </h2>
           <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-slate-600 text-sm leading-relaxed">
-            <p>Membangun school management system berbasis web fullstack dengan arsitektur yang jelas: React + TypeScript di frontend untuk UI yang responsif dan type-safe, Go Fiber di backend karena performanya yang superior (mampu handle jutaan request/detik dengan memory footprint minimal), dan PostgreSQL sebagai database relasional.</p>
-            <p class="mt-2">Sistem RBAC diimplementasikan di layer middleware Go Fiber — setiap API endpoint memvalidasi JWT token dan memeriksa role pengguna sebelum memberikan akses. Tiga role: <strong>admin</strong> (full CRUD), <strong>guru</strong> (manage kelas, absensi, nilai), <strong>siswa</strong> (view data pribadi dan jadwal).</p>
+            <p>Saya membangun aplikasi web fullstack dengan React + TypeScript di frontend, Go Fiber di backend, dan PostgreSQL sebagai database. TypeScript menangkap kesalahan tipe data sebelum kode dijalankan. Go Fiber saya pilih karena ringan dan cepat untuk REST API; perbandingannya dengan Express.js saya tulis di <a href="/blog/go-fiber-vs-nodejs-performa/" class="font-semibold text-slate-800 underline underline-offset-2 hover:text-slate-950">artikel benchmark ini</a>.</p>
+            <p class="mt-2">Hak akses diatur di middleware Go Fiber. Setiap endpoint API memeriksa token JWT dan peran pengguna sebelum memberi akses. Ada tiga peran: <strong>admin</strong> (menambah, mengubah, dan menghapus semua data), <strong>guru</strong> (mengelola kelas, absensi, dan nilai), dan <strong>siswa</strong> (melihat data pribadi dan jadwal).</p>
           </div>
         </section>
 
@@ -106,8 +106,8 @@ const projectSchema = JSON.stringify({
             Infrastruktur
           </h2>
           <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-600 text-sm leading-relaxed">
-            <p>Aplikasi di-deploy di AWS EC2 (Ubuntu 22.04 LTS) menggunakan Docker Compose untuk orchestration. Nginx berfungsi sebagai reverse proxy yang menangani SSL termination, HTTP-to-HTTPS redirect, static file serving, dan routing request ke container yang tepat.</p>
-            <p class="mt-2">GitHub Actions CI/CD pipeline otomatis: setiap merge ke main → SSH ke EC2 → git pull → docker compose up --build -d → aplikasi live dalam 2-3 menit tanpa manual intervention.</p>
+            <p>Aplikasi berjalan di AWS EC2 (Ubuntu 22.04 LTS) dengan Docker Compose. Nginx bertugas sebagai reverse proxy: menangani SSL, mengalihkan HTTP ke HTTPS, menyajikan file statis, dan meneruskan request ke container yang tepat.</p>
+            <p class="mt-2">Deploy berjalan otomatis lewat GitHub Actions. Setiap ada merge ke main, workflow masuk ke EC2 lewat SSH, menjalankan <code>git pull</code> dan <code>docker compose up --build -d</code>, lalu versi baru aktif dalam 2–3 menit.</p>
           </div>
         </section>
 
@@ -115,11 +115,11 @@ const projectSchema = JSON.stringify({
 
       <!-- CTA -->
       <div class="mt-12 p-6 bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 rounded-3xl text-center">
-        <p class="font-bold text-slate-900 mb-1">Tertarik dengan project ini?</p>
-        <p class="text-sm text-slate-500 mb-4">Saya terbuka untuk diskusi soal teknologi, arsitektur, maupun peluang kerja.</p>
+        <p class="font-bold text-slate-900 mb-1">Tertarik dengan proyek ini?</p>
+        <p class="text-sm text-slate-500 mb-4">Saya senang membahas cara kerjanya lebih dalam, atau membicarakan peluang magang dan kerja.</p>
         <div class="flex justify-center gap-3 flex-wrap">
-          <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-sky-500 text-white font-semibold rounded-xl text-sm hover:bg-sky-600 transition-colors">Hubungi Saya</a>
-          <a href="/" class="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-50 transition-colors">Lihat Portfolio</a>
+          <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-sky-500 text-white font-semibold rounded-xl text-sm hover:bg-sky-600 transition-colors">Kirim Email</a>
+          <a href="/#projects" class="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-50 transition-colors">Lihat Proyek Lain</a>
         </div>
       </div>
 

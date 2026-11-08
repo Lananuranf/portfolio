@@ -66,20 +66,19 @@
     <h2>Profil</h2>
     <p>
       Software Engineer dan mahasiswa Sistem Informasi semester 7 di Universitas Gunadarma. Membangun aplikasi
-      web secara menyeluruh — antarmuka, REST API, hingga database — dengan React, TypeScript, Go, dan PostgreSQL,
-      serta merilisnya ke server menggunakan Docker. Mengutamakan kode yang mudah dibaca, arsitektur yang
-      terstruktur, dan aplikasi yang benar-benar dipakai.
+      web dari tampilan, REST API, sampai database dengan React, TypeScript, Go, dan PostgreSQL. Tiga proyek
+      pribadi sudah berjalan di server: dua di AWS EC2 dengan Docker, satu di Vercel.
     </p>
   </section>
 
   <section>
     <h2>Keahlian Teknis</h2>
     <dl class="skills">
-      <dt>Bahasa</dt>    <dd>Go, TypeScript, JavaScript, SQL</dd>
+      <dt>Pemrograman</dt> <dd>Go, TypeScript, JavaScript, SQL</dd>
       <dt>Frontend</dt>  <dd>React, Tailwind CSS, Vite, Astro</dd>
       <dt>Backend</dt>   <dd>Go Fiber, Go Gin, GORM, REST API, autentikasi JWT, RBAC</dd>
       <dt>Database</dt>  <dd>PostgreSQL</dd>
-      <dt>Tools</dt>     <dd>Git, GitHub Actions, Docker, Docker Compose, Nginx, Linux (Ubuntu), AWS EC2, Postman</dd>
+      <dt>Alat &amp; Deploy</dt>     <dd>Git, GitHub Actions, Docker, Docker Compose, Nginx, Linux (Ubuntu), AWS EC2, Postman</dd>
     </dl>
   </section>
 
@@ -88,25 +87,25 @@
 
     <div class="item">
       <div class="row">
-        <span class="title">Web Management Letta School</span>
+        <span class="title">Letta School: Sistem Manajemen Sekolah</span>
         <span class="meta">school.lananuranf.my.id</span>
       </div>
       <div class="stack">React · TypeScript · Go Fiber · PostgreSQL · Docker · AWS EC2</div>
       <ul>
-        <li>Membangun sistem manajemen sekolah dengan autentikasi JWT dan tiga peran pengguna: admin, guru, dan siswa.</li>
+        <li>Membangun sistem manajemen sekolah dengan login JWT dan tiga peran: admin, guru, dan siswa.</li>
         <li>Menerapkan middleware otorisasi yang memvalidasi token dan peran pengguna di setiap endpoint API.</li>
-        <li>Merilis aplikasi ke AWS EC2 dengan Docker Compose dan Nginx (SSL); deploy otomatis lewat GitHub Actions.</li>
+        <li>Berjalan di AWS EC2 dengan Docker Compose dan Nginx (SSL); deploy otomatis lewat GitHub Actions.</li>
       </ul>
     </div>
 
     <div class="item">
       <div class="row">
-        <span class="title">Dockerized E-Commerce App</span>
+        <span class="title">Toko Online dengan Docker</span>
       </div>
       <div class="stack">React · Go Gin · GORM · PostgreSQL · Docker · Nginx</div>
       <ul>
-        <li>Membangun aplikasi toko online dengan arsitektur backend berlapis: handler, service, dan repository.</li>
-        <li>Menjalankan seluruh service dengan satu perintah Docker Compose, lengkap dengan health check dan volume data.</li>
+        <li>Membangun toko online dengan backend Go Gin yang dibagi tiga lapisan: handler, service, dan repository.</li>
+        <li>Menjalankan seluruh service di AWS EC2 dengan satu perintah Docker Compose, lengkap dengan health check.</li>
       </ul>
     </div>
 
@@ -117,8 +116,8 @@
       </div>
       <div class="stack">Astro · TypeScript · React · Tailwind CSS · Vercel</div>
       <ul>
-        <li>Membangun portfolio dan blog teknis berbasis render statis sehingga halaman hampir tanpa JavaScript.</li>
-        <li>Mengambil data proyek dari GitHub API saat build dan menambahkan structured data serta sitemap untuk SEO.</li>
+        <li>Membangun portfolio dan blog teknis dengan render statis Astro dan sedikit JavaScript.</li>
+        <li>Mengambil data proyek dari GitHub API saat build; dilengkapi structured data dan sitemap untuk SEO.</li>
       </ul>
     </div>
   </section>
@@ -130,7 +129,7 @@
         <span class="title">Universitas Gunadarma</span>
         <span class="meta">Semester 7 · Sedang berjalan</span>
       </div>
-      <div>S1 Sistem Informasi — Jakarta</div>
+      <div>S1 Sistem Informasi, Jakarta</div>
     </div>
   </section>
 
@@ -138,7 +137,7 @@
     <h2>Lainnya</h2>
     <dl class="skills">
       <dt>Bahasa</dt>   <dd>Indonesia (penutur asli), Inggris (membaca dokumentasi teknis)</dd>
-      <dt>Tulisan</dt>  <dd>Blog teknis: “Cara Deploy React + Go Fiber ke AWS EC2 dengan Docker &amp; GitHub Actions”</dd>
+      <dt>Tulisan</dt>  <dd>2 artikel di lananuranf.my.id/blog, salah satunya benchmark Go Fiber vs Express.js</dd>
     </dl>
   </section>
 
