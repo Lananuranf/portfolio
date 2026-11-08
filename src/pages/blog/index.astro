@@ -3,45 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MainLayout from '../../layouts/MainLayout.astro';
 import Footer from '../../components/Footer.astro';
-
-const POSTS = [
-  {
-    slug: "/blog/cara-deploy-react-go-docker-aws/",
-    title: "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions",
-    desc: "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang jalan tiap push ke main.",
-    date: "28 April 2026",
-    readTime: "12 menit baca",
-    tags: ["Docker","AWS EC2","Go Fiber","GitHub Actions","CI/CD"],
-    published: true,
-  },
-  {
-    slug: "/blog/devsecops-pipeline-github-actions/",
-    title: "Membangun DevSecOps Pipeline di GitHub Actions: GitLeaks, Semgrep, Trivy, OWASP ZAP",
-    desc: "Panduan langkah demi langkah memasang 4 alat pengecekan keamanan di pipeline GitHub Actions.",
-    date: "Segera hadir",
-    readTime: "15 menit baca",
-    tags: ["DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP"],
-    published: false,
-  },
-  {
-    slug: "/blog/go-fiber-vs-nodejs-performa/",
-    title: "Go Fiber vs Node.js Express: Benchmark Performa untuk Backend REST API",
-    desc: "Benchmark langsung antara Go Fiber dan Node.js Express — latency, throughput, memory usage, dan kapan harus pilih masing-masing.",
-    date: "Segera hadir",
-    readTime: "8 menit baca",
-    tags: ["Go Fiber","Node.js","Backend","Performance","Benchmark"],
-    published: false,
-  },
-  {
-    slug: "/blog/random-forest-sales-prediction-python/",
-    title: "Prediksi Penjualan dengan Random Forest di Python: End-to-End ML Pipeline",
-    desc: "Langkah demi langkah memprediksi penjualan: membersihkan data, membuat fitur, melatih Random Forest, evaluasi, lalu menampilkannya di Streamlit.",
-    date: "Segera hadir",
-    readTime: "10 menit baca",
-    tags: ["Python","Scikit-learn","Random Forest","Streamlit","Data Science"],
-    published: false,
-  },
-];
+import { POSTS } from '../../data/posts';
 
 const blogSchema = JSON.stringify({
   "@context": "https://schema.org",
@@ -93,7 +55,7 @@ const blogSchema = JSON.stringify({
                     {post.published ? "Terbit" : "Draf"}
                   </span>
                   <span class="text-xs text-slate-400">{post.date}</span>
-                  <span class="text-xs text-slate-400">· {post.readTime}</span>
+                  {post.readTime && <span class="text-xs text-slate-400">· {post.readTime}</span>}
                 </div>
                 <h2 class="text-lg font-bold text-slate-900 leading-snug">
                   {post.published

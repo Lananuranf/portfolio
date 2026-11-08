@@ -1,53 +1,9 @@
 ---
 // src/components/BlogTeaser.astro
 
-interface Post {
-  slug: string;
-  title: string;
-  desc: string;
-  date: string;
-  readTime: string;
-  tags: string[];
-  accent: string;
-  border: string;
-  published: boolean;
-}
+import { POSTS as ALL_POSTS } from '../data/posts';
 
-const POSTS: Post[] = [
-  {
-    slug: "/blog/cara-deploy-react-go-docker-aws/",
-    title: "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions",
-    desc: "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang jalan tiap push ke main.",
-    date: "28 April 2026",
-    readTime: "12 menit baca",
-    tags: ["Docker","AWS EC2","Go Fiber","GitHub Actions","CI/CD"],
-    accent: "from-sky-500 to-blue-600",
-    border: "border-sky-200",
-    published: true,
-  },
-  {
-    slug: "/blog/devsecops-pipeline-github-actions/",
-    title: "Membangun DevSecOps Pipeline di GitHub Actions: GitLeaks, Semgrep, Trivy, OWASP ZAP",
-    desc: "Panduan langkah demi langkah memasang 4 alat pengecekan keamanan di pipeline GitHub Actions.",
-    date: "Segera hadir",
-    readTime: "15 menit baca",
-    tags: ["DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP"],
-    accent: "from-violet-500 to-purple-600",
-    border: "border-violet-200",
-    published: false,
-  },
-  {
-    slug: "/blog/go-fiber-vs-nodejs-performa/",
-    title: "Go Fiber vs Node.js Express: Benchmark Performa untuk Backend REST API",
-    desc: "Benchmark langsung antara Go Fiber dan Node.js Express — latency, throughput, memory usage, dan kapan harus pilih masing-masing.",
-    date: "Segera hadir",
-    readTime: "8 menit baca",
-    tags: ["Go Fiber","Node.js","Backend","Performance","Benchmark"],
-    accent: "from-emerald-500 to-teal-600",
-    border: "border-emerald-200",
-    published: false,
-  },
-];
+const POSTS = ALL_POSTS.slice(0, 3);
 ---
 
 <section
@@ -74,7 +30,7 @@ const POSTS: Post[] = [
           <div class="p-6 flex flex-col gap-3 flex-1">
             <div class="flex items-center justify-between">
               <span class="text-xs text-slate-400 font-medium">{post.date}</span>
-              <span class="text-xs text-slate-400">{post.readTime}</span>
+              {post.readTime && <span class="text-xs text-slate-400">{post.readTime}</span>}
             </div>
 
             <h3 class="font-bold text-slate-900 text-base leading-snug">

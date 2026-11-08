@@ -1,5 +1,6 @@
 ---
 // src/components/ProjectsSection.astro — Studi kasus detail, SEO-rich content
+import { getRepoProof, formatBulanTahun, GITHUB_USER } from '../lib/github';
 
 const PROJECTS = [
   {
@@ -8,9 +9,7 @@ const PROJECTS = [
     title: "Web Management Letta School",
     subtitle: "Aplikasi Web Fullstack · CI/CD",
     category: "Web Dev · DevOps",
-    demoUrl: "https://school.lananuranf.my.id/",
-    githubUrl: "https://github.com/Lananuranf/letta-school",
-    demoLabel: "Lihat Demo",
+    repo: "letta-school",
     accent: "from-cyan-500 to-blue-600",
     border: "border-cyan-200",
     techBadges: [
@@ -36,9 +35,7 @@ const PROJECTS = [
     title: "Sales Data Dashboard",
     subtitle: "Data Science · Machine Learning",
     category: "Data Science · ML",
-    demoUrl: "https://sales-dashboard-lananuranf.streamlit.app/",
-    githubUrl: "https://github.com/Lananuranf/sales-dashboard",
-    demoLabel: "Buka Aplikasi",
+    repo: "sales-dashboard",
     accent: "from-amber-500 to-orange-500",
     border: "border-amber-200",
     techBadges: [
@@ -60,9 +57,7 @@ const PROJECTS = [
     title: "Dockerized E-Commerce App",
     subtitle: "Aplikasi Web Fullstack · Docker",
     category: "Web Dev · Cloud",
-    demoUrl: undefined,
-    githubUrl: "https://github.com/Lananuranf/ecommerce-fullstack",
-    demoLabel: undefined,
+    repo: "ecommerce-fullstack",
     accent: "from-violet-500 to-purple-600",
     border: "border-violet-200",
     techBadges: [
@@ -85,9 +80,7 @@ const PROJECTS = [
     title: "Bot Asisten Pribadi di Telegram",
     subtitle: "AI · Otomasi",
     category: "AI · Bot",
-    demoUrl: undefined,
-    githubUrl: undefined,
-    demoLabel: undefined,
+    repo: undefined as string | undefined,
     accent: "from-emerald-500 to-teal-600",
     border: "border-emerald-200",
     techBadges: [
@@ -105,6 +98,9 @@ const PROJECTS = [
     devsecops: "Otomatis deploy ke Railway setiap push ke main. API key disimpan sebagai environment variable, bukan di kode.",
   },
 ];
+
+// Bukti kepemilikan diambil dari GitHub API saat build (tanggal repo dibuat & jumlah commit asli).
+const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo) : Promise.resolve(null)));
 ---
 
 <section
@@ -124,7 +120,9 @@ const PROJECTS = [
     </div>
 
     <div class="flex flex-col gap-12">
-      {PROJECTS.map((p, idx) => (
+      {PROJECTS.map((p, idx) => {
+        const proof = proofs[idx];
+        return (
         <article
           class={`bg-white rounded-3xl border ${p.border} shadow-sm overflow-hidden`}
           aria-labelledby={`project-title-${p.id}`}
@@ -155,25 +153,40 @@ const PROJECTS = [
                 ))}
               </div>
 
-              <!-- Action buttons -->
-              {(p.demoUrl || p.githubUrl) && (
-                <div class="flex gap-3 pt-1">
-                  {p.demoUrl && (
-                    <a href={p.demoUrl} target="_blank" rel="noopener noreferrer"
-                      class={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${p.accent} shadow-sm hover:opacity-90 transition-opacity`}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
-                      {p.demoLabel}
-                    </a>
-                  )}
-                  {p.githubUrl && (
-                    <a href={p.githubUrl} target="_blank" rel="noopener noreferrer"
-                      class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors">
-                      <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-                      Kode Sumber
-                    </a>
-                  )}
-                </div>
-              )}
+              <!-- Bukti pembuat (data asli dari GitHub) -->
+              <div class="mt-auto pt-4 border-t border-slate-100">
+                {proof ? (
+                  <a href={proof.commitsUrl} target="_blank" rel="noopener noreferrer"
+                    class="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-3 hover:border-slate-900 hover:bg-white transition-colors"
+                    aria-label={`Riwayat commit ${GITHUB_USER} di repo ${proof.repo}`}>
+                    <img src={`https://github.com/${GITHUB_USER}.png?size=80`} alt={`Avatar GitHub ${GITHUB_USER}`}
+                      width="36" height="36" loading="lazy" class="w-9 h-9 rounded-full border border-slate-200 flex-shrink-0" />
+                    <div class="min-w-0 flex-1">
+                      <p class="text-xs font-semibold text-slate-800 truncate">
+                        Dibuat oleh <span class="text-slate-900">@{GITHUB_USER}</span>
+                        {proof.sharePct !== null && <span class="ml-1 text-emerald-600">· {proof.sharePct}% commit</span>}
+                      </p>
+                      <p class="text-[11px] text-slate-500 truncate">
+                        {[
+                          formatBulanTahun(proof.createdAt) && `Sejak ${formatBulanTahun(proof.createdAt)}`,
+                          proof.myCommits !== null && `${proof.myCommits} commit`,
+                          `github.com/${GITHUB_USER}/${proof.repo}`,
+                        ].filter(Boolean).join(" · ")}
+                      </p>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-slate-400 group-hover:text-slate-900 flex-shrink-0" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+                  </a>
+                ) : (
+                  <div class="flex items-center gap-3 rounded-2xl border border-dashed border-slate-200 p-3">
+                    <img src={`https://github.com/${GITHUB_USER}.png?size=80`} alt={`Avatar GitHub ${GITHUB_USER}`}
+                      width="36" height="36" loading="lazy" class="w-9 h-9 rounded-full border border-slate-200 flex-shrink-0" />
+                    <div>
+                      <p class="text-xs font-semibold text-slate-800">Dibuat oleh @{GITHUB_USER}</p>
+                      <p class="text-[11px] text-slate-500">Repositori privat</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <!-- Right: case study detail -->
@@ -198,7 +211,8 @@ const PROJECTS = [
 
           </div>
         </article>
-      ))}
+        );
+      })}
     </div>
 
     <!-- CTA -->

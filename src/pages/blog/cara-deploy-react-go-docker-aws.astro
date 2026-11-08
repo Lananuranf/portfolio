@@ -2,6 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MainLayout from '../../layouts/MainLayout.astro';
 import Footer from '../../components/Footer.astro';
+import { countWords, readingMinutes, WORDS_PER_MINUTE } from '../../lib/readingTime';
+
+// Dihitung dari isi file ini sendiri saat build — bukan angka tebakan.
+const wordCount   = countWords("src/pages/blog/cara-deploy-react-go-docker-aws.astro");
+const readMinutes = readingMinutes(wordCount);
 
 const title = "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions CI/CD";
 const desc  = "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang berjalan tiap push ke main branch.";
@@ -23,7 +28,8 @@ const articleSchema = JSON.stringify({
   "mainEntityOfPage": { "@type": "WebPage", "@id": url },
   "keywords": "deploy react go fiber aws ec2 docker github actions ci/cd nginx ssl fullstack indonesia",
   "articleSection": "Tutorial",
-  "wordCount": "1800"
+  "wordCount": String(wordCount),
+  "timeRequired": `PT${readMinutes}M`
 });
 
 // Semua code snippet yang punya ${ } di-escape sebagai string lalu di-inject via set:html
@@ -293,8 +299,17 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
 <BaseLayout title={title} description={desc} canonicalURL={url} extraSchema={articleSchema}>
   <MainLayout />
 
+  <!-- Progress baca (real-time, mengikuti posisi scroll) -->
+  <div class="fixed top-0 left-0 right-0 h-1 z-[60] bg-transparent" aria-hidden="true">
+    <div id="read-progress" class="h-full w-0 bg-gradient-to-r from-sky-500 to-blue-600 transition-[width] duration-100"></div>
+  </div>
+  <div id="read-remaining"
+    class="fixed bottom-5 right-5 z-50 px-3.5 py-2 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur opacity-0 translate-y-2 transition-all duration-300 pointer-events-none"
+    aria-live="polite"></div>
+
   <main class="pt-14" style="background-color:#f8fafc;">
-    <article class="max-w-3xl mx-auto px-6 py-14" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="article-body" data-words={wordCount} data-wpm={WORDS_PER_MINUTE}
+      class="max-w-3xl mx-auto px-6 py-14" itemscope itemtype="https://schema.org/BlogPosting">
       <meta itemprop="datePublished" content={datePublished} />
       <meta itemprop="dateModified" content={dateModified} />
 
@@ -309,7 +324,7 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">DevOps</span>
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Go Fiber</span>
           <time datetime={datePublished} class="text-xs text-slate-400">28 April 2026</time>
-          <span class="text-xs text-slate-400">· 12 menit baca</span>
+          <span class="text-xs text-slate-400" title={`${wordCount.toLocaleString("id-ID")} kata`}>· {readMinutes} menit baca</span>
         </div>
 
         <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4" itemprop="headline">
@@ -473,3 +488,38 @@ const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart ngin
 
   <Footer />
 </BaseLayout>
+
+<script>
+  // Sisa waktu baca dihitung langsung dari posisi scroll di dalam artikel.
+  const article = document.getElementById("article-body");
+  const bar = document.getElementById("read-progress");
+  const pill = document.getElementById("read-remaining");
+
+  if (article && bar && pill) {
+    const words = Number(article.dataset.words) || 0;
+    const wpm = Number(article.dataset.wpm) || 200;
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const rect = article.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 1;
+      bar.style.width = `${(progress * 100).toFixed(1)}%`;
+
+      const leftMin = Math.ceil((words * (1 - progress)) / wpm);
+      pill.textContent = progress >= 0.98 ? "Selesai dibaca ✓" : `Sisa ± ${leftMin} menit · ${Math.round(progress * 100)}%`;
+
+      const show = progress > 0.02;
+      pill.classList.toggle("opacity-0", !show);
+      pill.classList.toggle("translate-y-2", !show);
+    };
+
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  }
+</script>
