@@ -1,72 +1,107 @@
 ---
 // src/components/ContactSection.astro
+// Ikon brand dari paket pihak ketiga, di-inline saat build (tanpa JS di browser):
+// - simple-icons: Gmail, WhatsApp, GitHub
+// - Font Awesome Free Brands: LinkedIn (simple-icons tidak lagi menyediakan logo LinkedIn)
+import { siGmail, siWhatsapp, siGithub } from "simple-icons";
+import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
+
+const [liW, liH, , , liPath] = faLinkedin.icon;
+
+const CONTACTS = [
+  {
+    name: "Email",
+    value: "lananuranf@gmail.com",
+    href: "mailto:lananuranf@gmail.com",
+    hex: `#${siGmail.hex}`,
+    viewBox: "0 0 24 24",
+    path: siGmail.path,
+    external: false,
+  },
+  {
+    name: "WhatsApp",
+    value: "+62 859-6023-5008",
+    href: "https://wa.me/6285960235008",
+    hex: `#${siWhatsapp.hex}`,
+    viewBox: "0 0 24 24",
+    path: siWhatsapp.path,
+    external: true,
+  },
+  {
+    name: "GitHub",
+    value: "@Lananuranf",
+    href: "https://github.com/Lananuranf",
+    hex: `#${siGithub.hex}`,
+    viewBox: "0 0 24 24",
+    path: siGithub.path,
+    external: true,
+  },
+  {
+    name: "LinkedIn",
+    value: "Maulana Nur Anfajm",
+    href: "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
+    hex: "#0A66C2",
+    viewBox: `0 0 ${liW} ${liH}`,
+    path: String(liPath),
+    external: true,
+  },
+];
 ---
 
 <section
   id="contact"
   class="px-6 py-24"
-  style="background: linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 30%,#f8fafc 70%,#f5f3ff 100%);"
+  style="background: linear-gradient(160deg,#f8fafc 0%,#f0f9ff 35%,#f5f3ff 75%,#fdf4ff 100%);"
   aria-labelledby="contact-heading"
 >
-  <div class="max-w-4xl mx-auto text-center">
+  <div class="max-w-3xl mx-auto text-center">
 
-    <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Hubungi saya</p>
+    <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Mari terhubung</p>
     <h2 id="contact-heading" class="text-4xl font-extrabold text-slate-900 mb-3">Kontak</h2>
-    <p class="text-slate-500 text-sm mb-10 max-w-lg mx-auto">
-      Ingin menawarkan magang, proyek freelance, atau sekadar diskusi soal teknologi?
-      Silakan hubungi saya lewat salah satu kontak di bawah.
+    <p class="text-slate-500 text-sm leading-relaxed mb-10 max-w-md mx-auto">
+      Punya tawaran magang, proyek freelance, atau sekadar ingin ngobrol soal teknologi?
+      Kirim pesan lewat kontak yang paling nyaman untuk Anda, saya akan membalas secepatnya.
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
-      {[
-        {
-          href: "mailto:lananuranf@gmail.com",
-          label: "lananuranf@gmail.com",
-          sub: "Email",
-          emoji: "📧",
-          color: "hover:border-sky-400 hover:bg-sky-50",
-        },
-        {
-          href: "tel:+6285960235008",
-          label: "+62 859-6023-5008",
-          sub: "WhatsApp / Phone",
-          emoji: "📱",
-          color: "hover:border-green-400 hover:bg-green-50",
-        },
-        {
-          href: "https://github.com/Lananuranf",
-          label: "Lananuranf",
-          sub: "GitHub",
-          emoji: "💻",
-          color: "hover:border-gray-400 hover:bg-gray-50",
-          external: true,
-        },
-        {
-          href: "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
-          label: "maulana-nur-anfajm",
-          sub: "LinkedIn",
-          emoji: "💼",
-          color: "hover:border-blue-400 hover:bg-blue-50",
-          external: true,
-        },
-      ].map(c => (
-        <a
-          href={c.href}
-          target={c.external ? "_blank" : undefined}
-          rel={c.external ? "noopener noreferrer" : undefined}
-          class={`flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-left transition-all duration-200 ${c.color}`}
-        >
-          <span class="text-2xl">{c.emoji}</span>
-          <div>
-            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">{c.sub}</p>
-            <p class="text-sm font-semibold text-slate-800 mt-0.5">{c.label}</p>
-          </div>
-        </a>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 list-none p-0 m-0 mb-10 text-left">
+      {CONTACTS.map((c) => (
+        <li>
+          <a
+            href={c.href}
+            target={c.external ? "_blank" : undefined}
+            rel={c.external ? "noopener noreferrer" : undefined}
+            aria-label={`${c.name}: ${c.value}`}
+            class="group flex items-center gap-4 p-4 rounded-2xl bg-white/80 backdrop-blur border border-slate-200/80
+                   shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200
+                   hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_10px_24px_-12px_rgba(15,23,42,0.25)]
+                   focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+            style={`--brand:${c.hex}`}
+          >
+            <span
+              class="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
+              style="background: color-mix(in srgb, var(--brand) 10%, white);"
+              aria-hidden="true"
+            >
+              <svg viewBox={c.viewBox} class="w-5 h-5" fill="var(--brand)"><path d={c.path} /></svg>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-xs font-medium text-slate-400">{c.name}</span>
+              <span class="block text-sm font-semibold text-slate-800 truncate">{c.value}</span>
+            </span>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+              class="w-4 h-4 flex-shrink-0 text-slate-300 transition-all duration-200 group-hover:text-slate-600 group-hover:translate-x-0.5">
+              <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
 
-    <div class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-5 py-2.5 text-emerald-700 text-sm font-semibold">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+    <div class="inline-flex items-center gap-2 bg-white/80 border border-emerald-200 rounded-full px-5 py-2.5 text-emerald-700 text-sm font-medium">
+      <span class="relative flex h-2 w-2" aria-hidden="true">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+      </span>
       Terbuka untuk peluang kerja sebagai Software Engineer
     </div>
 
