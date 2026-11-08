@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://portfolio.lananuranf.my.id/sitemap.xml
-Sitemap: https://portfolio.lananuranf.my.id/sitemap-index.xml
+Sitemap: https://lananuranf.my.id/sitemap.xml
+Sitemap: https://lananuranf.my.id/sitemap-index.xml

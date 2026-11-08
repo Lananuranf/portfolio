@@ -8,12 +8,12 @@ const blogSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Blog",
   "name": "Blog Teknis Lananuranf",
-  "url": "https://portfolio.lananuranf.my.id/blog/",
+  "url": "https://lananuranf.my.id/blog/",
   "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf" },
   "blogPost": POSTS.filter(p => p.published).map(p => ({
     "@type": "BlogPosting",
     "headline": p.title,
-    "url": `https://portfolio.lananuranf.my.id${p.slug}`,
+    "url": `https://lananuranf.my.id${p.slug}`,
     "description": p.desc,
     "author": { "@type": "Person", "name": "Maulana Nur Anfajm" }
   }))
@@ -23,7 +23,7 @@ const blogSchema = JSON.stringify({
 <BaseLayout
   title="Blog Teknis — Maulana Nur Anfajm (Lananuranf) | Tutorial Software Engineering"
   description="Artikel teknis Maulana Nur Anfajm (Lananuranf): tutorial deploy fullstack React + Go Fiber ke AWS EC2 dan web development."
-  canonicalURL="https://portfolio.lananuranf.my.id/blog/"
+  canonicalURL="https://lananuranf.my.id/blog/"
   extraSchema={blogSchema}
 >
   <MainLayout />

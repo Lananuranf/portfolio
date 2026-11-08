@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://portfolio.lananuranf.my.id',
+  site: 'https://lananuranf.my.id',
   integrations: [
     react(),
     sitemap(),

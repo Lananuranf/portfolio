@@ -19,7 +19,7 @@ interface Props {
 }
 
 const { slug, file, title, desc, datePublished, dateModified = datePublished, dateLabel, category, tags, keywords } = Astro.props;
-const url = `https://portfolio.lananuranf.my.id/blog/${slug}/`;
+const url = `https://lananuranf.my.id/blog/${slug}/`;
 const wordCount = countWords(file);
 const readMinutes = readingMinutes(wordCount);
 
@@ -32,7 +32,7 @@ const articleSchema = JSON.stringify({
   "datePublished": datePublished,
   "dateModified": dateModified,
   "inLanguage": "id",
-  "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf", "url": "https://portfolio.lananuranf.my.id/" },
+  "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf", "url": "https://lananuranf.my.id/" },
   "publisher": { "@type": "Person", "name": "Maulana Nur Anfajm" },
   "mainEntityOfPage": { "@type": "WebPage", "@id": url },
   "keywords": keywords,
