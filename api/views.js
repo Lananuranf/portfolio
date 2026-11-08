@@ -7,8 +7,11 @@
 // - live     : jumlah orang yang sedang membuka artikel (heartbeat < 45 detik terakhir)
 // - lastRead : waktu terakhir artikel dibuka/dibaca (epoch ms)
 //
-// Penyimpanan: Upstash Redis lewat REST API. Isi env KV_REST_API_URL & KV_REST_API_TOKEN
-// (otomatis dari integrasi Upstash di Vercel) atau UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN.
+// Penyimpanan (pilih salah satu, diisi lewat Environment Variables di Vercel):
+// - REDIS_URL   : Redis biasa, mis. Redis Cloud (redis://user:pass@host:port)
+// - KV_REST_API_URL & KV_REST_API_TOKEN : Upstash Redis lewat REST API
+
+import { createClient } from "redis";
 
 // Cari variabel Upstash, termasuk yang memakai awalan custom (mis. "PORTFOLIO_KV_REST_API_URL").
 function env(...suffixes) {
@@ -21,11 +24,31 @@ function env(...suffixes) {
 }
 const URL_ = env("KV_REST_API_URL", "UPSTASH_REDIS_REST_URL");
 const TOKEN = env("KV_REST_API_TOKEN", "UPSTASH_REDIS_REST_TOKEN");
+const REDIS_URL = env("REDIS_URL");
+const ENABLED = Boolean(REDIS_URL || (URL_ && TOKEN));
 const LIVE_WINDOW_MS = 45_000;
 const SLUG_RE = /^[a-z0-9-]{1,80}$/;
 const SID_RE = /^[a-zA-Z0-9-]{8,64}$/;
 
+// Koneksi TCP disimpan di global agar dipakai ulang antar-permintaan (warm start).
+function tcpClient() {
+  if (!globalThis.__redis) {
+    const client = createClient({
+      url: REDIS_URL,
+      socket: { connectTimeout: 5000, reconnectStrategy: (n) => (n > 3 ? false : 200) },
+    });
+    client.on("error", (e) => console.error("redis:", e.message));
+    globalThis.__redis = client.connect().then(() => client).catch((e) => { globalThis.__redis = null; throw e; });
+  }
+  return globalThis.__redis;
+}
+
 async function redis(commands) {
+  if (REDIS_URL) {
+    const client = await tcpClient();
+    // node-redis otomatis mengirim perintah-perintah ini dalam satu pipeline.
+    return Promise.all(commands.map((c) => client.sendCommand(c)));
+  }
   const r = await fetch(`${URL_}/pipeline`, {
     method: "POST",
     headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
@@ -61,7 +84,7 @@ function readBody(req) {
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (!URL_ || !TOKEN) return res.status(200).json({ enabled: false });
+  if (!ENABLED) return res.status(200).json({ enabled: false });
 
   const now = Date.now();
   try {
