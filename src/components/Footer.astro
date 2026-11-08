@@ -1,74 +1,16 @@
 ---
 // src/components/Footer.astro — Footer statis, tanpa JS
 const year = new Date().getFullYear();
-
-const NAV = [
-  { label: "Beranda", href: "/#home" },
-  { label: "Tentang", href: "/#about" },
-  { label: "Keahlian", href: "/#skills" },
-  { label: "Proyek", href: "/#projects" },
-  { label: "Blog", href: "/blog/" },
-  { label: "Kontak", href: "/#contact" },
-];
-
-const SOCIAL = [
-  { label: "GitHub", href: "https://github.com/Lananuranf",
-    d: "M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
-    d: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" },
-  { label: "Instagram", href: "https://www.instagram.com/lananur.anf/",
-    d: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" },
-  { label: "Email", href: "mailto:lananuranf@gmail.com",
-    d: "M1.5 6.75A2.25 2.25 0 0 1 3.75 4.5h16.5a2.25 2.25 0 0 1 2.25 2.25v.4l-10.5 6.3-10.5-6.3v-.4zm0 2.15v8.35a2.25 2.25 0 0 0 2.25 2.25h16.5a2.25 2.25 0 0 0 2.25-2.25V8.9l-10.1 6.06a.75.75 0 0 1-.8 0L1.5 8.9z" },
-];
 ---
 
-<footer class="bg-slate-950 text-slate-400 px-6 pt-14 pb-8" aria-label="Footer">
-  <div class="max-w-5xl mx-auto">
-
-    <div class="flex flex-col md:flex-row md:items-start justify-between gap-10">
-      <div class="max-w-sm">
-        <a href="/" class="text-xl font-extrabold text-white tracking-tight">Lananuranf</a>
-        <p class="text-sm mt-3 leading-relaxed">
-          Maulana Nur Anfajm — mahasiswa Sistem Informasi Universitas Gunadarma
-          yang suka membangun aplikasi web dan mengolah data.
-        </p>
-        <a href="/cv.pdf" download="CV_Maulana_Nur_Anfajm.pdf"
-          class="inline-flex items-center gap-2 mt-5 text-sm font-medium text-white border border-slate-700 rounded-lg px-4 py-2 hover:border-slate-400 transition-colors">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
-          Unduh CV
-        </a>
-      </div>
-
-      <nav aria-label="Navigasi footer" class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-2 text-sm">
-        {NAV.map((l) => (
-          <a href={l.href} class="hover:text-white transition-colors">{l.label}</a>
-        ))}
-      </nav>
-
-      <div class="flex gap-2">
-        {SOCIAL.map((s) => (
-          <a href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
-            aria-label={s.label} title={s.label}
-            class="w-9 h-9 grid place-items-center rounded-lg border border-slate-800 hover:border-slate-500 hover:text-white transition-colors">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d={s.d} /></svg>
-          </a>
-        ))}
-      </div>
-    </div>
-
-    <div class="mt-12 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-      <p>
-        &copy; {year} <span class="text-slate-200 font-medium">Maulana Nur Anfajm</span>. Hak cipta dilindungi.
+<footer class="bg-slate-950 text-slate-400 px-6 py-12" aria-label="Footer">
+  <div class="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div class="max-w-md">
+      <a href="/" class="text-2xl font-extrabold text-white tracking-tight">Lananuranf</a>
+      <p class="text-sm mt-2 leading-relaxed">
+        Mahasiswa Sistem Informasi Universitas Gunadarma — membangun aplikasi web dan mengolah data.
       </p>
-      <div class="flex items-center gap-4">
-        <span class="text-slate-500">Dibuat dengan Astro &amp; Tailwind CSS</span>
-        <a href="#top" class="inline-flex items-center gap-1 hover:text-white transition-colors" aria-label="Kembali ke atas">
-          Ke atas
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-6 6m6-6 6 6" /></svg>
-        </a>
-      </div>
     </div>
-
+    <p class="text-xs text-slate-500">&copy; {year} Maulana Nur Anfajm</p>
   </div>
 </footer>

@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = "Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer · DevSecOps · Data Science",
-  description = "Portfolio Maulana Nur Anfajm alias Lananuranf, mahasiswa Sistem Informasi Universitas Gunadarma semester 6. Fullstack developer React + Go Fiber + PostgreSQL + Docker + AWS EC2. Open for internship & freelance.",
+  title = "Maulana Nur Anfajm (Lananuranf) — Software Engineer",
+  description = "Portfolio Maulana Nur Anfajm alias Lananuranf, software engineer dan mahasiswa Sistem Informasi Universitas Gunadarma semester 7. Membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL. Open for internship & freelance.",
   canonicalURL = Astro.url.href,
   ogImage = "/og-image.png",
   extraSchema = "",
@@ -27,8 +27,8 @@ const schemaPerson = JSON.stringify({
   "alternateName": ["Lananuranf", "lananur.anf", "Maulana Anfajm"],
   "url": "https://portfolio.lananuranf.my.id/",
   "image": "https://portfolio.lananuranf.my.id/og-image.png",
-  "jobTitle": "Fullstack Web Developer",
-  "description": "Mahasiswa Sistem Informasi semester 6 Universitas Gunadarma Jakarta. Fullstack developer spesialis React, Go Fiber, PostgreSQL, Docker, AWS EC2, Data Science, dan Machine Learning.",
+  "jobTitle": "Software Engineer",
+  "description": "Software engineer dan mahasiswa Sistem Informasi semester 7 Universitas Gunadarma Jakarta. Membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL.",
   "email": "lananuranf@gmail.com",
   "telephone": "+6285960235008",
   "address": { "@type": "PostalAddress", "addressLocality": "Jakarta", "addressCountry": "ID" },
@@ -38,10 +38,8 @@ const schemaPerson = JSON.stringify({
     "https://www.instagram.com/lananur.anf/"
   ],
   "knowsAbout": [
-    "React","TypeScript","Go Fiber","Go Gin","PostgreSQL","Docker","Docker Compose",
-    "AWS EC2","GitHub Actions","CI/CD","DevSecOps","GitLeaks","Semgrep","Trivy",
-    "OWASP ZAP","Python","Pandas","Scikit-learn","Streamlit","Machine Learning",
-    "Data Science","Nginx","Linux"
+    "Software Engineering","React","TypeScript","JavaScript","Tailwind CSS","Astro",
+    "Go","Go Fiber","Go Gin","REST API","PostgreSQL","GORM","Git","Docker","AWS EC2","Linux"
   ],
   "alumniOf": { "@type": "CollegeOrUniversity", "name": "Universitas Gunadarma", "url": "https://www.gunadarma.ac.id/" }
 });
@@ -52,7 +50,7 @@ const schemaWebsite = JSON.stringify({
   "name": "Portfolio Maulana Nur Anfajm — Lananuranf",
   "alternateName": ["Lananuranf Portfolio","Portfolio Lananuranf","Maulana Nur Anfajm Portfolio"],
   "url": "https://portfolio.lananuranf.my.id/",
-  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf) — mahasiswa Sistem Informasi dan fullstack web developer dari Jakarta."
+  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf) — software engineer dan mahasiswa Sistem Informasi dari Jakarta."
 });
 
 const schemaFAQ = JSON.stringify({
@@ -62,22 +60,22 @@ const schemaFAQ = JSON.stringify({
     {
       "@type": "Question",
       "name": "Siapa Lananuranf?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Lananuranf adalah nama online dari Maulana Nur Anfajm, mahasiswa Sistem Informasi Universitas Gunadarma semester 6 yang fokus di pengembangan web fullstack, data science, dan dasar DevOps." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Lananuranf adalah nama online dari Maulana Nur Anfajm, mahasiswa Sistem Informasi Universitas Gunadarma semester 7 yang berperan sebagai software engineer, fokus membangun aplikasi web frontend dan backend." }
     },
     {
       "@type": "Question",
       "name": "Apa saja proyek Lananuranf?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf meliputi: Web Management Letta School (React + Go Fiber + AWS EC2 + DevSecOps), Sales Data Dashboard (Python + Random Forest + Streamlit), Dockerized E-Commerce App (Go Gin + Docker + AWS EC2), dan AI Agent Telegram Personal Assistant (Groq LLaMA 3.3 + Whisper V3)." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf meliputi: Web Management Letta School (React + Go Fiber + PostgreSQL) dan Dockerized E-Commerce App (React + Go Gin + PostgreSQL)." }
     },
     {
       "@type": "Question",
       "name": "Apa tech stack yang digunakan Maulana Nur Anfajm?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Tech stack utama: React, TypeScript, Go Fiber, Go Gin, PostgreSQL, Docker, AWS EC2, GitHub Actions CI/CD, Python, Pandas, Scikit-learn, Streamlit, GitLeaks, Semgrep, Trivy, OWASP ZAP." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Tech stack utama: React, TypeScript, Tailwind CSS, Go Fiber, Go Gin, PostgreSQL, GORM, Git, Docker, dan AWS EC2." }
     },
     {
       "@type": "Question",
       "name": "Apakah Lananuranf open for work?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk internship, freelance, dan full-time. Hubungi via email lananuranf@gmail.com atau WhatsApp +62 859-6023-5008." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk peluang kerja sebagai Software Engineer. Hubungi via email lananuranf@gmail.com atau LinkedIn." }
     }
   ]
 });
@@ -92,7 +90,7 @@ const schemaFAQ = JSON.stringify({
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, portofolio lananuranf, portfolio lananuranf, project lananuranf, blog lananuranf, maulana nur anfajm portfolio, maulana anfajm developer, lananuranf github, Fullstack Web Developer, DevSecOps Engineer, Data Science, React Developer, Go Fiber Backend, Go Gin, PostgreSQL, Docker, AWS EC2, GitHub Actions, CI/CD Pipeline, Sistem Informasi, Universitas Gunadarma, Machine Learning, Python, Streamlit, Telegram Bot AI, fullstack developer jakarta, web developer indonesia, portfolio developer indonesia" />
+    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, portofolio lananuranf, portfolio lananuranf, project lananuranf, blog lananuranf, maulana nur anfajm portfolio, maulana anfajm developer, lananuranf github, Software Engineer, React Developer, Go Fiber Backend, Go Gin, PostgreSQL, Docker, AWS EC2, Sistem Informasi, Universitas Gunadarma, software engineer jakarta, web developer indonesia, portfolio developer indonesia" />
     <meta name="author" content="Maulana Nur Anfajm (Lananuranf)" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href={canonicalURL} />
@@ -109,7 +107,7 @@ const schemaFAQ = JSON.stringify({
     <meta property="og:image" content={ogImageFull} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer Jakarta" />
+    <meta property="og:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf) — Software Engineer Jakarta" />
     <meta property="og:site_name" content="Portfolio Lananuranf" />
     <meta property="og:locale" content="id_ID" />
 

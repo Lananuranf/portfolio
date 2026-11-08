@@ -30,16 +30,6 @@ const RAW: Post[] = [
     file: "src/pages/blog/cara-deploy-react-go-docker-aws.astro",
   },
   {
-    slug: "/blog/devsecops-pipeline-github-actions/",
-    title: "Membangun DevSecOps Pipeline di GitHub Actions: GitLeaks, Semgrep, Trivy, OWASP ZAP",
-    desc: "Panduan langkah demi langkah memasang 4 alat pengecekan keamanan di pipeline GitHub Actions.",
-    date: "Segera hadir",
-    tags: ["DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP"],
-    accent: "from-violet-500 to-purple-600",
-    border: "border-violet-200",
-    published: false,
-  },
-  {
     slug: "/blog/go-fiber-vs-nodejs-performa/",
     title: "Go Fiber vs Node.js Express: Benchmark Performa untuk Backend REST API",
     desc: "Benchmark langsung antara Go Fiber dan Node.js Express — latency, throughput, memory usage, dan kapan harus pilih masing-masing.",
@@ -47,16 +37,6 @@ const RAW: Post[] = [
     tags: ["Go Fiber","Node.js","Backend","Performance","Benchmark"],
     accent: "from-emerald-500 to-teal-600",
     border: "border-emerald-200",
-    published: false,
-  },
-  {
-    slug: "/blog/random-forest-sales-prediction-python/",
-    title: "Prediksi Penjualan dengan Random Forest di Python: End-to-End ML Pipeline",
-    desc: "Langkah demi langkah memprediksi penjualan: membersihkan data, membuat fitur, melatih Random Forest, evaluasi, lalu menampilkannya di Streamlit.",
-    date: "Segera hadir",
-    tags: ["Python","Scikit-learn","Random Forest","Streamlit","Data Science"],
-    accent: "from-amber-500 to-orange-500",
-    border: "border-amber-200",
     published: false,
   },
 ];

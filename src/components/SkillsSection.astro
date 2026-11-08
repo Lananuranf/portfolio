@@ -6,8 +6,6 @@ import {
   siJavascript, siTypescript, siReact, siTailwindcss, siVite, siAstro,
   siGo, siPostgresql, siPostman,
   siGit, siDocker, siNginx, siUbuntu, siGithubactions,
-  siPython, siPandas, siNumpy, siScikitlearn, siStreamlit, siJupyter,
-  siTrivy, siOwasp,
 } from "simple-icons";
 
 interface Icon { path: string; hex: string }
@@ -37,8 +35,8 @@ const GROUPS: Group[] = [
     ],
   },
   {
-    title: "Deploy & DevOps",
-    desc: "Deploy aplikasi ke server dan otomatisasi CI/CD.",
+    title: "Tools & Deploy",
+    desc: "Version control, container, dan deploy aplikasi.",
     skills: [
       { name: "Git", icon: siGit },
       { name: "Docker", icon: siDocker },
@@ -46,27 +44,6 @@ const GROUPS: Group[] = [
       { name: "Nginx", icon: siNginx },
       { name: "GitHub Actions", icon: siGithubactions },
       { name: "AWS EC2", fallback: "AWS" },
-    ],
-  },
-  {
-    title: "Data Science",
-    desc: "Olah data, visualisasi, dan model ML dasar.",
-    skills: [
-      { name: "Python", icon: siPython },
-      { name: "Pandas", icon: siPandas },
-      { name: "NumPy", icon: siNumpy },
-      { name: "scikit-learn", icon: siScikitlearn },
-      { name: "Streamlit", icon: siStreamlit },
-      { name: "Jupyter", icon: siJupyter },
-    ],
-  },
-  {
-    title: "Keamanan (dasar)",
-    desc: "Security scanning di pipeline CI/CD — masih terus belajar.",
-    skills: [
-      { name: "GitLeaks", fallback: "GL", learning: true },
-      { name: "Trivy", icon: siTrivy, learning: true },
-      { name: "OWASP ZAP", icon: siOwasp, learning: true },
     ],
   },
 ];

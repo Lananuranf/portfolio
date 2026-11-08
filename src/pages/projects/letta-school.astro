@@ -12,7 +12,7 @@ const projectSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Web Management Letta School",
-  "description": "Sistem manajemen sekolah fullstack dengan JWT auth, RBAC, dan DevSecOps pipeline lengkap. React + Go Fiber + PostgreSQL + Docker + AWS EC2.",
+  "description": "Sistem manajemen sekolah fullstack dengan JWT auth dan RBAC. React + Go Fiber + PostgreSQL + Docker + AWS EC2.",
   "url": "https://school.lananuranf.my.id/",
   "applicationCategory": "WebApplication",
   "programmingLanguage": ["React","TypeScript","Go Fiber","PostgreSQL","Docker"],
@@ -22,13 +22,13 @@ const projectSchema = JSON.stringify({
 
 <BaseLayout
   title="Letta School — Fullstack School Management System | Maulana Nur Anfajm (Lananuranf)"
-  description="Studi kasus: sistem manajemen sekolah fullstack dengan React, Go Fiber, PostgreSQL, Docker, AWS EC2, dan DevSecOps pipeline lengkap (GitLeaks, Semgrep, Trivy, OWASP ZAP). Dibangun oleh Maulana Nur Anfajm (Lananuranf)."
+  description="Studi kasus: sistem manajemen sekolah fullstack dengan React, Go Fiber, PostgreSQL, Docker, AWS EC2, dengan JWT auth dan RBAC. Dibangun oleh Maulana Nur Anfajm (Lananuranf)."
   canonicalURL="https://portfolio.lananuranf.my.id/projects/letta-school/"
   extraSchema={projectSchema}
 >
   <MainLayout />
 
-  <main class="pt-14 min-h-screen bg-slate-50">
+  <main class="pt-20 min-h-screen bg-slate-50">
     <article class="max-w-4xl mx-auto px-6 py-14">
 
       <!-- Back -->
@@ -41,7 +41,6 @@ const projectSchema = JSON.stringify({
       <header class="mb-10">
         <div class="flex flex-wrap gap-2 mb-4">
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200">Fullstack</span>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">DevSecOps</span>
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">AWS EC2</span>
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-3">
@@ -49,7 +48,7 @@ const projectSchema = JSON.stringify({
         </h1>
         <p class="text-slate-500 text-base leading-relaxed">
           Sistem manajemen sekolah dengan login JWT, pembagian hak akses per peran,
-          dan pipeline CI/CD yang menjalankan security scanning dasar setiap kali ada push.
+          dan deploy otomatis setiap kali ada push ke branch main.
         </p>
         <!-- Bukti pembuat (data asli dari GitHub, diambil saat build) -->
         <a href={proof.commitsUrl} target="_blank" rel="noopener noreferrer"
@@ -72,7 +71,7 @@ const projectSchema = JSON.stringify({
       <!-- Tech stack -->
       <div class="flex flex-wrap gap-2 mb-10 p-4 bg-white rounded-2xl border border-slate-200">
         <span class="text-xs font-semibold text-slate-500 w-full mb-1">Teknologi:</span>
-        {["React","TypeScript","Tailwind CSS","Go Fiber","GORM","PostgreSQL","JWT","RBAC","Docker","Docker Compose","AWS EC2","GitHub Actions","Nginx","GitLeaks","Semgrep","Trivy","OWASP ZAP","AWS CloudTrail"].map(t => (
+        {["React","TypeScript","Tailwind CSS","Go Fiber","GORM","PostgreSQL","JWT","RBAC","Docker","Docker Compose","AWS EC2","GitHub Actions","Nginx"].map(t => (
           <span class="text-xs font-medium px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-full text-slate-600">{t}</span>
         ))}
       </div>
@@ -104,40 +103,12 @@ const projectSchema = JSON.stringify({
 
         <section>
           <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-            <span class="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center text-sm">🔵</span>
-            Pipeline CI/CD &amp; Keamanan
-          </h2>
-          <div class="bg-violet-50 border border-violet-200 rounded-2xl p-5 text-slate-600 text-sm leading-relaxed">
-            <p class="mb-3">Setiap push ke branch <code class="bg-white px-1.5 py-0.5 rounded border border-violet-200">main</code> otomatis menjalankan pipeline GitHub Actions dengan 6 tahap security:</p>
-            <ol class="flex flex-col gap-2 list-none p-0">
-              {[
-                { step:"1", tool:"GitLeaks", desc:"Secret scanning — deteksi API key, password, atau token yang tidak sengaja ter-commit ke repository." },
-                { step:"2", tool:"Semgrep", desc:"SAST (Static Application Security Testing) — analisis source code Go dan JavaScript untuk mendeteksi kerentanan keamanan." },
-                { step:"3", tool:"Dependency Audit", desc:"npm audit + go mod tidy — memastikan tidak ada dependency dengan CVE yang diketahui." },
-                { step:"4", tool:"Trivy", desc:"Container image scanning — scan Docker image sebelum push ke registry, deteksi vulnerability di OS packages." },
-                { step:"5", tool:"OWASP ZAP", desc:"DAST (Dynamic Application Security Testing) — mensimulasikan serangan nyata (SQL injection, XSS, CSRF) ke staging environment." },
-                { step:"6", tool:"AWS CloudTrail", desc:"Audit log semua aktivitas di infrastruktur AWS untuk forensik dan compliance monitoring." },
-              ].map(s => (
-                <li class="flex items-start gap-3 bg-white rounded-xl p-3 border border-violet-100">
-                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-violet-500 text-white text-xs font-bold flex items-center justify-center">{s.step}</span>
-                  <div>
-                    <span class="font-semibold text-slate-800">{s.tool}</span>
-                    <span class="text-slate-500"> — {s.desc}</span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section>
-          <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-sm">⚡</span>
             Infrastruktur
           </h2>
           <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-slate-600 text-sm leading-relaxed">
             <p>Aplikasi di-deploy di AWS EC2 (Ubuntu 22.04 LTS) menggunakan Docker Compose untuk orchestration. Nginx berfungsi sebagai reverse proxy yang menangani SSL termination, HTTP-to-HTTPS redirect, static file serving, dan routing request ke container yang tepat.</p>
-            <p class="mt-2">GitHub Actions CI/CD pipeline otomatis: setiap merge ke main → security scan → SSH ke EC2 → git pull → docker compose up --build -d → aplikasi live dalam 2-3 menit tanpa manual intervention.</p>
+            <p class="mt-2">GitHub Actions CI/CD pipeline otomatis: setiap merge ke main → SSH ke EC2 → git pull → docker compose up --build -d → aplikasi live dalam 2-3 menit tanpa manual intervention.</p>
           </div>
         </section>
 

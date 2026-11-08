@@ -39,7 +39,7 @@ export default function HeroIsland(): ReactElement {
   return (
     <section
       id="home"
-      aria-label="Perkenalan Maulana Nur Anfajm alias Lananuranf, Fullstack Web Developer Jakarta"
+      aria-label="Perkenalan Maulana Nur Anfajm alias Lananuranf, Software Engineer Jakarta"
       className="min-h-screen flex items-center justify-center px-6 md:px-12 overflow-hidden relative"
       style={{ background: "linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 25%,#f8fafc 50%,#ede9fe 75%,#fdf4ff 100%)" }}
     >
@@ -57,7 +57,7 @@ export default function HeroIsland(): ReactElement {
             <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-sky-100 via-violet-100 to-pink-100 opacity-80" />
             <img
               src="/Profile.jpg"
-              alt="Foto profil Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer, Jakarta"
+              alt="Foto profil Maulana Nur Anfajm (Lananuranf) — Software Engineer, Jakarta"
               className="relative w-48 h-48 md:w-56 md:h-56 rounded-full object-cover shadow-2xl ring-4 ring-white"
               width={224} height={224}
             />
@@ -74,7 +74,7 @@ export default function HeroIsland(): ReactElement {
 
           <motion.span variants={item}
             className="text-xs font-semibold tracking-widest text-slate-400 uppercase border border-slate-200 bg-white/80 rounded-full px-4 py-1.5">
-            Terbuka untuk Magang &amp; Freelance
+            Terbuka untuk Peluang Kerja
           </motion.span>
 
           <motion.div variants={item}>
@@ -84,7 +84,7 @@ export default function HeroIsland(): ReactElement {
             <p className="text-sm text-slate-400 mt-0.5">alias <strong className="text-slate-600">Lananuranf</strong></p>
             <div className="mt-2 h-7 text-base font-semibold">
               <TypeAnimation
-                sequence={["Fullstack Web Developer",1800,"Mahasiswa Sistem Informasi",1800,"Belajar Data Science",1800,"Belajar DevOps & Cloud",1800]}
+                sequence={["Software Engineer",1800,"Mahasiswa Sistem Informasi",1800,"Frontend & Backend Developer",1800]}
                 wrapper="span" speed={55} deletionSpeed={70} repeat={Infinity}
                 className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-violet-500 to-pink-500"
               />

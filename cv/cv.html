@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   Sumber CV. Edit file ini lalu jalankan:  npm run cv
-  Hasilnya ditulis ke public/cv.pdf (dipakai tombol "Unduh CV").
+  Hasilnya ditulis ke public/cv.pdf.
 -->
 <html lang="id">
 <head>
@@ -10,35 +10,40 @@
 <style>
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --ink: #0f172a; --text: #334155; --muted: #64748b; --line: #e2e8f0; --accent: #1e3a8a; }
   body {
     font-family: "Segoe UI", Calibri, Arial, sans-serif;
-    color: #1f2937; font-size: 9.6pt; line-height: 1.45;
+    color: var(--text); font-size: 9.8pt; line-height: 1.5;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  .page { width: 210mm; min-height: 297mm; padding: 16mm 17mm 14mm; }
-  header { border-bottom: 1.5px solid #111827; padding-bottom: 10px; margin-bottom: 14px; }
-  h1 { font-size: 22pt; font-weight: 700; letter-spacing: -.3px; color: #111827; }
-  .role { font-size: 10.5pt; color: #4b5563; margin-top: 2px; }
-  .contact { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 8.8pt; color: #374151; }
-  .contact a { color: inherit; text-decoration: none; }
-  .contact span + span::before { content: ""; }
+  .page { width: 210mm; min-height: 297mm; padding: 18mm 18mm 16mm; }
+  a { color: inherit; text-decoration: none; }
+
+  header { padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+  h1 { font-size: 24pt; font-weight: 700; letter-spacing: -.4px; color: var(--ink); line-height: 1.1; }
+  .role { font-size: 11.5pt; font-weight: 600; color: var(--accent); margin-top: 4px; }
+  .contact { margin-top: 9px; font-size: 8.8pt; color: var(--text); }
+  .contact span:not(:last-child)::after { content: "|"; margin: 0 7px; color: #cbd5e1; }
+
+  section { margin-top: 15px; }
   h2 {
-    font-size: 8.6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px;
-    color: #111827; margin: 14px 0 7px; padding-bottom: 3px; border-bottom: 1px solid #e5e7eb;
+    font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px;
+    color: var(--accent); padding-bottom: 4px; margin-bottom: 8px; border-bottom: 1px solid var(--line);
   }
-  p { color: #374151; }
-  .item { margin-bottom: 9px; break-inside: avoid; }
+  p { text-align: justify; }
+
+  .item { margin-bottom: 11px; break-inside: avoid; }
+  .item:last-child { margin-bottom: 0; }
   .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .title { font-weight: 700; color: #111827; font-size: 10pt; }
-  .meta { font-size: 8.6pt; color: #6b7280; white-space: nowrap; }
-  .sub { font-size: 8.8pt; color: #4b5563; font-style: italic; margin-top: 1px; }
-  ul { padding-left: 14px; margin-top: 3px; }
-  li { margin-bottom: 1.5px; color: #374151; }
-  .skills { display: grid; grid-template-columns: 34mm 1fr; gap: 3px 10px; }
-  .skills dt { font-weight: 600; color: #111827; }
-  .skills dd { color: #374151; }
-  .muted { color: #6b7280; }
-  footer { margin-top: 14px; font-size: 7.8pt; color: #9ca3af; text-align: center; }
+  .title { font-weight: 700; color: var(--ink); font-size: 10.3pt; }
+  .meta { font-size: 8.8pt; color: var(--muted); white-space: nowrap; }
+  .stack { font-size: 8.8pt; color: var(--accent); font-weight: 600; margin-top: 1px; }
+  ul { padding-left: 14px; margin-top: 4px; }
+  li { margin-bottom: 2px; }
+  li::marker { color: var(--muted); }
+
+  .skills { display: grid; grid-template-columns: 30mm 1fr; gap: 4px 12px; }
+  .skills dt { font-weight: 600; color: var(--ink); }
 </style>
 </head>
 <body>
@@ -46,36 +51,36 @@
 
   <header>
     <h1>Maulana Nur Anfajm</h1>
-    <div class="role">Mahasiswa Sistem Informasi · Fullstack Web Developer</div>
+    <div class="role">Software Engineer</div>
     <div class="contact">
       <span>Jakarta, Indonesia</span>
-      <a href="mailto:lananuranf@gmail.com">lananuranf@gmail.com</a>
-      <a href="tel:+6285960235008">+62 859-6023-5008</a>
-      <a href="https://portfolio.lananuranf.my.id">portfolio.lananuranf.my.id</a>
-      <a href="https://github.com/Lananuranf">github.com/Lananuranf</a>
-      <a href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/">linkedin.com/in/maulana-nur-anfajm</a>
+      <span><a href="mailto:lananuranf@gmail.com">lananuranf@gmail.com</a></span>
+      <span><a href="tel:+6285960235008">+62 859-6023-5008</a></span>
+      <span><a href="https://portfolio.lananuranf.my.id">portfolio.lananuranf.my.id</a></span>
+      <span><a href="https://github.com/Lananuranf">github.com/Lananuranf</a></span>
+      <span><a href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/">linkedin.com/in/maulana-nur-anfajm</a></span>
     </div>
   </header>
 
   <section>
     <h2>Profil</h2>
     <p>
-      Mahasiswa Sistem Informasi semester 6 di Universitas Gunadarma yang senang membangun aplikasi web
-      dari frontend hingga deploy. Terbiasa memakai React, Go, dan PostgreSQL, serta men-deploy aplikasi
-      ke AWS EC2 dengan Docker dan GitHub Actions. Juga mendalami data science dengan Python.
-      Mencari kesempatan magang atau freelance untuk terus belajar di lingkungan kerja nyata.
+      Software Engineer dan mahasiswa Sistem Informasi semester 7 di Universitas Gunadarma. Membangun aplikasi
+      web secara menyeluruh — antarmuka, REST API, hingga database — dengan React, TypeScript, Go, dan PostgreSQL,
+      serta merilisnya ke server menggunakan Docker. Mengutamakan kode yang mudah dibaca, arsitektur yang
+      terstruktur, dan aplikasi yang benar-benar dipakai.
     </p>
   </section>
 
   <section>
-    <h2>Pendidikan</h2>
-    <div class="item">
-      <div class="row">
-        <span class="title">Universitas Gunadarma</span>
-        <span class="meta">Sedang berjalan · Semester 6</span>
-      </div>
-      <div class="sub">S1 Sistem Informasi — Jakarta</div>
-    </div>
+    <h2>Keahlian Teknis</h2>
+    <dl class="skills">
+      <dt>Bahasa</dt>    <dd>Go, TypeScript, JavaScript, SQL</dd>
+      <dt>Frontend</dt>  <dd>React, Tailwind CSS, Vite, Astro</dd>
+      <dt>Backend</dt>   <dd>Go Fiber, Go Gin, GORM, REST API, autentikasi JWT, RBAC</dd>
+      <dt>Database</dt>  <dd>PostgreSQL</dd>
+      <dt>Tools</dt>     <dd>Git, GitHub Actions, Docker, Docker Compose, Nginx, Linux (Ubuntu), AWS EC2, Postman</dd>
+    </dl>
   </section>
 
   <section>
@@ -84,60 +89,49 @@
     <div class="item">
       <div class="row">
         <span class="title">Web Management Letta School</span>
-        <span class="meta">React · Go Fiber · PostgreSQL · Docker · AWS EC2</span>
+        <span class="meta">school.lananuranf.my.id</span>
       </div>
+      <div class="stack">React · TypeScript · Go Fiber · PostgreSQL · Docker · AWS EC2</div>
       <ul>
-        <li>Membangun sistem manajemen sekolah dengan login JWT dan tiga peran pengguna: admin, guru, dan siswa.</li>
-        <li>Men-deploy ke AWS EC2 memakai Docker Compose dan Nginx sebagai reverse proxy dengan SSL.</li>
-        <li>Membuat pipeline GitHub Actions yang menjalankan GitLeaks, Semgrep, Trivy, dan OWASP ZAP sebelum deploy.</li>
-      </ul>
-      <div class="sub">school.lananuranf.my.id</div>
-    </div>
-
-    <div class="item">
-      <div class="row">
-        <span class="title">Sales Data Dashboard</span>
-        <span class="meta">Python · Pandas · scikit-learn · Streamlit</span>
-      </div>
-      <ul>
-        <li>Membersihkan dan menganalisis data penjualan, termasuk penanganan nilai kosong dan outlier (IQR).</li>
-        <li>Melatih model Random Forest untuk memprediksi penjualan periode berikutnya dengan cross-validation.</li>
-        <li>Menyajikan hasil analisis dalam dashboard Streamlit interaktif.</li>
+        <li>Membangun sistem manajemen sekolah dengan autentikasi JWT dan tiga peran pengguna: admin, guru, dan siswa.</li>
+        <li>Menerapkan middleware otorisasi yang memvalidasi token dan peran pengguna di setiap endpoint API.</li>
+        <li>Merilis aplikasi ke AWS EC2 dengan Docker Compose dan Nginx (SSL); deploy otomatis lewat GitHub Actions.</li>
       </ul>
     </div>
 
     <div class="item">
       <div class="row">
         <span class="title">Dockerized E-Commerce App</span>
-        <span class="meta">React · Go Gin · GORM · PostgreSQL · Docker</span>
       </div>
+      <div class="stack">React · Go Gin · GORM · PostgreSQL · Docker · Nginx</div>
       <ul>
-        <li>Membuat aplikasi toko online dengan backend berlapis (handler, service, repository).</li>
-        <li>Menjalankan seluruh service dengan Docker Compose di AWS EC2 di balik Nginx.</li>
+        <li>Membangun aplikasi toko online dengan arsitektur backend berlapis: handler, service, dan repository.</li>
+        <li>Menjalankan seluruh service dengan satu perintah Docker Compose, lengkap dengan health check dan volume data.</li>
       </ul>
     </div>
 
     <div class="item">
       <div class="row">
-        <span class="title">Bot Asisten Pribadi di Telegram</span>
-        <span class="meta">Python · Groq API · Railway</span>
+        <span class="title">Website Portfolio Pribadi</span>
+        <span class="meta">portfolio.lananuranf.my.id</span>
       </div>
+      <div class="stack">Astro · TypeScript · React · Tailwind CSS · Vercel</div>
       <ul>
-        <li>Bot yang memakai LLaMA 3.3 untuk tanya-jawab, Whisper untuk transkripsi suara, dan integrasi Google Calendar.</li>
-        <li>Otomatis deploy ke Railway setiap push; API key disimpan sebagai environment variable.</li>
+        <li>Membangun portfolio dan blog teknis berbasis render statis sehingga halaman hampir tanpa JavaScript.</li>
+        <li>Mengambil data proyek dari GitHub API saat build dan menambahkan structured data serta sitemap untuk SEO.</li>
       </ul>
     </div>
   </section>
 
   <section>
-    <h2>Keahlian</h2>
-    <dl class="skills">
-      <dt>Frontend</dt>       <dd>JavaScript, TypeScript, React, Tailwind CSS, Vite, Astro</dd>
-      <dt>Backend</dt>        <dd>Go (Fiber, Gin), REST API, PostgreSQL, GORM, Postman</dd>
-      <dt>Deploy &amp; DevOps</dt> <dd>Git, Docker, Docker Compose, Linux (Ubuntu), Nginx, GitHub Actions, AWS EC2</dd>
-      <dt>Data</dt>           <dd>Python, Pandas, NumPy, scikit-learn, Matplotlib, Streamlit, Jupyter</dd>
-      <dt>Keamanan</dt>       <dd>GitLeaks, Semgrep, Trivy, OWASP ZAP <span class="muted">(dasar, masih belajar)</span></dd>
-    </dl>
+    <h2>Pendidikan</h2>
+    <div class="item">
+      <div class="row">
+        <span class="title">Universitas Gunadarma</span>
+        <span class="meta">Semester 7 · Sedang berjalan</span>
+      </div>
+      <div>S1 Sistem Informasi — Jakarta</div>
+    </div>
   </section>
 
   <section>
