@@ -1,0 +1,224 @@
+---
+// src/pages/blog/go-fiber-vs-nodejs-performa.astro
+// Angka di artikel ini hasil pengukuran langsung pada 8 November 2026 (lihat bagian "Lingkungan pengujian").
+import ArticleLayout from '../../components/blog/ArticleLayout.astro';
+import CodeBlock from '../../components/blog/CodeBlock.astro';
+import Callout from '../../components/blog/Callout.astro';
+
+const codeFiber = `package main
+
+import "github.com/gofiber/fiber/v2"
+
+type User struct {
+	ID    int    \`json:"id"\`
+	Name  string \`json:"name"\`
+	Email string \`json:"email"\`
+}
+
+func main() {
+	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+
+	// Skenario 1: teks pendek
+	app.Get("/hello", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
+
+	// Skenario 2: daftar 50 user dalam bentuk JSON
+	app.Get("/users", func(c *fiber.Ctx) error {
+		users := make([]User, 0, 50)
+		for i := 1; i <= 50; i++ {
+			users = append(users, User{ID: i, Name: "User", Email: "user@example.com"})
+		}
+		return c.JSON(users)
+	})
+
+	app.Listen("127.0.0.1:3001")
+}`;
+
+const codeExpress = `const express = require("express");
+const app = express();
+
+// Skenario 1: teks pendek
+app.get("/hello", (req, res) => res.send("Hello, World!"));
+
+// Skenario 2: daftar 50 user dalam bentuk JSON
+app.get("/users", (req, res) => {
+  const users = [];
+  for (let i = 1; i <= 50; i++) {
+    users.push({ id: i, name: "User", email: "user@example.com" });
+  }
+  res.json(users);
+});
+
+app.listen(3002, "127.0.0.1");`;
+
+const codeSetup = `# Server Go Fiber
+mkdir fiber && cd fiber
+go mod init bench/fiber
+go get github.com/gofiber/fiber/v2
+# simpan kode di atas sebagai main.go, lalu:
+go build -o fiber .
+./fiber
+
+# Server Express (di terminal lain)
+mkdir express && cd express
+npm init -y
+npm install express@5
+# simpan kode di atas sebagai server.js, lalu:
+node server.js`;
+
+const codeHey = `# Pasang alat uji beban "hey"
+go install github.com/rakyll/hey@latest
+
+# Pemanasan 5 detik (hasilnya diabaikan)
+hey -z 5s -c 100 http://127.0.0.1:3001/users
+
+# Pengukuran: 100 koneksi bersamaan selama 15 detik, diulang 5 kali
+hey -z 15s -c 100 http://127.0.0.1:3001/users`;
+---
+
+<ArticleLayout
+  slug="go-fiber-vs-nodejs-performa"
+  file="src/pages/blog/go-fiber-vs-nodejs-performa.astro"
+  title="Go Fiber vs Express.js: Benchmark Performa REST API Secara Langsung"
+  desc="Saya mengukur sendiri throughput, latency, dan pemakaian memori Go Fiber dan Express.js di laptop yang sama. Berikut hasilnya, cara mengulanginya, dan kapan sebaiknya memilih masing-masing."
+  datePublished="2026-11-08"
+  dateLabel="8 November 2026"
+  category="Backend"
+  tags={["Go Fiber","Express.js","Node.js","Backend","Benchmark"]}
+  keywords="go fiber vs express benchmark performa rest api golang nodejs throughput latency memori indonesia"
+>
+  <h2>Ringkasan</h2>
+  <ul>
+    <li>Untuk respons JSON berisi 50 data, <strong>Go Fiber melayani sekitar 2,1 kali lebih banyak permintaan</strong> per detik dibanding Express (± 25.900 vs ± 12.300).</li>
+    <li><strong>Pemakaian memori Fiber jauh lebih kecil</strong>: sekitar 8 MB saat diam dan 18 MB saat dibebani, sedangkan Express sekitar 68 MB dan 104 MB.</li>
+    <li>Latency pada persentil 99 keduanya mirip, sekitar 12–13 ms.</li>
+    <li>Pada skenario teks pendek, hasil Fiber di laptop saya <strong>tidak stabil</strong>, jadi saya tidak menarik kesimpulan dari skenario itu.</li>
+  </ul>
+
+  <Callout type="info" title="Kenapa saya menulis ini">
+    <p>
+      Backend proyek saya, <a href="/projects/letta-school/">Letta School</a>, memakai Go Fiber. Saya ingin tahu
+      seberapa besar sebenarnya selisih performanya dengan Express, framework Node.js yang paling umum,
+      dengan mengukurnya sendiri, bukan sekadar mengutip angka dari internet.
+    </p>
+  </Callout>
+
+  <h2>Apa yang diukur?</h2>
+  <p>Tiga hal yang paling relevan untuk sebuah REST API:</p>
+  <ul>
+    <li><strong>Throughput (req/s)</strong> — berapa permintaan yang bisa dilayani per detik. Makin besar makin baik.</li>
+    <li><strong>Latency p50 dan p99</strong> — waktu tunggu satu permintaan. p50 adalah waktu tunggu umum; p99 adalah waktu tunggu 1% permintaan paling lambat. Makin kecil makin baik.</li>
+    <li><strong>Memori</strong> — RAM yang dipakai proses server saat diam dan saat dibebani.</li>
+  </ul>
+  <p>Ada dua skenario. <code>/hello</code> mengirim teks pendek, sedangkan <code>/users</code> membuat 50 objek lalu mengirimnya sebagai JSON. Skenario kedua lebih mendekati API sungguhan.</p>
+
+  <h2>Kode yang diuji</h2>
+  <p>Kedua server dibuat sesederhana dan seadil mungkin: logika sama, tanpa database, tanpa middleware tambahan.</p>
+  <CodeBlock code={codeFiber} label="fiber/main.go" />
+  <CodeBlock code={codeExpress} label="express/server.js" />
+
+  <h2>Lingkungan pengujian</h2>
+  <ul>
+    <li><strong>Laptop:</strong> Intel Core i3-1115G4 (2 core, 4 thread), RAM 8 GB, Windows 11.</li>
+    <li><strong>Versi:</strong> Go 1.27.3 + Fiber v2.52.16; Node.js 26.12.1 + Express 5.3.0.</li>
+    <li><strong>Alat uji:</strong> <code>hey</code>, 100 koneksi bersamaan, 15 detik per putaran, 5 putaran per skenario setelah pemanasan 5 detik. Angka yang ditampilkan adalah <strong>median</strong> dari 5 putaran.</li>
+    <li><strong>Memori:</strong> <em>working set</em> proses server, dicatat setiap 1,5 detik selama pengujian.</li>
+  </ul>
+
+  <h2>Hasil</h2>
+  <h3>Skenario <code>/users</code> (JSON, 50 data)</h3>
+  <div class="not-prose overflow-x-auto my-5 rounded-2xl ring-1 ring-slate-200 bg-white shadow-sm">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-600">
+        <tr><th class="text-left font-semibold px-4 py-3">Metrik</th><th class="text-right font-semibold px-4 py-3">Go Fiber</th><th class="text-right font-semibold px-4 py-3">Express</th></tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 text-slate-700">
+        <tr><td class="px-4 py-3">Throughput (median)</td><td class="px-4 py-3 text-right font-semibold text-slate-900">25.862 req/s</td><td class="px-4 py-3 text-right">12.260 req/s</td></tr>
+        <tr><td class="px-4 py-3">Rentang 5 putaran</td><td class="px-4 py-3 text-right">17.232 – 27.207</td><td class="px-4 py-3 text-right">12.125 – 12.398</td></tr>
+        <tr><td class="px-4 py-3">Latency p50</td><td class="px-4 py-3 text-right font-semibold text-slate-900">3,2 ms</td><td class="px-4 py-3 text-right">7,9 ms</td></tr>
+        <tr><td class="px-4 py-3">Latency p99</td><td class="px-4 py-3 text-right">13,2 ms</td><td class="px-4 py-3 text-right font-semibold text-slate-900">11,7 ms</td></tr>
+        <tr><td class="px-4 py-3">Memori puncak</td><td class="px-4 py-3 text-right font-semibold text-slate-900">± 18 MB</td><td class="px-4 py-3 text-right">± 103 MB</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Memori saat diam</h3>
+  <p>Begitu server dinyalakan dan belum menerima permintaan apa pun, Fiber memakai sekitar <strong>8 MB</strong>, sedangkan Express sekitar <strong>68 MB</strong>. Sebagian besar selisih ini berasal dari runtime: Go menghasilkan satu program yang sudah dikompilasi, sedangkan Node.js membawa mesin JavaScript V8 beserta JIT compiler-nya.</p>
+
+  <h3>Skenario <code>/hello</code> (teks pendek)</h3>
+  <p>
+    Express stabil di sekitar <strong>14.700 req/s</strong> (rentang 14.505 – 14.875). Hasil Fiber justru melompat-lompat
+    antara <strong>5.278 dan 27.285 req/s</strong> dalam lima putaran. Pada percobaan sebelumnya pun angkanya bisa mencapai
+    44.000 req/s. Karena variasinya terlalu besar, angka skenario ini <strong>tidak saya pakai untuk membandingkan</strong>.
+  </p>
+  <Callout type="warn" title="Kenapa hasilnya bisa tidak stabil?">
+    <p>
+      Server dan alat uji berjalan di laptop yang sama dengan hanya 4 thread, sehingga keduanya berebut CPU.
+      Respons yang sangat kecil membuat pengujian lebih sensitif terhadap faktor sistem seperti penjadwalan CPU,
+      manajemen daya laptop, dan jaringan lokal Windows. Hasil yang benar-benar stabil butuh dua mesin terpisah,
+      sebaiknya Linux.
+    </p>
+  </Callout>
+
+  <h2>Cara membaca hasil ini</h2>
+  <ul>
+    <li><strong>Selisih 2 kali lipat itu nyata, tetapi tidak selalu terasa.</strong> Di aplikasi sungguhan, waktu terbesar biasanya habis untuk menunggu database atau layanan lain. Jika satu query butuh 20 ms, perbedaan 4–5 ms di framework menjadi relatif kecil.</li>
+    <li><strong>Memori adalah keunggulan Fiber yang paling konsisten.</strong> Di server kecil seperti EC2 <code>t2.micro</code> (RAM 1 GB), selisih puluhan MB per proses cukup berarti, terutama jika menjalankan beberapa service sekaligus.</li>
+    <li><strong>Express di sini hanya memakai satu thread.</strong> Node.js bisa menjalankan beberapa proses sekaligus (misalnya dengan <code>cluster</code> atau PM2) untuk memakai semua core. Throughput-nya akan naik, tetapi pemakaian memorinya juga ikut berlipat.</li>
+    <li><strong>Ini benchmark sederhana.</strong> Hasilnya menggambarkan biaya dasar framework, bukan performa aplikasi lengkap.</li>
+  </ul>
+
+  <h2>Jadi, pilih yang mana?</h2>
+  <div class="not-prose grid sm:grid-cols-2 gap-4 my-6">
+    <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm">
+      <p class="font-bold text-slate-900 mb-2">Pilih Go Fiber jika…</p>
+      <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1.5">
+        <li>Server kecil dan RAM terbatas.</li>
+        <li>Butuh throughput tinggi atau banyak pekerjaan berat di CPU.</li>
+        <li>Ingin hasil build berupa satu file yang mudah di-deploy.</li>
+        <li>Tim nyaman dengan bahasa bertipe statis.</li>
+      </ul>
+    </div>
+    <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm">
+      <p class="font-bold text-slate-900 mb-2">Pilih Express jika…</p>
+      <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1.5">
+        <li>Tim sudah terbiasa dengan JavaScript/TypeScript.</li>
+        <li>Ingin berbagi kode dan tipe data dengan frontend.</li>
+        <li>Butuh ekosistem paket npm yang sangat luas.</li>
+        <li>Kecepatan membuat fitur lebih penting daripada efisiensi server.</li>
+      </ul>
+    </div>
+  </div>
+  <p>
+    Untuk Letta School, saya tetap memilih Fiber karena aplikasinya berjalan di EC2 dengan RAM 1 GB bersama
+    PostgreSQL, Nginx, dan frontend. Hemat memori di sana lebih berharga daripada selisih throughput-nya.
+  </p>
+
+  <h2>Coba ulangi sendiri</h2>
+  <p>Angka di laptopmu pasti berbeda. Yang penting adalah perbandingannya. Berikut langkahnya:</p>
+  <ol>
+    <li>Pastikan Go dan Node.js sudah terpasang (<code>go version</code> dan <code>node -v</code>).</li>
+    <li>Buat dan jalankan kedua server:</li>
+  </ol>
+  <CodeBlock code={codeSetup} label="Terminal" />
+  <ol start="3">
+    <li>Pasang <code>hey</code>, lalu uji setiap server <strong>bergantian</strong>, bukan bersamaan:</li>
+  </ol>
+  <CodeBlock code={codeHey} label="Terminal" />
+  <ol start="4">
+    <li>Ganti port <code>3001</code> menjadi <code>3002</code> untuk menguji Express.</li>
+    <li>Catat baris <code>Requests/sec</code> dan <code>Latency distribution</code> dari setiap putaran, lalu ambil mediannya.</li>
+  </ol>
+  <Callout type="tip">
+    <p>Tutup aplikasi lain dan colokkan charger laptop selama pengujian. Jika memungkinkan, jalankan <code>hey</code> dari komputer lain di jaringan yang sama agar tidak berebut CPU dengan server.</p>
+  </Callout>
+
+  <h2>Kesimpulan</h2>
+  <p>
+    Dalam pengujian ini, Go Fiber unggul jelas dalam throughput respons JSON (sekitar 2 kali lipat) dan pemakaian
+    memori (sekitar 6 kali lebih hemat). Meski begitu, Express tetap pilihan yang sangat layak, terutama untuk tim
+    JavaScript. Pilih framework berdasarkan kebutuhan proyek dan kemampuan tim, lalu ukur sendiri jika performa
+    memang menjadi pertimbangan utama.
+  </p>
+</ArticleLayout>

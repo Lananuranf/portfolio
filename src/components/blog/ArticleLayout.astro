@@ -1,0 +1,235 @@
+---
+// src/components/blog/ArticleLayout.astro — kerangka semua artikel blog:
+// SEO + schema, header, statistik pembaca real-time, progres baca, profil penulis, dan ajakan kontak.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MainLayout from '../../layouts/MainLayout.astro';
+import { countWords, readingMinutes, WORDS_PER_MINUTE } from '../../lib/readingTime';
+
+interface Props {
+  slug: string;            // contoh: "cara-deploy-react-go-docker-aws"
+  file: string;            // path file halaman, untuk menghitung jumlah kata
+  title: string;
+  desc: string;
+  datePublished: string;   // YYYY-MM-DD
+  dateModified?: string;
+  dateLabel: string;       // contoh: "28 April 2026"
+  category: string;
+  tags: string[];
+  keywords: string;
+}
+
+const { slug, file, title, desc, datePublished, dateModified = datePublished, dateLabel, category, tags, keywords } = Astro.props;
+const url = `https://portfolio.lananuranf.my.id/blog/${slug}/`;
+const wordCount = countWords(file);
+const readMinutes = readingMinutes(wordCount);
+
+const articleSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": desc,
+  "url": url,
+  "datePublished": datePublished,
+  "dateModified": dateModified,
+  "inLanguage": "id",
+  "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf", "url": "https://portfolio.lananuranf.my.id/" },
+  "publisher": { "@type": "Person", "name": "Maulana Nur Anfajm" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": url },
+  "keywords": keywords,
+  "articleSection": category,
+  "wordCount": String(wordCount),
+  "timeRequired": `PT${readMinutes}M`
+});
+---
+
+<BaseLayout title={`${title} | Lananuranf`} description={desc} canonicalURL={url} extraSchema={articleSchema}>
+  <MainLayout />
+
+  <!-- Progres baca -->
+  <div class="fixed top-0 left-0 right-0 h-1 z-[60]" aria-hidden="true">
+    <div id="read-progress" class="h-full w-0 bg-gradient-to-r from-sky-500 to-blue-600"></div>
+  </div>
+  <div id="read-remaining"
+    class="fixed bottom-5 right-5 z-50 px-3.5 py-2 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur opacity-0 translate-y-2 transition-all duration-300 pointer-events-none"
+    aria-live="polite"></div>
+
+  <main class="pt-20 bg-slate-50 min-h-screen">
+    <article id="article-body" data-words={wordCount} data-wpm={WORDS_PER_MINUTE} data-slug={slug}
+      class="max-w-3xl mx-auto px-5 md:px-6 py-12 md:py-14">
+
+      <a href="/blog/" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors mb-8">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+        Kembali ke Blog
+      </a>
+
+      <header class="mb-10">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4 text-xs text-slate-500">
+          <span class="font-semibold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-200">{category}</span>
+          <time datetime={datePublished}>{dateLabel}</time>
+          <span aria-hidden="true">·</span>
+          <span title={`${wordCount.toLocaleString("id-ID")} kata`}>{readMinutes} menit baca</span>
+        </div>
+
+        <h1 class="text-3xl md:text-[2.5rem] font-extrabold text-slate-900 leading-tight tracking-tight mb-4">{title}</h1>
+        <p class="text-slate-600 text-base md:text-lg leading-relaxed">{desc}</p>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-200">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-900 grid place-items-center text-white text-sm font-bold shadow-md shadow-slate-900/20">L</div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Maulana Nur Anfajm</p>
+              <p class="text-xs text-slate-500">Software Engineer</p>
+            </div>
+          </div>
+
+          <!-- Statistik pembaca real-time (disembunyikan bila layanan belum aktif) -->
+          <div id="live-stats" hidden class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-slate-200 text-slate-600 shadow-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span><b data-stat="views" class="text-slate-900">0</b> kali dibaca</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 ring-1 ring-emerald-200 text-emerald-700 shadow-sm">
+              <span class="relative flex w-2 h-2"><span class="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75"></span><span class="relative w-2 h-2 rounded-full bg-emerald-500"></span></span>
+              <span><b data-stat="live">0</b> sedang membaca</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-slate-200 text-slate-600 shadow-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <span>Terakhir dibaca <b data-stat="last" class="text-slate-900">—</b></span>
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <div class="prose prose-slate max-w-none
+                  prose-headings:font-extrabold prose-headings:text-slate-900 prose-headings:tracking-tight
+                  prose-h2:mt-12 prose-h2:mb-4 prose-h3:mt-8
+                  prose-a:text-sky-600 prose-a:no-underline hover:prose-a:underline
+                  prose-code:before:content-none prose-code:after:content-none prose-code:bg-slate-200/60 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-medium prose-code:text-slate-800
+                  prose-li:my-1">
+        <slot />
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-12 pt-8 border-t border-slate-200">
+        {tags.map(t => (
+          <span class="text-xs font-medium px-3 py-1.5 bg-white ring-1 ring-slate-200 text-slate-600 rounded-full">{t}</span>
+        ))}
+      </div>
+
+      <div class="mt-8 flex items-start gap-4 p-6 bg-white rounded-2xl ring-1 ring-slate-200 shadow-sm">
+        <div class="w-12 h-12 flex-shrink-0 rounded-full bg-slate-900 grid place-items-center text-white font-bold shadow-md shadow-slate-900/20">L</div>
+        <div>
+          <p class="font-semibold text-slate-900">Maulana Nur Anfajm <span class="font-normal text-slate-400">(Lananuranf)</span></p>
+          <p class="text-sm text-slate-600 mt-1 leading-relaxed">
+            Software Engineer dan mahasiswa Sistem Informasi semester 7 di Universitas Gunadarma.
+            Membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL.
+          </p>
+          <a href="/" class="inline-block mt-2 text-sm font-medium text-sky-600 hover:underline">Lihat portfolio →</a>
+        </div>
+      </div>
+
+      <div class="mt-8 p-7 bg-white rounded-3xl ring-1 ring-slate-200 shadow-[0_12px_32px_-12px_rgba(15,23,42,0.18)] text-center">
+        <p class="font-bold text-lg text-slate-900 mb-1">Ada pertanyaan atau masukan?</p>
+        <p class="text-sm text-slate-500 mb-5 max-w-md mx-auto">
+          Silakan hubungi saya. Saya dengan senang hati membantu dan berdiskusi lebih lanjut.
+        </p>
+        <div class="flex justify-center gap-3 flex-wrap">
+          <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-full text-sm shadow-md shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-px transition-all">Kirim Email</a>
+          <a href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 bg-white ring-1 ring-slate-200 text-slate-700 font-semibold rounded-full text-sm shadow-sm hover:ring-slate-400 transition-all">LinkedIn</a>
+          <a href="https://github.com/Lananuranf" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 bg-white ring-1 ring-slate-200 text-slate-700 font-semibold rounded-full text-sm shadow-sm hover:ring-slate-400 transition-all">GitHub</a>
+        </div>
+      </div>
+
+    </article>
+  </main>
+</BaseLayout>
+
+<script>
+  import { relativeTime, sessionId } from "../../lib/liveStats";
+
+  const article = document.getElementById("article-body") as HTMLElement | null;
+
+  // ── Progres & sisa waktu baca, dihitung dari posisi scroll ──
+  const bar = document.getElementById("read-progress");
+  const pill = document.getElementById("read-remaining");
+  if (article && bar && pill) {
+    const words = Number(article.dataset.words) || 0;
+    const wpm = Number(article.dataset.wpm) || 200;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const rect = article.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 1;
+      bar.style.width = `${(progress * 100).toFixed(1)}%`;
+      const leftMin = Math.ceil((words * (1 - progress)) / wpm);
+      pill.textContent = progress >= 0.98 ? "Selesai dibaca ✓" : `Sisa ± ${leftMin} menit · ${Math.round(progress * 100)}%`;
+      const show = progress > 0.02;
+      pill.classList.toggle("opacity-0", !show);
+      pill.classList.toggle("translate-y-2", !show);
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  }
+
+  // ── Statistik pembaca real-time ──
+  const box = document.getElementById("live-stats");
+  const slug = article?.dataset.slug;
+  if (box && slug) {
+    const el = (k: string) => box.querySelector(`[data-stat="${k}"]`) as HTMLElement;
+    const sid = sessionId();
+    const hitKey = `viewed:${slug}`;
+    let lastRead: number | null = null;
+    let timer: number | undefined;
+
+    const render = () => { el("last").textContent = lastRead ? relativeTime(lastRead) : "—"; };
+
+    const beat = async () => {
+      let hit = false;
+      try { hit = !sessionStorage.getItem(hitKey); } catch { hit = true; }
+      try {
+        const r = await fetch("/api/views", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slug, sid, hit }),
+          keepalive: true,
+        });
+        const d = await r.json();
+        if (!r.ok || !d.enabled) { box.hidden = true; return false; }
+        if (hit) { try { sessionStorage.setItem(hitKey, "1"); } catch {} }
+        el("views").textContent = Number(d.views).toLocaleString("id-ID");
+        el("live").textContent = String(Math.max(1, d.live));
+        lastRead = d.lastRead;
+        render();
+        box.hidden = false;
+        return true;
+      } catch { return false; }
+    };
+
+    let disabled = false;
+    const start = async () => {
+      if (timer || disabled) return;
+      timer = window.setInterval(beat, 15000);
+      if ((await beat()) === false && box.hidden) { disabled = true; stop(); }
+    };
+    const stop = () => { clearInterval(timer); timer = undefined; };
+
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+    window.setInterval(render, 30000);
+    if (!document.hidden) start();
+  }
+
+  // ── Tombol salin di blok kode ──
+  document.querySelectorAll<HTMLElement>("[data-code-block]").forEach((fig) => {
+    const btn = fig.querySelector<HTMLButtonElement>("[data-copy]");
+    const code = fig.querySelector("code");
+    btn?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code?.textContent ?? "");
+        btn.textContent = "Tersalin ✓";
+      } catch { btn.textContent = "Gagal menyalin"; }
+      setTimeout(() => (btn.textContent = "Salin"), 1800);
+    });
+  });
+</script>

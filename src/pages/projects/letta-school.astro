@@ -2,7 +2,6 @@
 // src/pages/projects/letta-school.astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MainLayout from '../../layouts/MainLayout.astro';
-import Footer from '../../components/Footer.astro';
 import { getRepoProof, formatBulanTahun, GITHUB_USER } from '../../lib/github';
 
 const proof = await getRepoProof('letta-school');
@@ -127,5 +126,4 @@ const projectSchema = JSON.stringify({
     </article>
   </main>
 
-  <Footer />
 </BaseLayout>

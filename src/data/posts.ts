@@ -20,10 +20,10 @@ export interface Post {
 const RAW: Post[] = [
   {
     slug: "/blog/cara-deploy-react-go-docker-aws/",
-    title: "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions",
-    desc: "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang jalan tiap push ke main.",
+    title: "Cara Deploy Aplikasi React + Go Fiber ke AWS EC2 dengan Docker",
+    desc: "Panduan langkah demi langkah untuk pemula: menyiapkan server EC2, Docker Compose, HTTPS, sampai deploy otomatis setiap push ke GitHub.",
     date: "28 April 2026",
-    tags: ["Docker","AWS EC2","Go Fiber","GitHub Actions","CI/CD"],
+    tags: ["Docker","AWS EC2","Go Fiber","React","Tutorial"],
     accent: "from-sky-500 to-blue-600",
     border: "border-sky-200",
     published: true,
@@ -31,17 +31,18 @@ const RAW: Post[] = [
   },
   {
     slug: "/blog/go-fiber-vs-nodejs-performa/",
-    title: "Go Fiber vs Node.js Express: Benchmark Performa untuk Backend REST API",
-    desc: "Benchmark langsung antara Go Fiber dan Node.js Express — latency, throughput, memory usage, dan kapan harus pilih masing-masing.",
-    date: "Segera hadir",
-    tags: ["Go Fiber","Node.js","Backend","Performance","Benchmark"],
+    title: "Go Fiber vs Express.js: Benchmark Performa REST API Secara Langsung",
+    desc: "Saya mengukur sendiri throughput, latency, dan pemakaian memori Go Fiber dan Express.js di laptop yang sama — lengkap dengan cara mengulanginya dan kapan sebaiknya memilih masing-masing.",
+    date: "8 November 2026",
+    tags: ["Go Fiber","Express.js","Node.js","Backend","Benchmark"],
     accent: "from-emerald-500 to-teal-600",
     border: "border-emerald-200",
-    published: false,
+    published: true,
+    file: "src/pages/blog/go-fiber-vs-nodejs-performa.astro",
   },
 ];
 
-export const POSTS: Post[] = RAW.map(p => ({
+export const POSTS: Post[] = [RAW[1], RAW[0], ...RAW.slice(2)].map(p => ({
   ...p,
   readTime: p.published && p.file ? readingTimeLabel(p.file) : undefined,
 }));

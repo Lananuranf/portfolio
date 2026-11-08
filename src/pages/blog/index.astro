@@ -2,7 +2,6 @@
 // src/pages/blog/index.astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MainLayout from '../../layouts/MainLayout.astro';
-import Footer from '../../components/Footer.astro';
 import { POSTS } from '../../data/posts';
 
 const blogSchema = JSON.stringify({
@@ -56,6 +55,11 @@ const blogSchema = JSON.stringify({
                   </span>
                   <span class="text-xs text-slate-400">{post.date}</span>
                   {post.readTime && <span class="text-xs text-slate-400">· {post.readTime}</span>}
+                  {post.published && (
+                    <span data-stats-for={post.slug.split("/").filter(Boolean).pop()} hidden class="text-xs text-slate-400">
+                      · <b data-v class="font-semibold text-slate-600">0</b> kali dibaca · terakhir dibaca <b data-l class="font-semibold text-slate-600">—</b>
+                    </span>
+                  )}
                 </div>
                 <h2 class="text-lg font-bold text-slate-900 leading-snug">
                   {post.published
@@ -85,5 +89,39 @@ const blogSchema = JSON.stringify({
     </div>
   </main>
 
-  <Footer />
 </BaseLayout>
+
+<script>
+  import { relativeTime } from "../../lib/liveStats";
+
+  // Statistik pembaca diperbarui setiap 20 detik selama tab terbuka.
+  const els = Array.from(document.querySelectorAll<HTMLElement>("[data-stats-for]"));
+  const slugs = els.map((e) => e.dataset.statsFor).join(",");
+  let last: Record<string, number | null> = {};
+
+  const render = () => els.forEach((e) => {
+    const t = last[e.dataset.statsFor!];
+    (e.querySelector("[data-l]") as HTMLElement).textContent = t ? relativeTime(t) : "belum ada";
+  });
+
+  const load = async () => {
+    if (document.hidden || !slugs) return;
+    try {
+      const r = await fetch(`/api/views?slugs=${slugs}`);
+      const d = await r.json();
+      if (!r.ok || !d.enabled) return;
+      els.forEach((e) => {
+        const st = d.stats[e.dataset.statsFor!];
+        if (!st) return;
+        (e.querySelector("[data-v]") as HTMLElement).textContent = Number(st.views).toLocaleString("id-ID");
+        last[e.dataset.statsFor!] = st.lastRead;
+        e.hidden = false;
+      });
+      render();
+    } catch {}
+  };
+
+  load();
+  setInterval(load, 20000);
+  document.addEventListener("visibilitychange", load);
+</script>

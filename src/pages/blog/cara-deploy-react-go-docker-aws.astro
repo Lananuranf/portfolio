@@ -1,177 +1,118 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import MainLayout from '../../layouts/MainLayout.astro';
-import Footer from '../../components/Footer.astro';
-import { countWords, readingMinutes, WORDS_PER_MINUTE } from '../../lib/readingTime';
+// src/pages/blog/cara-deploy-react-go-docker-aws.astro
+import ArticleLayout from '../../components/blog/ArticleLayout.astro';
+import CodeBlock from '../../components/blog/CodeBlock.astro';
+import Callout from '../../components/blog/Callout.astro';
 
-// Dihitung dari isi file ini sendiri saat build — bukan angka tebakan.
-const wordCount   = countWords("src/pages/blog/cara-deploy-react-go-docker-aws.astro");
-const readMinutes = readingMinutes(wordCount);
+const codeSSH = `# Di laptop: batasi izin file kunci agar SSH mau memakainya
+chmod 400 kunci-saya.pem
 
-const title = "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions CI/CD";
-const desc  = "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang berjalan tiap push ke main branch.";
-const url   = "https://portfolio.lananuranf.my.id/blog/cara-deploy-react-go-docker-aws/";
-const datePublished = "2026-04-28";
-const dateModified  = "2026-04-28";
+# Masuk ke server (ganti dengan IP publik EC2 kamu)
+ssh -i kunci-saya.pem ubuntu@IP_PUBLIK_EC2`;
 
-const articleSchema = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": title,
-  "description": desc,
-  "url": url,
-  "datePublished": datePublished,
-  "dateModified": dateModified,
-  "inLanguage": "id",
-  "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf", "url": "https://portfolio.lananuranf.my.id/" },
-  "publisher": { "@type": "Person", "name": "Maulana Nur Anfajm" },
-  "mainEntityOfPage": { "@type": "WebPage", "@id": url },
-  "keywords": "deploy react go fiber aws ec2 docker github actions ci/cd nginx ssl fullstack indonesia",
-  "articleSection": "Tutorial",
-  "wordCount": String(wordCount),
-  "timeRequired": `PT${readMinutes}M`
-});
-
-// Semua code snippet yang punya ${ } di-escape sebagai string lalu di-inject via set:html
-// Ini menghindari Astro parse ${ sebagai template expression
-
-const codeSSH = `chmod 400 your-key.pem
-ssh -i your-key.pem ubuntu@YOUR_EC2_IP`;
-
-const codeDocker = `# Update system
-sudo apt-get update && sudo apt-get upgrade -y
-
-# Install dependencies
-sudo apt-get install -y ca-certificates curl gnupg lsb-release
-
-# Add Docker GPG key
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-# Add Docker repository
-echo "deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \\
-https://download.docker.com/linux/ubuntu \$(lsb_release -cs) stable" | \\
-sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Install Docker Engine
+const codeDocker = `# 1. Perbarui daftar paket
 sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-# Tambahkan user ubuntu ke group docker
-sudo usermod -aG docker ubuntu
-newgrp docker
+# 2. Pasang Docker dengan skrip resmi dari Docker
+curl -fsSL https://get.docker.com | sudo sh
 
-# Verifikasi
-docker --version
-docker compose version`;
+# 3. Izinkan user "ubuntu" menjalankan docker tanpa sudo
+sudo usermod -aG docker ubuntu`;
 
-const codeDockerfileBackend = `# Stage 1: Build binary
-FROM golang:1.22-alpine AS builder
+const codeDockerCheck = `docker --version
+docker compose version
+docker run --rm hello-world`;
+
+const codeTree = `letta-school/
+├── backend/            # kode Go Fiber
+│   ├── Dockerfile
+│   └── ...
+├── frontend/           # kode React (Vite)
+│   ├── Dockerfile
+│   ├── nginx-frontend.conf
+│   └── ...
+├── nginx/
+│   └── nginx.conf      # reverse proxy + HTTPS
+├── docker-compose.yml
+└── .env                # rahasia — JANGAN di-commit`;
+
+const codeDockerfileBackend = `# Tahap 1: kompilasi kode Go menjadi satu file program
+FROM golang:1.23-alpine AS builder
 WORKDIR /app
-
 COPY go.mod go.sum ./
 RUN go mod download
-
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o main ./cmd/main.go
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o server ./cmd/main.go
 
-# Stage 2: Image final (minimal)
-FROM alpine:3.19
-RUN apk --no-cache add ca-certificates tzdata
-WORKDIR /root/
-COPY --from=builder /app/main .
+# Tahap 2: image akhir yang kecil, hanya berisi program jadi
+FROM alpine:3.20
+RUN apk add --no-cache ca-certificates tzdata
+WORKDIR /app
+COPY --from=builder /app/server .
 ENV TZ=Asia/Jakarta
 EXPOSE 8080
-CMD ["./main"]`;
+CMD ["./server"]`;
 
-const codeDockerfileFrontend = `# Stage 1: Build React app
+const codeDockerfileFrontend = `# Tahap 1: build React menjadi file statis (HTML, CSS, JS)
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve dengan Nginx
+# Tahap 2: sajikan file statis dengan Nginx
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx-frontend.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]`;
+EXPOSE 80`;
 
 const codeNginxFrontend = `server {
     listen 80;
     root /usr/share/nginx/html;
     index index.html;
 
-    gzip on;
-    gzip_types text/css application/javascript application/json;
-
+    # Semua URL diarahkan ke index.html agar React Router berfungsi
     location / {
-        try_files \$uri \$uri/ /index.html;
-    }
-
-    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff2)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
+        try_files $uri $uri/ /index.html;
     }
 }`;
 
-const codeCompose = `version: '3.8'
-
-services:
+const codeCompose = `services:
   db:
     image: postgres:16-alpine
-    container_name: letta_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: \${DB_USER}
       POSTGRES_PASSWORD: \${DB_PASSWORD}
       POSTGRES_DB: \${DB_NAME}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
+      - postgres_data:/var/lib/postgresql/data   # data tetap aman walau container dihapus
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \${DB_USER}"]
       interval: 10s
-      timeout: 5s
       retries: 5
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: letta_backend
+    build: ./backend
     restart: unless-stopped
     environment:
-      DB_HOST: db
+      DB_HOST: db                 # nama service, bukan "localhost"
+      DB_PORT: 5432
       DB_USER: \${DB_USER}
       DB_PASSWORD: \${DB_PASSWORD}
       DB_NAME: \${DB_NAME}
-      DB_PORT: 5432
       JWT_SECRET: \${JWT_SECRET}
-      APP_ENV: production
     depends_on:
       db:
-        condition: service_healthy
-    networks:
-      - app-network
+        condition: service_healthy   # tunggu database siap dulu
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: letta_frontend
+    build: ./frontend
     restart: unless-stopped
-    depends_on:
-      - backend
-    networks:
-      - app-network
 
   nginx:
     image: nginx:alpine
-    container_name: letta_nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -182,60 +123,74 @@ services:
     depends_on:
       - frontend
       - backend
-    networks:
-      - app-network
 
 volumes:
-  postgres_data:
-
-networks:
-  app-network:
-    driver: bridge`;
+  postgres_data:`;
 
 const codeEnv = `DB_USER=letta_user
-DB_PASSWORD=supersecretpassword123
+DB_PASSWORD=ganti-dengan-password-yang-panjang
 DB_NAME=letta_school
-JWT_SECRET=your-very-long-random-jwt-secret-here`;
+JWT_SECRET=ganti-dengan-teks-acak-minimal-32-karakter`;
 
-const codeCertbot = `sudo apt-get install -y certbot
-sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com`;
+const codeCertbot = `# Pasang certbot
+sudo apt-get install -y certbot
 
-const codeNginxConf = `events { worker_connections 1024; }
+# Minta sertifikat. Port 80 harus kosong (belum ada container yang jalan).
+sudo certbot certonly --standalone -d domainkamu.com -d www.domainkamu.com`;
+
+const codeNginxConf = `events {}
 
 http {
+    # 1) Semua akses HTTP diarahkan ke HTTPS
     server {
         listen 80;
-        server_name yourdomain.com www.yourdomain.com;
-        return 301 https://\$host\$request_uri;
+        server_name domainkamu.com www.domainkamu.com;
+        return 301 https://$host$request_uri;
     }
 
+    # 2) Situs utama lewat HTTPS
     server {
-        listen 443 ssl http2;
-        server_name yourdomain.com www.yourdomain.com;
+        listen 443 ssl;
+        http2 on;
+        server_name domainkamu.com www.domainkamu.com;
 
-        ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+        ssl_certificate     /etc/letsencrypt/live/domainkamu.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/domainkamu.com/privkey.pem;
 
-        add_header X-Frame-Options "SAMEORIGIN";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "strict-origin-when-cross-origin";
-
+        # Halaman web -> container frontend
         location / {
             proxy_pass http://frontend:80;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header Host $host;
         }
 
+        # Permintaan /api/... -> container backend (awalan /api dibuang)
         location /api/ {
             proxy_pass http://backend:8080/;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
     }
 }`;
 
-const codeGHActions = `name: Deploy to AWS EC2
+const codeFirstDeploy = `# Ambil kode dari GitHub
+cd ~
+git clone https://github.com/username/letta-school.git
+cd letta-school
+
+# Buat file .env lalu isi seperti contoh di Langkah 5
+nano .env
+
+# Build dan jalankan semua container di latar belakang
+docker compose up --build -d
+
+# Pastikan keempat service berstatus "running"
+docker compose ps`;
+
+const codeLogs = `# Lihat log backend secara langsung (Ctrl+C untuk keluar)
+docker compose logs -f backend`;
+
+const codeGHActions = `name: Deploy ke EC2
 
 on:
   push:
@@ -243,283 +198,177 @@ on:
 
 jobs:
   deploy:
-    name: Build & Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: GitLeaks — Secret Scanning
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
-
-      - name: Semgrep — SAST
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: "auto"
-
-      - name: Trivy — Container Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: './backend'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-
-      - name: Deploy via SSH
+      - name: Deploy lewat SSH
         uses: appleboy/ssh-action@v1
         with:
           host: \${{ secrets.EC2_HOST }}
           username: ubuntu
           key: \${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/letta-school
+            cd ~/letta-school
             git pull origin main
             docker compose up --build -d
             docker image prune -f`;
 
-const codeFirstDeploy = `cd /home/ubuntu
-git clone https://github.com/username/letta-school.git
-cd letta-school
+const codeRenew = `# Buka crontab milik root
+sudo crontab -e
 
-# Buat .env
-nano .env
-
-# Jalankan semua container
-docker compose up --build -d
-
-# Cek status
-docker compose ps
-docker compose logs -f backend`;
-
-const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart nginx`;
+# Tambahkan baris ini: setiap tanggal 1 jam 03.00, perpanjang sertifikat.
+# Nginx dihentikan sebentar agar port 80 bisa dipakai certbot.
+0 3 1 * * certbot renew --quiet --pre-hook "docker compose -f /home/ubuntu/letta-school/docker-compose.yml stop nginx" --post-hook "docker compose -f /home/ubuntu/letta-school/docker-compose.yml start nginx"`;
 ---
 
-<BaseLayout title={title} description={desc} canonicalURL={url} extraSchema={articleSchema}>
-  <MainLayout />
+<ArticleLayout
+  slug="cara-deploy-react-go-docker-aws"
+  file="src/pages/blog/cara-deploy-react-go-docker-aws.astro"
+  title="Cara Deploy Aplikasi React + Go Fiber ke AWS EC2 dengan Docker"
+  desc="Panduan langkah demi langkah untuk pemula: menyiapkan server EC2, menjalankan aplikasi dengan Docker Compose, memasang HTTPS, sampai deploy otomatis setiap push ke GitHub."
+  datePublished="2026-04-28"
+  dateModified="2026-11-08"
+  dateLabel="28 April 2026 · diperbarui 8 November 2026"
+  category="Tutorial"
+  tags={["React","Go Fiber","PostgreSQL","Docker","AWS EC2","Nginx","GitHub Actions"]}
+  keywords="deploy react go fiber aws ec2 docker compose nginx https github actions tutorial pemula indonesia"
+>
+  <h2>Apa yang akan kita buat?</h2>
+  <p>
+    Di akhir panduan ini, aplikasi web kamu (frontend React, backend Go Fiber, database PostgreSQL)
+    bisa diakses siapa saja lewat domain sendiri dengan HTTPS. Setiap kali kamu <code>push</code> ke
+    branch <code>main</code>, server akan memperbarui aplikasinya sendiri.
+  </p>
+  <p>Panduan ini saya tulis dari pengalaman men-deploy <a href="https://school.lananuranf.my.id/">Letta School</a>. Alur permintaannya seperti ini:</p>
+  <ol>
+    <li><strong>Pengunjung</strong> membuka <code>https://domainkamu.com</code>.</li>
+    <li><strong>Nginx</strong> menerima permintaan itu, lalu meneruskannya ke container yang tepat.</li>
+    <li>Halaman web dilayani container <strong>frontend</strong>; permintaan <code>/api/...</code> dilayani container <strong>backend</strong>.</li>
+    <li>Backend membaca dan menyimpan data di container <strong>PostgreSQL</strong>.</li>
+  </ol>
 
-  <!-- Progress baca (real-time, mengikuti posisi scroll) -->
-  <div class="fixed top-0 left-0 right-0 h-1 z-[60] bg-transparent" aria-hidden="true">
-    <div id="read-progress" class="h-full w-0 bg-gradient-to-r from-sky-500 to-blue-600 transition-[width] duration-100"></div>
-  </div>
-  <div id="read-remaining"
-    class="fixed bottom-5 right-5 z-50 px-3.5 py-2 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur opacity-0 translate-y-2 transition-all duration-300 pointer-events-none"
-    aria-live="polite"></div>
+  <Callout type="info" title="Sebelum mulai">
+    <ul>
+      <li>Akun AWS. Instance <code>t2.micro</code>/<code>t3.micro</code> termasuk free tier selama 12 bulan pertama.</li>
+      <li>Domain yang sudah kamu miliki (diperlukan untuk HTTPS).</li>
+      <li>Repository GitHub berisi kode frontend dan backend.</li>
+      <li>Bisa menjalankan perintah dasar di terminal (<code>cd</code>, <code>ls</code>, <code>nano</code>).</li>
+    </ul>
+    <p>Perkiraan waktu: 1–2 jam untuk pertama kali.</p>
+  </Callout>
 
-  <main class="pt-20" style="background-color:#f8fafc;">
-    <article id="article-body" data-words={wordCount} data-wpm={WORDS_PER_MINUTE}
-      class="max-w-3xl mx-auto px-6 py-14" itemscope itemtype="https://schema.org/BlogPosting">
-      <meta itemprop="datePublished" content={datePublished} />
-      <meta itemprop="dateModified" content={dateModified} />
+  <h2>Langkah 1 — Membuat server di AWS EC2</h2>
+  <p>EC2 adalah komputer virtual milik AWS yang menyala 24 jam. Di sinilah aplikasi kita akan berjalan.</p>
+  <ol>
+    <li>Buka AWS Console, pilih <strong>EC2</strong>, lalu klik <strong>Launch instance</strong>.</li>
+    <li>Pilih sistem operasi <strong>Ubuntu Server 24.04 LTS</strong>.</li>
+    <li>Pilih tipe instance <code>t2.micro</code> atau <code>t3.micro</code>.</li>
+    <li>Pada <strong>Key pair</strong>, buat kunci baru dan unduh file <code>.pem</code>. Simpan baik-baik, file ini tidak bisa diunduh ulang.</li>
+    <li>Pada <strong>Network settings</strong>, izinkan tiga port berikut:
+      <ul>
+        <li><code>22</code> (SSH) — pilih <em>My IP</em> agar hanya kamu yang bisa masuk.</li>
+        <li><code>80</code> (HTTP) dan <code>443</code> (HTTPS) — dari mana saja (<em>Anywhere</em>).</li>
+      </ul>
+    </li>
+    <li>Klik <strong>Launch instance</strong>, lalu catat <strong>Public IPv4 address</strong>-nya.</li>
+  </ol>
+  <p>Sekarang masuk ke server dari terminal laptop:</p>
+  <CodeBlock code={codeSSH} label="Terminal (laptop)" />
+  <Callout type="check">
+    <p>Tampilan terminal berubah menjadi <code>ubuntu@ip-...:~$</code>. Artinya kamu sudah berada di dalam server.</p>
+  </Callout>
 
-      <a href="/blog/" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors mb-8">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
-        Kembali ke Blog
-      </a>
+  <h2>Langkah 2 — Memasang Docker di server</h2>
+  <p>Docker membuat setiap bagian aplikasi berjalan di "kotak" (container) masing-masing, sehingga hasilnya sama persis di laptop maupun di server.</p>
+  <CodeBlock code={codeDocker} label="Terminal (server)" />
+  <p>Keluar dari server (<code>exit</code>), lalu masuk lagi dengan perintah SSH di Langkah 1 agar izin grup <code>docker</code> berlaku. Setelah itu jalankan:</p>
+  <CodeBlock code={codeDockerCheck} label="Terminal (server)" />
+  <Callout type="check">
+    <p>Muncul nomor versi Docker dan Docker Compose, serta pesan <code>Hello from Docker!</code>.</p>
+  </Callout>
 
-      <header class="mb-10">
-        <div class="flex flex-wrap items-center gap-3 mb-4">
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">Tutorial</span>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Tutorial</span>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Go Fiber</span>
-          <time datetime={datePublished} class="text-xs text-slate-400">28 April 2026</time>
-          <span class="text-xs text-slate-400" title={`${wordCount.toLocaleString("id-ID")} kata`}>· {readMinutes} menit baca</span>
-        </div>
+  <h2>Langkah 3 — Menyiapkan struktur proyek</h2>
+  <p>Agar semua file mudah ditemukan, susun repository seperti ini:</p>
+  <CodeBlock code={codeTree} label="Struktur folder" />
 
-        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4" itemprop="headline">
-          Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker &amp; GitHub Actions CI/CD
-        </h1>
-        <p class="text-slate-500 text-base leading-relaxed" itemprop="description">
-          Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL,
-          sampai CI/CD pipeline otomatis yang berjalan tiap push ke main branch.
-          Semua berdasarkan pengalaman langsung deploy proyek
-          <a href="https://school.lananuranf.my.id/" class="text-sky-600 hover:underline">Letta School</a>.
-        </p>
+  <h2>Langkah 4 — Membuat Dockerfile</h2>
+  <p>
+    Dockerfile adalah "resep" untuk membuat image. Kita memakai <strong>multi-stage build</strong>:
+    tahap pertama memakai image besar untuk mengompilasi kode, tahap kedua hanya menyalin hasil jadinya.
+    Hasilnya, image backend yang awalnya ratusan MB bisa menjadi hanya belasan MB.
+  </p>
+  <h3>Backend (Go Fiber)</h3>
+  <p>Sesuaikan <code>./cmd/main.go</code> dengan lokasi file <code>main</code> di proyekmu.</p>
+  <CodeBlock code={codeDockerfileBackend} label="backend/Dockerfile" />
+  <h3>Frontend (React)</h3>
+  <p>React di-build menjadi file statis, lalu disajikan oleh Nginx. Cara ini jauh lebih ringan daripada menjalankan server development.</p>
+  <CodeBlock code={codeDockerfileFrontend} label="frontend/Dockerfile" />
+  <CodeBlock code={codeNginxFrontend} label="frontend/nginx-frontend.conf" />
+  <Callout type="tip">
+    <p>Di frontend, panggil API dengan alamat relatif seperti <code>/api/users</code>, bukan <code>http://localhost:8080/users</code>. Nginx yang akan meneruskannya ke backend.</p>
+  </Callout>
 
-        <div class="flex items-center gap-3 mt-5 pt-5 border-t border-slate-200">
-          <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white text-sm font-bold">L</div>
-          <div>
-            <p class="text-sm font-semibold text-slate-800" itemprop="author" itemscope itemtype="https://schema.org/Person">
-              <span itemprop="name">Maulana Nur Anfajm</span>
-              <span class="text-slate-400 font-normal"> (Lananuranf)</span>
-            </p>
-            <p class="text-xs text-slate-400">Software Engineer · Mahasiswa Universitas Gunadarma</p>
-          </div>
-        </div>
-      </header>
+  <h2>Langkah 5 — Menyatukan semuanya dengan Docker Compose</h2>
+  <p>Docker Compose menjalankan keempat container sekaligus dengan satu perintah dan menghubungkan mereka dalam satu jaringan. Di dalam jaringan itu, setiap container bisa dipanggil memakai nama service-nya, misalnya <code>db</code> atau <code>backend</code>.</p>
+  <CodeBlock code={codeCompose} label="docker-compose.yml" />
+  <p>Nilai rahasia seperti password disimpan terpisah di file <code>.env</code>, di folder yang sama:</p>
+  <CodeBlock code={codeEnv} label=".env" />
+  <Callout type="warn">
+    <p>Tambahkan <code>.env</code> ke <code>.gitignore</code>. File ini hanya dibuat langsung di server dan tidak boleh masuk ke GitHub.</p>
+  </Callout>
 
-      <div class="flex flex-wrap gap-2 mb-10 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-        <span class="text-xs font-semibold text-slate-500 w-full mb-1">Stack yang digunakan:</span>
-        {["React","Go Fiber","PostgreSQL","Docker","Docker Compose","AWS EC2","GitHub Actions","Nginx","SSL/HTTPS"].map(t => (
-          <span class="text-xs font-medium px-2.5 py-1 bg-white border border-slate-200 rounded-full text-slate-600">{t}</span>
-        ))}
-      </div>
+  <h2>Langkah 6 — Mengarahkan domain dan memasang HTTPS</h2>
+  <p>Di pengelola DNS domainmu, buat dua <strong>A record</strong>: <code>@</code> dan <code>www</code>, keduanya mengarah ke IP publik EC2. Tunggu beberapa menit sampai aktif, lalu minta sertifikat gratis dari Let's Encrypt:</p>
+  <CodeBlock code={codeCertbot} label="Terminal (server)" />
+  <p>Setelah sertifikat terbit, buat konfigurasi Nginx utama. Ganti <code>domainkamu.com</code> dengan domainmu.</p>
+  <CodeBlock code={codeNginxConf} label="nginx/nginx.conf" />
 
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm" itemprop="articleBody">
+  <h2>Langkah 7 — Deploy pertama kali</h2>
+  <CodeBlock code={codeFirstDeploy} label="Terminal (server)" />
+  <Callout type="check">
+    <p>Buka <code>https://domainkamu.com</code> di browser. Halaman aplikasi tampil dan ada ikon gembok di address bar.</p>
+  </Callout>
+  <p>Jika ada yang belum berjalan, lihat log service yang bermasalah:</p>
+  <CodeBlock code={codeLogs} label="Terminal (server)" />
 
-        <h2>Pendahuluan</h2>
-        <p>Salah satu skill yang paling berguna tapi jarang diajarkan di kampus adalah bagaimana cara deploy aplikasi ke internet secara benar — bukan cuma "bisa diakses", tapi production-grade: aman, otomatis, dan mudah dimaintain.</p>
-        <p>Artikel ini adalah panduan lengkap yang saya tulis berdasarkan pengalaman langsung men-deploy <strong>Letta School</strong>, sebuah fullstack school management system dengan React di frontend dan Go Fiber di backend.</p>
+  <h2>Langkah 8 — Deploy otomatis dengan GitHub Actions</h2>
+  <p>Supaya tidak perlu masuk ke server setiap kali ada perubahan, kita minta GitHub yang melakukannya.</p>
+  <ol>
+    <li>Di repository GitHub, buka <strong>Settings → Secrets and variables → Actions</strong>.</li>
+    <li>Tambahkan <code>EC2_HOST</code> berisi IP publik server.</li>
+    <li>Tambahkan <code>EC2_SSH_KEY</code> berisi seluruh isi file <code>.pem</code>.</li>
+    <li>Buat file workflow berikut, lalu commit dan push.</li>
+  </ol>
+  <CodeBlock code={codeGHActions} label=".github/workflows/deploy.yml" />
+  <Callout type="warn">
+    <p>Karena port 22 hanya terbuka untuk IP kamu, GitHub tidak akan bisa masuk. Untuk percobaan, kamu bisa membuka port 22 ke <em>Anywhere</em>; untuk jangka panjang, pertimbangkan cara yang lebih aman seperti AWS Systems Manager.</p>
+    <p>Jika repository bersifat private, server juga perlu izin untuk <code>git pull</code>, misalnya dengan menambahkan <em>deploy key</em> di pengaturan repository.</p>
+  </Callout>
+  <Callout type="check">
+    <p>Buka tab <strong>Actions</strong> di GitHub. Workflow berwarna hijau, dan perubahanmu muncul di website dalam beberapa menit.</p>
+  </Callout>
 
-        <div class="not-prose bg-amber-50 border border-amber-200 rounded-2xl p-5 my-6">
-          <p class="text-sm font-semibold text-amber-800 mb-2">⚡ Yang akan kamu pelajari:</p>
-          <ul class="text-sm text-amber-700 list-disc list-inside space-y-1">
-            <li>Setup AWS EC2 instance (Ubuntu) dari nol</li>
-            <li>Dockerize React app dan Go Fiber app</li>
-            <li>Orchestrate multi-container dengan Docker Compose</li>
-            <li>Konfigurasi Nginx reverse proxy + SSL dengan Let's Encrypt</li>
-            <li>Build GitHub Actions CI/CD pipeline yang fully automated</li>
-            <li>Tips production: health check, restart policy, environment variables</li>
-          </ul>
-        </div>
+  <h2>Langkah 9 — Perawatan rutin</h2>
+  <p>Sertifikat Let's Encrypt berlaku 90 hari. Atur agar diperpanjang otomatis setiap bulan:</p>
+  <CodeBlock code={codeRenew} label="Terminal (server)" />
+  <ul>
+    <li><strong>Cadangkan database</strong> secara berkala, misalnya dengan <code>pg_dump</code>.</li>
+    <li><strong>Pantau sisa disk</strong> dengan <code>df -h</code>; image lama dibersihkan oleh <code>docker image prune</code> di workflow.</li>
+  </ul>
 
-        <h2>Prasyarat</h2>
-        <ul>
-          <li>Akun AWS (bisa pakai free tier untuk EC2 t2.micro)</li>
-          <li>Domain yang sudah diarahkan ke IP EC2 (untuk SSL)</li>
-          <li>Pemahaman dasar Docker dan Linux command line</li>
-          <li>Repository GitHub dengan kode React + Go Fiber</li>
-        </ul>
+  <h2>Masalah yang sering muncul</h2>
+  <ul>
+    <li><strong><code>permission denied</code> saat menjalankan docker</strong> — kamu belum keluar-masuk ulang setelah Langkah 2.</li>
+    <li><strong>Backend gagal terhubung ke database</strong> — pastikan <code>DB_HOST</code> bernilai <code>db</code>, bukan <code>localhost</code>.</li>
+    <li><strong>Certbot gagal</strong> — DNS belum mengarah ke server, atau port 80 sedang dipakai container lain.</li>
+    <li><strong>Halaman React 404 saat di-refresh</strong> — periksa baris <code>try_files</code> di <code>nginx-frontend.conf</code>.</li>
+    <li><strong>Server kehabisan memori saat build</strong> — instance 1 GB cukup sempit; tambahkan swap 1–2 GB.</li>
+  </ul>
 
-        <h2>Langkah 1: Setup AWS EC2 Instance</h2>
-        <p>Login ke AWS Console → EC2 → <strong>"Launch Instance"</strong>. Pilih <strong>Ubuntu Server 22.04 LTS</strong>. Instance type <code>t2.micro</code> cukup untuk project kecil-menengah (masuk free tier).</p>
-        <p><strong>Security Group</strong> — buka port berikut:</p>
-        <ul>
-          <li><code>22</code> (SSH) — restrict ke IP kamu saja</li>
-          <li><code>80</code> (HTTP) — dari mana saja</li>
-          <li><code>443</code> (HTTPS) — dari mana saja</li>
-        </ul>
-        <p>Download file <code>.pem</code>, simpan aman, lalu koneksi SSH:</p>
-      </div>
-
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeSSH} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Langkah 2: Install Docker di EC2</h2>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDocker} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Langkah 3: Dockerize Go Fiber Backend</h2>
-        <p>Pakai <strong>multi-stage build</strong> untuk meminimalkan ukuran image — dari ~300MB jadi hanya ~15MB:</p>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDockerfileBackend} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Langkah 4: Dockerize React Frontend</h2>
-        <p>React di-build jadi static files, lalu di-serve Nginx. Jauh lebih efisien dari <code>npm start</code> di production:</p>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDockerfileFrontend} /></pre>
-      <p class="text-slate-600 text-sm my-3">Konfigurasi Nginx untuk handle React Router (SPA fallback):</p>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeNginxFrontend} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Langkah 5: Docker Compose</h2>
-        <p>Orchestrate semua service (db, backend, frontend, nginx) dalam satu file:</p>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCompose} /></pre>
-      <p class="text-slate-600 text-sm my-3">Buat file <code>.env</code> di server (jangan di-commit ke Git!):</p>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeEnv} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Langkah 6: Nginx Reverse Proxy + SSL</h2>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCertbot} /></pre>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeNginxConf} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Langkah 7: GitHub Actions CI/CD Pipeline</h2>
-        <p>Buat <code>.github/workflows/deploy.yml</code>. Setiap push ke <code>main</code> → security scan → deploy otomatis:</p>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeGHActions} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <p>Tambahkan secrets di GitHub → Settings → Secrets: <code>EC2_HOST</code> dan <code>EC2_SSH_KEY</code>.</p>
-        <h2>Langkah 8: First Deployment</h2>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeFirstDeploy} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <h2>Tips untuk Production</h2>
-        <ul>
-          <li><strong>Auto-renew SSL:</strong> Setup cron job:</li>
-        </ul>
-      </div>
-      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCron} /></pre>
-
-      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
-        <ul>
-          <li><strong>Database backup:</strong> Setup cronjob backup PostgreSQL ke S3 secara rutin.</li>
-          <li><strong>Jangan commit .env:</strong> Tambahkan <code>.env</code> ke <code>.gitignore</code>.</li>
-          <li><strong>Resource limit:</strong> Tambahkan memory dan CPU limits di docker-compose.yml.</li>
-        </ul>
-
-        <h2>Hasil Akhir</h2>
-        <p>Workflow deployment kamu jadi: push ke <code>main</code> → GitHub Actions scan security → SSH ke EC2 → <code>docker compose up --build -d</code> → aplikasi live dalam 2-3 menit tanpa manual intervention. Ini persis workflow yang dipakai untuk deploy <a href="https://school.lananuranf.my.id/">Letta School</a>.</p>
-
-        <div class="not-prose bg-slate-50 border border-slate-200 rounded-2xl p-6 mt-8">
-          <p class="font-semibold text-slate-800 mb-1">Tentang penulis</p>
-          <p class="text-sm text-slate-600">
-            <strong>Maulana Nur Anfajm</strong> (Lananuranf) — mahasiswa Sistem Informasi Universitas Gunadarma semester 7. Software engineer yang membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL.
-            <a href="/" class="text-sky-600 hover:underline">Lihat portfolio lengkap →</a>
-          </p>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-2 mt-10 pt-8 border-t border-slate-200">
-        {["Docker","AWS EC2","Go Fiber","React","GitHub Actions","CI/CD","Nginx","SSL","Tutorial"].map(t => (
-          <span class="text-xs font-medium px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full">{t}</span>
-        ))}
-      </div>
-
-      <div class="mt-10 p-6 bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200 rounded-3xl text-center">
-        <p class="font-bold text-slate-900 mb-1">Ada pertanyaan atau feedback?</p>
-        <p class="text-sm text-slate-500 mb-4">Hubungi gua langsung — happy to discuss!</p>
-        <div class="flex justify-center gap-3 flex-wrap">
-          <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-sky-500 text-white font-semibold rounded-xl text-sm hover:bg-sky-600 transition-colors">Email Gua</a>
-          <a href="https://github.com/Lananuranf" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors">GitHub</a>
-          <a href="/" class="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-50 transition-colors">Lihat Portfolio</a>
-        </div>
-      </div>
-
-    </article>
-  </main>
-
-  <Footer />
-</BaseLayout>
-
-<script>
-  // Sisa waktu baca dihitung langsung dari posisi scroll di dalam artikel.
-  const article = document.getElementById("article-body");
-  const bar = document.getElementById("read-progress");
-  const pill = document.getElementById("read-remaining");
-
-  if (article && bar && pill) {
-    const words = Number(article.dataset.words) || 0;
-    const wpm = Number(article.dataset.wpm) || 200;
-    let ticking = false;
-
-    const update = () => {
-      ticking = false;
-      const rect = article.getBoundingClientRect();
-      const scrollable = rect.height - window.innerHeight;
-      const progress = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 1;
-      bar.style.width = `${(progress * 100).toFixed(1)}%`;
-
-      const leftMin = Math.ceil((words * (1 - progress)) / wpm);
-      pill.textContent = progress >= 0.98 ? "Selesai dibaca ✓" : `Sisa ± ${leftMin} menit · ${Math.round(progress * 100)}%`;
-
-      const show = progress > 0.02;
-      pill.classList.toggle("opacity-0", !show);
-      pill.classList.toggle("translate-y-2", !show);
-    };
-
-    const onScroll = () => {
-      if (!ticking) { ticking = true; requestAnimationFrame(update); }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-  }
-</script>
+  <h2>Ringkasan</h2>
+  <p>
+    Alur akhirnya: kamu <code>push</code> ke <code>main</code> → GitHub Actions masuk ke server →
+    <code>git pull</code> → <code>docker compose up --build -d</code> → aplikasi versi terbaru langsung aktif.
+    Semua bagian aplikasi berjalan terpisah di container, rahasia disimpan di <code>.env</code>,
+    dan pengunjung selalu terhubung lewat HTTPS.
+  </p>
+</ArticleLayout>
