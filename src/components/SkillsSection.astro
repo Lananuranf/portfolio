@@ -60,11 +60,38 @@ const GROUPS: Group[] = [
   },
 ];
 
-const SOFT_SKILLS = [
-  "Debugging sampai akar masalah",
-  "Belajar dari dokumentasi resmi",
-  "Menulis README dan dokumentasi API",
-  "Komunikasi lewat issue dan PR",
+// Ikon: path SVG outline 24x24 (stroke), sama gaya untuk semua kartu.
+const SOFT_SKILLS: { name: string; note: string; icon: string }[] = [
+  {
+    name: "Manajemen Waktu",
+    note: "Kuliah semester 7 sambil menyelesaikan 3 proyek backend",
+    icon: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  },
+  {
+    name: "Scrum / Agile",
+    note: "Ruang Rasa dikerjakan per sprint, satu sprint satu milestone",
+    icon: '<path d="M4 12a8 8 0 0 1 14-5.3"/><path d="M18 3v4h-4"/><path d="M20 12a8 8 0 0 1-14 5.3"/><path d="M6 21v-4h4"/>',
+  },
+  {
+    name: "Manajemen Prioritas",
+    note: "Scope Ruang Rasa dipangkas sesuai budget, fitur inti dulu",
+    icon: '<path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h5"/>',
+  },
+  {
+    name: "Problem Solving",
+    note: "250+ test otomatis untuk melacak dan mengunci bug di backend",
+    icon: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  },
+  {
+    name: "Belajar Mandiri",
+    note: "Belajar Go, lalu Rust, dari dokumentasi resmi",
+    icon: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/>',
+  },
+  {
+    name: "Komunikasi Tertulis",
+    note: "README, kontrak API, dan 3 artikel teknis di blog",
+    icon: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/>',
+  },
 ];
 ---
 
@@ -106,11 +133,19 @@ const SOFT_SKILLS = [
       ))}
     </div>
 
-    <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 justify-center text-center">
-      <span class="text-xs font-semibold tracking-widest text-ink-muted uppercase">Soft skill</span>
-      <ul class="flex flex-wrap justify-center gap-2 list-none p-0 m-0">
+    <div class="mt-10">
+      <p class="text-center text-xs font-semibold tracking-widest text-ink-muted uppercase mb-4">Soft skill</p>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 list-none p-0 m-0">
         {SOFT_SKILLS.map((s) => (
-          <li class="px-3 py-1.5 rounded-full bg-lavender-soft text-lavender-deep text-sm font-medium">{s}</li>
+          <li class="flex items-start gap-3 p-4 rounded-2xl border border-line bg-white shadow-sm transition-colors hover:border-pink-brand">
+            <span class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-lavender-soft text-lavender-deep" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={s.icon} />
+            </span>
+            <span class="min-w-0">
+              <span class="block text-sm font-bold text-ink leading-tight">{s.name}</span>
+              <span class="block text-xs text-ink-muted mt-1 leading-snug">{s.note}</span>
+            </span>
+          </li>
         ))}
       </ul>
     </div>

@@ -17,6 +17,15 @@ export interface Post {
 
 const RAW: Post[] = [
   {
+    slug: "/blog/mencegah-double-booking-reservasi-rust/",
+    title: "Mencegah Double Booking di Backend Reservasi Rust dengan SELECT FOR UPDATE dan Idempotency-Key",
+    desc: "Cara saya menjaga kapasitas kursi di backend Ruang Rasa (Rust, Axum, PostgreSQL) tetap benar saat banyak orang memesan bersamaan, lengkap dengan test 50 request paralel.",
+    date: "12 November 2026",
+    tags: ["Rust","Axum","PostgreSQL","Backend","Concurrency"],
+    published: true,
+    file: "src/pages/blog/mencegah-double-booking-reservasi-rust.astro",
+  },
+  {
     slug: "/blog/cara-deploy-react-go-docker-aws/",
     title: "Cara Deploy Aplikasi React + Go Fiber ke AWS EC2 dengan Docker",
     desc: "Panduan langkah demi langkah untuk pemula: menyiapkan server EC2, Docker Compose, HTTPS, sampai deploy otomatis setiap push ke GitHub.",
@@ -36,7 +45,8 @@ const RAW: Post[] = [
   },
 ];
 
-export const POSTS: Post[] = [RAW[1], RAW[0], ...RAW.slice(2)].map(p => ({
+// Urutan tampil: terbaru di atas.
+export const POSTS: Post[] = [RAW[0], RAW[2], RAW[1], ...RAW.slice(3)].map(p => ({
   ...p,
   readTime: p.published && p.file ? readingTimeLabel(p.file) : undefined,
 }));

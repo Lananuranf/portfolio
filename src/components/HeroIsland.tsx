@@ -2,7 +2,6 @@
 // Foto profil diambil dari /public/Profile.jpg. Animasi dimatikan bila pengguna memilih reduced motion.
 import { type ReactElement } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import CVDownloadButton from "./CVDownloadButton.tsx";
 import { siGithub, siInstagram } from "simple-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
@@ -105,7 +104,6 @@ export default function HeroIsland(): ReactElement {
                 />
               </svg>
             </a>
-            <CVDownloadButton />
             <ul className="flex items-center gap-2" aria-label="Media sosial">
               {SOCIAL.map((s) => (
                 <li key={s.name}>
@@ -138,7 +136,7 @@ export default function HeroIsland(): ReactElement {
             <img
               src="/Profile.jpg"
               alt="Foto Maulana Nur Anfajm (Lananuranf)"
-              className="block h-56 w-56 md:h-72 md:w-72 rounded-[1.6rem] object-cover bg-white"
+              className="block h-56 w-56 sm:h-64 sm:w-64 md:h-72 md:w-72 max-w-[calc(100vw-4rem)] max-h-[calc(100vw-4rem)] rounded-[1.6rem] object-cover object-[50%_40%] bg-white"
               width={288}
               height={288}
               fetchPriority="high"

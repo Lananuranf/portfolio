@@ -1,0 +1,303 @@
+---
+// src/pages/blog/mencegah-double-booking-reservasi-rust.astro
+import ArticleLayout from '../../components/blog/ArticleLayout.astro';
+import CodeBlock from '../../components/blog/CodeBlock.astro';
+import Callout from '../../components/blog/Callout.astro';
+
+const codeLock = `let mut tx = pool.begin().await?;
+// ... cek status user, klaim Idempotency-Key (lihat bagian berikutnya)
+
+let area: Option<(i32, String, String)> = sqlx::query_as(
+    "SELECT a.capacity_seats, rs.timezone, rs.name FROM dining_areas a \\
+     JOIN restaurants rs ON rs.id = a.restaurant_id \\
+     WHERE a.id = $1 AND a.restaurant_id = $2 AND rs.status = 'ACTIVE' FOR UPDATE OF a",
+)
+.bind(n.area_id)
+.bind(n.restaurant_id)
+.fetch_optional(&mut *tx)
+.await?;
+let (capacity, tz_name, rest_name) = area.ok_or(RsvError::NotFound)?;
+
+// ... validasi policy dan slot jadwal
+let ends_at = n.starts_at + Duration::minutes(policy.duration_minutes.into());
+let used: i32 = sqlx::query_scalar(&format!(
+    "SELECT COALESCE(SUM(party_size), 0)::int FROM reservations \\
+     WHERE area_id = $1 AND status IN {ACTIVE} AND starts_at < $3 AND ends_at > $2"
+))
+.bind(n.area_id)
+.bind(n.starts_at)
+.bind(ends_at)
+.fetch_one(&mut *tx)
+.await?;
+if capacity - used < n.party_size {
+    return Err(RsvError::SlotUnavailable);
+}`;
+
+const codeIdem = `// INSERT yang bentrok menunggu transaksi pemegang kunci selesai (commit/rollback).
+let claimed = sqlx::query(
+    "INSERT INTO idempotency_keys (user_id, key, request_hash, status, body) \\
+     VALUES ($1, $2, $3, 0, 'null'::jsonb) ON CONFLICT DO NOTHING",
+)
+.bind(n.user_id)
+.bind(idem_key)
+.bind(req_hash)
+.execute(&mut *tx)
+.await?
+.rows_affected()
+    == 1;
+if !claimed {
+    let (hash, st, body): (String, i32, Value) = sqlx::query_as(
+        "SELECT request_hash, status, body FROM idempotency_keys WHERE user_id = $1 AND key = $2",
+    )
+    .bind(n.user_id)
+    .bind(idem_key)
+    .fetch_one(&mut *tx)
+    .await?;
+    return if hash == req_hash {
+        Ok((Created::Replay(st, body), vec![]))
+    } else {
+        Err(RsvError::IdempotencyMismatch)
+    };
+}`;
+
+const codeTest = `#[sqlx::test(migrations = "../../migrations")]
+async fn tc_rsv_03_parallel_overbooking_only_one_wins(pool: PgPool) {
+    let app = app(pool.clone());
+    // satu restoran dengan satu area berkapasitas 4 kursi
+    let w = world(&pool, &app, "Asia/Jakarta", "10:00", "22:00", &[4]).await;
+    let diner = login(&app, "081200000002").await;
+    let starts = w.at(2, "12:00");
+    let mut hs = Vec::new();
+    for _ in 0..50 {
+        // ... clone app, token, area; setiap request memakai key() baru
+        hs.push(tokio::spawn(async move {
+            send(&a, Method::POST, "/api/v1/reservations",
+                Some(json!({"restaurant_id": rid, "area_id": area, "starts_at": s,
+                            "party_size": 4, "guest_name": "Budi"})),
+                Some(&t), &[("Idempotency-Key", &k)]).await
+        }));
+    }
+    let (mut ok, mut conflict) = (0, 0);
+    for h in hs {
+        let (s, v) = h.await.unwrap();
+        match s {
+            StatusCode::CREATED => ok += 1,
+            StatusCode::CONFLICT => {
+                assert_eq!(v["code"], "RSV_SLOT_UNAVAILABLE");
+                conflict += 1
+            }
+            other => panic!("status tak terduga {other}: {v}"),
+        }
+    }
+    assert_eq!((ok, conflict), (1, 49));
+    // ... lalu cek total kursi PENDING di database tetap 4
+}`;
+
+const codeRun = `cd services/api
+cargo test -p api --test reservation tc_rsv_03`;
+
+const codeNotify = `// chat_repo.rs: NOTIFY ke hub. Di dalam transaksi, terkirim saat commit.
+async fn notify(conn: &mut PgConnection, ev: &Value) -> Result<(), sqlx::Error> {
+    sqlx::query("SELECT pg_notify($1, $2)")
+        .bind(CHANNEL)
+        .bind(ev.to_string())
+        .execute(conn)
+        .await?;
+    Ok(())
+}
+
+// chat_hub.rs: satu listener per proses, tersambung ulang kalau putus
+loop {
+    match PgListener::connect_with(&pool).await {
+        Ok(mut l) => {
+            if let Err(e) = l.listen(CHANNEL).await {
+                tracing::warn!(error = %e, "chat: LISTEN gagal");
+            } else {
+                loop {
+                    match l.recv().await {
+                        Ok(n) => dispatch(&inner, &pool, n.payload()).await,
+                        Err(e) => {
+                            tracing::warn!(error = %e, "chat: listener putus");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        Err(e) => tracing::warn!(error = %e, "chat: listener gagal konek"),
+    }
+    tokio::time::sleep(Duration::from_secs(1)).await;
+}`;
+---
+
+<ArticleLayout
+  slug="mencegah-double-booking-reservasi-rust"
+  file="src/pages/blog/mencegah-double-booking-reservasi-rust.astro"
+  title="Mencegah Double Booking di Backend Reservasi Rust dengan SELECT FOR UPDATE dan Idempotency-Key"
+  desc="Cara saya menjaga kapasitas kursi di backend Ruang Rasa (Rust, Axum, PostgreSQL) tetap benar saat banyak orang memesan bersamaan, lengkap dengan test 50 request paralel."
+  datePublished="2026-11-12"
+  dateLabel="12 November 2026"
+  category="Backend"
+  tags={["Rust","Axum","PostgreSQL","Backend","Concurrency"]}
+  keywords="double booking reservasi rust axum sqlx postgresql select for update idempotency key race condition test paralel listen notify indonesia"
+>
+  <p>
+    <a href="/projects/ruang-rasa/">Ruang Rasa</a> adalah aplikasi reservasi meja restoran. Backend-nya saya
+    tulis dengan Rust (Axum 0.8, Tokio, SQLx) di atas PostgreSQL 16. Dari semua fitur, reservasi yang paling
+    bikin saya was-was. Bayangkan dua orang menekan tombol pesan untuk area yang sama di jam yang sama,
+    padahal kursinya tinggal empat. Kalau backend lengah, keduanya dapat konfirmasi dan restoran yang
+    menanggung akibatnya di hari H.
+  </p>
+  <p>
+    Tulisan ini membahas cara saya menutup celah itu dengan dua lapis pengaman. Lapis pertama adalah kunci baris
+    di database lewat <code>SELECT ... FOR UPDATE</code>. Lapis kedua adalah header <code>Idempotency-Key</code>
+    untuk request yang terkirim ulang. Di bagian akhir ada sedikit cerita tentang chat realtime yang sampai
+    sekarang jalan tanpa Redis.
+  </p>
+
+  <h2>Ringkasan</h2>
+  <ul>
+    <li>Kapasitas dihitung dalam kursi per area makan. Pengecekan dan penyimpanan terjadi di satu transaksi yang mengunci baris area dengan <code>FOR UPDATE OF a</code>.</li>
+    <li>Setiap <code>POST /api/v1/reservations</code> wajib membawa <code>Idempotency-Key</code>. Kunci beserta hash isi request disimpan di tabel <code>idempotency_keys</code> dan berlaku 24 jam.</li>
+    <li>Test <code>tc_rsv_03</code> mengirim 50 request bersamaan ke area berkapasitas 4 kursi. Hasilnya 1 berhasil dan 49 ditolak dengan <code>RSV_SLOT_UNAVAILABLE</code>.</li>
+    <li>Chat memakai WebSocket ditambah <code>LISTEN/NOTIFY</code> PostgreSQL, jadi saya belum memasang Redis.</li>
+  </ul>
+
+  <h2>Celah di antara cek dan simpan</h2>
+  <p>
+    Alur reservasi versi paling sederhana punya tiga langkah. Baca kapasitas area, jumlahkan kursi yang sudah
+    dipesan di rentang waktu yang beririsan, lalu <code>INSERT</code> kalau sisanya cukup. Celahnya ada di jeda
+    antara langkah kedua dan ketiga. Dua transaksi bisa membaca angka yang sama, sama-sama merasa kursinya
+    masih ada, lalu sama-sama menyimpan. Dengan isolasi bawaan PostgreSQL (<code>READ COMMITTED</code>), kejadian
+    ini sangat mungkin begitu traffic agak ramai.
+  </p>
+  <p>
+    Urusannya makin rumit karena setiap reservasi punya durasi yang diatur restoran. Dengan durasi 90 menit,
+    reservasi jam 12.00 dan jam 12.30 sama-sama memakai kursi antara 12.30 dan 13.30. Yang dijaga adalah jumlah
+    kursi di sebuah rentang waktu, dan constraint <code>UNIQUE</code> biasa tidak bisa mengungkapkan aturan
+    seperti itu.
+  </p>
+
+  <h2>Mengunci baris area dengan FOR UPDATE</h2>
+  <p>
+    Saya membuat pembuatan reservasi berjalan dalam satu transaksi. Sebelum menghitung apa pun, transaksi itu
+    mengunci baris area makan yang dituju. Potongan di bawah diambil dari <code>reservation_repo.rs</code>,
+    beberapa bagian saya pendekkan.
+  </p>
+  <CodeBlock code={codeLock} label="crates/infra/src/reservation_repo.rs" />
+  <p>
+    Transaksi kedua yang menyasar area yang sama akan tertahan di <code>FOR UPDATE</code> sampai transaksi pertama
+    commit atau rollback. Begitu gilirannya tiba, query <code>SUM(party_size)</code> dijalankan ulang dan
+    reservasi yang baru masuk sudah ikut terhitung. Kursi yang tersisa nol, fungsi mengembalikan
+    <code>SlotUnavailable</code>, dan API menjawab <code>409</code> dengan body error format RFC 9457.
+  </p>
+  <p>
+    Klausa <code>OF a</code> membuat yang terkunci hanya baris area. Baris restoran yang ikut di-<code>JOIN</code>
+    tidak ikut dikunci, jadi proses lain yang membaca atau mengubah data restoran tidak perlu antre.
+  </p>
+
+  <h3>Kenapa yang dikunci baris area</h3>
+  <p>
+    Saat transaksi dimulai, baris reservasi untuk slot itu belum ada, jadi tidak ada yang bisa dikunci di tabel
+    reservasi. Baris area selalu ada dan semua pemesanan ke area itu pasti melewatinya. Cakupannya juga sempit.
+    Pemesanan ke area lain atau restoran lain tetap berjalan paralel.
+  </p>
+  <p>
+    Pilihan lain yang aman adalah isolasi <code>SERIALIZABLE</code>. Konsekuensinya, transaksi yang kalah
+    dibatalkan PostgreSQL dan aplikasi harus mengulanginya sendiri. Untuk kasus ini saya lebih suka antrean yang
+    jelas di satu baris daripada menulis logika retry.
+  </p>
+
+  <Callout type="info" title="Satu kunci lagi di baris user">
+    <p>
+      Di awal transaksi ada <code>SELECT status FROM users ... FOR SHARE</code>. Tujuannya supaya reservasi baru
+      tidak bisa lolos bersamaan dengan proses hapus akun, yang mengunci baris user yang sama dengan
+      <code>FOR UPDATE</code>.
+    </p>
+  </Callout>
+
+  <h2>Idempotency-Key untuk request yang terkirim dua kali</h2>
+  <p>
+    Kunci baris menyelesaikan rebutan antar pengguna. Ada satu kasus lagi yang datang dari satu pengguna saja.
+    Sinyal HP putus tepat setelah request terkirim, aplikasi mencoba lagi, dan server menerima dua request
+    dengan isi yang sama. Tanpa penanganan khusus, orang itu bisa punya dua reservasi.
+  </p>
+  <p>
+    Karena itu klien wajib mengirim header <code>Idempotency-Key</code> sepanjang 8 sampai 64 karakter
+    (<code>A-Za-z0-9-_</code>). Handler menghitung SHA-256 dari isi request, yaitu restoran, area, waktu mulai,
+    jumlah orang, nama tamu, dan catatan. Kunci itu kemudian diklaim di transaksi yang sama dengan pembuatan
+    reservasi.
+  </p>
+  <CodeBlock code={codeIdem} label="crates/infra/src/reservation_repo.rs" />
+  <p>
+    Primary key tabelnya <code>(user_id, key)</code>, jadi kunci yang sama milik dua user berbeda tidak
+    bentrok. Kalau <code>INSERT</code> gagal karena konflik, server membaca baris yang sudah ada. Hash yang sama
+    berarti ini pengiriman ulang, dan server mengembalikan status serta body yang tersimpan tanpa membuat
+    reservasi baru. Hash yang berbeda berarti klien memakai kunci lama untuk isi yang lain. Untuk kasus itu
+    server menjawab <code>422 IDEMPOTENCY_MISMATCH</code>.
+  </p>
+  <p>
+    Kasus yang paling licin adalah dua request dengan kunci sama yang datang hampir bersamaan.
+    <code>INSERT</code> kedua akan menunggu sampai transaksi pertama selesai. Kalau transaksi pertama commit,
+    request kedua mendapat respons yang sama persis. Kalau transaksi pertama rollback, klaimnya ikut hilang dan
+    request kedua diproses dari awal. Ada test khusus untuk ini, yaitu 8 request paralel dengan kunci yang sama.
+    Semuanya mendapat <code>201</code> dan isi tabel reservasi tetap satu baris.
+  </p>
+
+  <h2>Membuktikannya dengan 50 request paralel</h2>
+  <p>
+    Semua penjelasan di atas masih teori sebelum ada test yang memaksanya. Test integrasi Ruang Rasa memakai
+    <code>#[sqlx::test]</code>, yang membuat database PostgreSQL baru untuk setiap test lalu menjalankan seluruh
+    migrasi. Test di bawah menyiapkan satu area berkapasitas 4 kursi, lalu menembakkan 50 request untuk 4 orang
+    di jam yang sama lewat <code>tokio::spawn</code>.
+  </p>
+  <CodeBlock code={codeTest} label="crates/api/tests/reservation.rs" />
+  <p>
+    Setiap request membawa <code>Idempotency-Key</code> yang berbeda, jadi yang diuji murni rebutan kursi.
+    Assertion-nya ketat. Harus tepat 1 yang berhasil dan 49 yang ditolak dengan <code>RSV_SLOT_UNAVAILABLE</code>.
+    Status lain langsung membuat test gagal. Di akhir, test mengecek total kursi berstatus
+    <code>PENDING</code> di database tetap 4.
+  </p>
+  <p>
+    Saya juga menulis test kedua untuk waktu yang saling beririsan. Isinya 36 request dengan tiga jam mulai
+    berbeda (12.00, 12.30, dan 13.00) ke area berkapasitas 6 kursi. Test itu memastikan jumlah kursi terpakai
+    tidak pernah melewati kapasitas. Secara keseluruhan backend ini punya 252 test, dan 89 di antaranya memakai
+    <code>#[sqlx::test]</code>.
+  </p>
+  <CodeBlock code={codeRun} label="Terminal" />
+  <Callout type="tip">
+    <p>
+      <code>#[sqlx::test]</code> butuh variabel <code>DATABASE_URL</code> yang mengarah ke server PostgreSQL.
+      Migrasi Ruang Rasa memakai ekstensi PostGIS dan pg_trgm, jadi pakai image PostgreSQL yang sudah
+      menyertakan keduanya.
+    </p>
+  </Callout>
+
+  <h2>Chat realtime tanpa Redis</h2>
+  <p>
+    Ruang Rasa punya chat antara pengunjung dan restoran lewat WebSocket. Pola yang sering saya lihat adalah
+    memasang Redis pub/sub supaya pesan bisa sampai ke koneksi yang dipegang proses mana pun. Saya memakai
+    <code>LISTEN/NOTIFY</code> bawaan PostgreSQL.
+  </p>
+  <CodeBlock code={codeNotify} label="crates/infra/src/chat_repo.rs + chat_hub.rs" />
+  <p>
+    <code>pg_notify</code> dipanggil di dalam transaksi yang menyimpan pesan. PostgreSQL baru mengirim notifikasi
+    saat commit, jadi pesan yang rollback tidak pernah sampai ke penerima. Payload-nya sengaja kecil, cukup id
+    percakapan. Hub lalu membaca daftar peserta dari database dan mengirim pesan ke koneksi WebSocket mereka.
+    Kalau koneksi listener putus, hub menyambung ulang setelah 1 detik.
+  </p>
+  <p>
+    Saat ini Ruang Rasa berjalan dengan Docker Compose dan Caddy di satu VPS Ubuntu. Untuk ukuran itu,
+    satu komponen yang tidak perlu dipasang berarti satu hal yang tidak perlu dipantau dan di-backup. Kalau API
+    nanti dijalankan lebih dari satu instance, setiap instance cukup mendengarkan channel yang sama. Redis baru
+    saya pertimbangkan kalau volume pesan mulai membebani PostgreSQL.
+  </p>
+
+  <h2>Kode lengkap</h2>
+  <p>
+    Semua potongan di atas berasal dari repo
+    <a href="https://github.com/Lananuranf/ruang-rasa-app" target="_blank" rel="noopener">github.com/Lananuranf/ruang-rasa-app</a>,
+    di folder <code>services/api</code>. Gambaran arsitektur, alur status reservasi, dan keputusan teknis lainnya
+    saya tulis di <a href="/projects/ruang-rasa/">halaman proyek Ruang Rasa</a>.
+  </p>
+</ArticleLayout>
