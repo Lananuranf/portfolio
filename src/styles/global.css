@@ -297,16 +297,17 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
 #toc-mobile[open] .toc-chevron { transform: rotate(180deg); }
 #toc-mobile[open] [data-toc-list] { animation: postPop .3s cubic-bezier(.2,.7,.2,1); }
 
-/* tombol kembali ke atas & toast (di atas dock bawah pada <1024px) */
-.to-top, .blog-toast { bottom: calc(5.75rem + env(safe-area-inset-bottom)); }
-@media (min-width: 1024px) { .to-top, .blog-toast { bottom: 2rem; } }
-.to-top { opacity: 0; translate: 0 12px; pointer-events: none; transition: opacity .3s ease, translate .3s cubic-bezier(.2,.7,.2,1); }
-.to-top.is-shown { opacity: 1; translate: 0 0; pointer-events: auto; }
+/* toast (di atas dock bawah pada <1024px) */
+.blog-toast { bottom: calc(5.75rem + env(safe-area-inset-bottom)); }
+@media (min-width: 1024px) { .blog-toast { bottom: 2rem; } }
+
+/* Lazy render: bagian di bawah layar baru digambar saat mendekati viewport */
+.lazy-section { content-visibility: auto; contain-intrinsic-size: auto 900px; }
 .blog-toast { opacity: 0; translate: -50% 10px; pointer-events: none; transition: opacity .25s ease, translate .25s ease; }
 .blog-toast.is-shown { opacity: 1; translate: -50% 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .post-pop, #toc-mobile[open] [data-toc-list] { animation: none; }
   .code-glass, .code-glass:hover, .article-prose img, .article-prose img:hover { transform: none; transition: none; }
-  .to-top, .blog-toast, .tag-chip { transition: none; }
+  .blog-toast, .tag-chip { transition: none; }
 }

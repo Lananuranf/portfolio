@@ -61,7 +61,7 @@ const PROJECTS: Project[] = [
 const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo) : Promise.resolve(null)));
 ---
 
-<section id="projects" class="glass-scene scene-sky px-4 sm:px-6 py-24 bg-surface" aria-labelledby="projects-heading">
+<section id="projects" class="lazy-section glass-scene scene-sky px-4 sm:px-6 py-24 bg-surface" aria-labelledby="projects-heading">
   <div class="max-w-6xl mx-auto">
 
     <div class="text-center mb-12" data-reveal>
