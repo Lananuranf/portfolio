@@ -1,75 +1,23 @@
-# React + TypeScript + Vite
+# lananuranf.my.id
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio Maulana Nur Anfajm (Lananuranf), backend engineer: Go, Rust, PostgreSQL, Docker, AWS EC2.
 
-Currently, two official plugins are available:
+Dibangun dengan Astro 5 + Tailwind CSS v4, dideploy di Vercel.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Perintah
 
-## React Compiler
+| Perintah | Fungsi |
+| --- | --- |
+| `npm run dev` | Server pengembangan di localhost:4321 |
+| `npm run build` | Build statis ke `dist/` |
+| `npm run cv` | Render `cv/cv.html` menjadi `public/cv.pdf` |
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Palet
 
-Note: This will impact Vite dev & build performances.
+| Token | Hex | Pemakaian |
+| --- | --- | --- |
+| rose-brand | #FA699E | Aksi utama, link |
+| pink-brand | #FF9FC7 | Highlight, gradient |
+| lavender | #C9B5E0 | Aksen sekunder |
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Token lengkap ada di `src/styles/global.css`.

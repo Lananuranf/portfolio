@@ -1,14 +1,97 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-html {
-  scroll-behavior: smooth;
+/* ==== Design tokens (sumber tunggal palet) ====
+   Primary  : #FA699E (rose)  -> aksi utama, link, aksen kuat
+   Soft     : #FF9FC7 (pink)  -> highlight, gradient, badge
+   Lavender : #C9B5E0         -> aksen sekunder, latar lembut
+   Teks gelap memakai plum (bukan hitam murni) supaya serasi dengan palet. */
+@theme {
+  --color-rose-brand: #FA699E;
+  --color-rose-deep: #BE2D65;      /* teks/hover di atas putih (kontras AA) */
+  --color-pink-brand: #FF9FC7;
+  --color-pink-soft: #FFE4EF;
+  --color-lavender: #C9B5E0;
+  --color-lavender-soft: #F1EBF8;
+  --color-lavender-deep: #7B5FA6;
+  --color-ink: #2A1B33;            /* teks utama */
+  --color-ink-muted: #6B5876;      /* teks sekunder */
+  --color-surface: #FFFBFD;        /* latar halaman */
+  --color-line: #F0DDE8;           /* border */
+
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-body {
-  margin: 0;
+:root {
+  --brand-gradient: linear-gradient(135deg, #FF9FC7 0%, #FA699E 50%, #C9B5E0 100%);
 }
 
-* {
-  scroll-margin-top: 72px;
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
+* { scroll-margin-top: 80px; }
+
+.text-gradient-brand {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.bg-gradient-brand { background: var(--brand-gradient); }
+
+::selection { background: #FF9FC7; color: #2A1B33; }
+:focus-visible { outline: 2px solid #FA699E; outline-offset: 3px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* nav glass */
+.nav-glass {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,240,246,0.78) 55%, rgba(244,239,250,0.8) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(255,255,255,0.3),
+    0 10px 30px -14px rgba(42,27,51,0.28),
+    0 2px 6px -3px rgba(42,27,51,0.1);
+  transition: background-color .3s ease, box-shadow .3s ease;
+}
+.nav-glass.is-scrolled,
+.nav-glass.is-open {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,240,246,0.86) 55%, rgba(244,239,250,0.88) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(255,255,255,0.3),
+    0 14px 36px -14px rgba(190,45,101,0.32),
+    0 2px 8px -3px rgba(42,27,51,0.12);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav-glass, .nav-glass.is-scrolled, .nav-glass.is-open { background: rgba(255,255,255,0.95); }
+}
+.nav-pill { -webkit-tap-highlight-color: transparent; }
+.nav-pill:hover { background: rgba(255,255,255,0.6); }
+.nav-pill.is-active {
+  color: var(--color-rose-deep);
+  background: rgba(255,255,255,0.85);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgba(250,105,158,0.28),
+    0 2px 8px -3px rgba(190,45,101,0.3);
+}
+.nav-panel { max-height: calc(100dvh - 6rem); animation: nav-panel-in .22s ease-out; }
+@keyframes nav-panel-in {
+  from { opacity: 0; transform: translateY(-6px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.nav-bar { transition: transform .3s ease, opacity .2s ease; }
+#navbar.is-open .nav-bar-1 { transform: translateY(8px) rotate(45deg); }
+#navbar.is-open .nav-bar-2 { opacity: 0; }
+#navbar.is-open .nav-bar-3 { transform: translateY(-8px) rotate(-45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .nav-panel { animation: none; }
+  .nav-glass, .nav-bar { transition: none; }
 }

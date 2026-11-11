@@ -48,66 +48,46 @@ const CONTACTS = [
 ];
 ---
 
-<section
-    id="contact"
-    class="px-6 py-24"
-    style="background: linear-gradient(160deg,#f8fafc 0%,#f0f9ff 35%,#f5f3ff 75%,#fdf4ff 100%);"
-    aria-labelledby="contact-heading"
->
-    <div class="max-w-3xl mx-auto text-center">
-        <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">
-            Mari terhubung
-        </p>
-        <h2
-            id="contact-heading"
-            class="text-4xl font-extrabold text-slate-900 mb-3"
-        >
-            Kontak
-        </h2>
-        <p class="text-slate-500 text-sm leading-relaxed mb-10 max-w-md mx-auto">
-            Ada yang ingin ditanyakan?
-        </p>
+<section id="contact" class="px-5 md:px-12 py-20 md:py-28 bg-white border-t border-line" aria-labelledby="contact-heading">
+    <div class="max-w-5xl mx-auto grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-center">
+        <div>
+            <p class="text-xs font-semibold tracking-widest uppercase text-rose-deep mb-2">Kontak</p>
+            <h2 id="contact-heading" class="text-3xl md:text-4xl font-extrabold tracking-tight text-ink">
+                Mari ngobrol
+            </h2>
+            <p class="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
+                Saya terbuka untuk magang dan proyek freelance di bidang backend. Kalau ingin diskusi soal
+                Go, Rust, atau PostgreSQL, kirim pesan lewat salah satu kanal berikut.
+            </p>
+        </div>
 
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 list-none p-0 m-0 mb-10 text-left">
+        <ul class="grid gap-3 sm:grid-cols-2">
             {CONTACTS.map((c) => (
                 <li>
                     <a
                         href={c.href}
                         target={c.external ? "_blank" : undefined}
                         rel={c.external ? "noopener noreferrer" : undefined}
-                        aria-label={`${c.name}: ${c.value}`}
-                        class="group flex items-center gap-4 p-4 rounded-2xl bg-white/80 backdrop-blur border border-slate-200/80
-                   shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200
-                   hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_10px_24px_-12px_rgba(15,23,42,0.25)]
-                   focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
-                        style={`--brand:${c.hex}`}
+                        aria-label={`${c.name}: ${c.value}${c.external ? " (tab baru)" : ""}`}
+                        class="group flex items-center gap-4 rounded-2xl border border-line bg-white p-4 transition-[border-color,box-shadow] duration-200 hover:border-pink-brand hover:shadow-[0_12px_28px_-16px_rgba(217,67,122,0.45)]"
                     >
                         <span
-                            class="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
-                            style="background: color-mix(in srgb, var(--brand) 10%, white);"
+                            class="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-line bg-surface"
                             aria-hidden="true"
                         >
-                            <svg
-                                viewBox={c.viewBox}
-                                class="w-5 h-5"
-                                fill="var(--brand)"
-                            >
+                            <svg viewBox={c.viewBox} class="h-6 w-6" fill={c.hex}>
                                 <path d={c.path} />
                             </svg>
                         </span>
                         <span class="min-w-0 flex-1">
-                            <span class="block text-xs font-medium text-slate-400">
-                                {c.name}
-                            </span>
-                            <span class="block text-sm font-semibold text-slate-800 truncate">
-                                {c.value}
-                            </span>
+                            <span class="block text-sm font-semibold text-ink">{c.name}</span>
+                            <span class="block truncate text-sm text-ink-muted">{c.value}</span>
                         </span>
                         <svg
                             viewBox="0 0 20 20"
                             fill="currentColor"
                             aria-hidden="true"
-                            class="w-4 h-4 shrink-0 text-slate-300 transition-all duration-200 group-hover:text-slate-600 group-hover:translate-x-0.5"
+                            class="h-5 w-5 shrink-0 text-ink-muted transition-colors group-hover:text-rose-deep"
                         >
                             <path
                                 fill-rule="evenodd"
@@ -119,13 +99,5 @@ const CONTACTS = [
                 </li>
             ))}
         </ul>
-
-        <div class="inline-flex items-center gap-2 bg-white/80 border border-emerald-200 rounded-full px-5 py-2.5 text-emerald-700 text-sm font-medium">
-            <span class="relative flex h-2 w-2" aria-hidden="true">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-            </span>
-            Terbuka untuk peluang kerja sebagai Backend engginer
-        </div>
     </div>
 </section>

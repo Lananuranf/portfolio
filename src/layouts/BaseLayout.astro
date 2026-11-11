@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = "Maulana Nur Anfajm (Lananuranf) — Backend engginer",
-  description = "Portfolio Maulana Nur Anfajm alias Lananuranf, Backend engginer dan mahasiswa Sistem Informasi Universitas Gunadarma semester 7. Membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL. Open for internship & freelance.",
+  title = "Maulana Nur Anfajm (Lananuranf) | Backend Engineer",
+  description = "Portfolio Maulana Nur Anfajm alias Lananuranf, Backend Engineer dan mahasiswa Sistem Informasi Universitas Gunadarma semester 7. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker. Terbuka untuk magang dan proyek freelance.",
   canonicalURL = Astro.url.href,
   ogImage = "/og-image.png",
   extraSchema = "",
@@ -27,8 +27,8 @@ const schemaPerson = JSON.stringify({
   "alternateName": ["Lananuranf", "lananur.anf", "Maulana Anfajm"],
   "url": "https://lananuranf.my.id/",
   "image": "https://lananuranf.my.id/og-image.png",
-  "jobTitle": "Backend engginer",
-  "description": "Backend engginer dan mahasiswa Sistem Informasi semester 7 Universitas Gunadarma Jakarta. Membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL.",
+  "jobTitle": "Backend Engineer",
+  "description": "Backend Engineer dan mahasiswa Sistem Informasi semester 7 Universitas Gunadarma Jakarta. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker.",
   "email": "lananuranf@gmail.com",
   "telephone": "+6285960235008",
   "address": { "@type": "PostalAddress", "addressLocality": "Jakarta", "addressCountry": "ID" },
@@ -38,8 +38,8 @@ const schemaPerson = JSON.stringify({
     "https://www.instagram.com/lananur.anf/"
   ],
   "knowsAbout": [
-    "Backend engginering","React","TypeScript","JavaScript","Tailwind CSS","Astro",
-    "Go","Go Fiber","Go Gin","REST API","PostgreSQL","GORM","Git","Docker","AWS EC2","Linux"
+    "Backend Engineering","Go","Go Fiber","Go Gin","Rust","Axum","REST API",
+    "PostgreSQL","PostGIS","GORM","Docker","Docker Compose","Nginx","Linux","Git","GitHub Actions"
   ],
   "alumniOf": { "@type": "CollegeOrUniversity", "name": "Universitas Gunadarma", "url": "https://www.gunadarma.ac.id/" }
 });
@@ -47,10 +47,10 @@ const schemaPerson = JSON.stringify({
 const schemaWebsite = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Portfolio Maulana Nur Anfajm — Lananuranf",
+  "name": "Portfolio Maulana Nur Anfajm (Lananuranf)",
   "alternateName": ["Lananuranf Portfolio","Portfolio Lananuranf","Maulana Nur Anfajm Portfolio"],
   "url": "https://lananuranf.my.id/",
-  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf) — Backend engginer dan mahasiswa Sistem Informasi dari Jakarta."
+  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf), Backend Engineer dan mahasiswa Sistem Informasi dari Jakarta."
 });
 
 const schemaFAQ = JSON.stringify({
@@ -60,22 +60,22 @@ const schemaFAQ = JSON.stringify({
     {
       "@type": "Question",
       "name": "Siapa Lananuranf?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Lananuranf adalah nama online dari Maulana Nur Anfajm, mahasiswa Sistem Informasi Universitas Gunadarma semester 7 yang berperan sebagai Backend engginer, fokus membangun aplikasi web frontend dan backend." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Lananuranf adalah nama online dari Maulana Nur Anfajm, mahasiswa Sistem Informasi Universitas Gunadarma semester 7 yang berperan sebagai Backend Engineer, fokus membangun REST API, database, dan deployment server." }
     },
     {
       "@type": "Question",
       "name": "Apa saja proyek Lananuranf?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf: Letta School, sistem manajemen sekolah (React + Go Fiber + PostgreSQL); toko online dengan Docker (React + Go Gin + PostgreSQL); dan website portfolio ini (Astro + React)." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf: Ruang Rasa, backend aplikasi reservasi restoran (Rust Axum + PostgreSQL/PostGIS); Letta School, sistem manajemen sekolah (Go Fiber + PostgreSQL); toko online dengan Docker (Go Gin + PostgreSQL); dan website portfolio ini (Astro)." }
     },
     {
       "@type": "Question",
       "name": "Teknologi apa saja yang dipakai Maulana Nur Anfajm?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Teknologi utama: React, TypeScript, Tailwind CSS, Go Fiber, Go Gin, PostgreSQL, GORM, Git, Docker, dan AWS EC2." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Teknologi utama: Go (Fiber, Gin), Rust (Axum), PostgreSQL, GORM, Docker, Nginx, Linux, dan Git." }
     },
     {
       "@type": "Question",
       "name": "Apakah Lananuranf terbuka untuk tawaran kerja?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk peluang kerja sebagai Backend engginer. Hubungi via email lananuranf@gmail.com atau LinkedIn." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk peluang kerja sebagai Backend Engineer. Hubungi via email lananuranf@gmail.com atau LinkedIn." }
     }
   ]
 });
@@ -90,7 +90,7 @@ const schemaFAQ = JSON.stringify({
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, portofolio lananuranf, portfolio lananuranf, project lananuranf, blog lananuranf, maulana nur anfajm portfolio, maulana anfajm developer, lananuranf github, Backend engginer, React Developer, Go Fiber Backend, Go Gin, PostgreSQL, Docker, AWS EC2, Sistem Informasi, Universitas Gunadarma, Backend engginer jakarta, web developer indonesia, portfolio developer indonesia" />
+    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, portofolio lananuranf, portfolio lananuranf, project lananuranf, blog lananuranf, maulana nur anfajm portfolio, maulana anfajm developer, lananuranf github, Backend Engineer, Go Backend Developer, Rust Axum, Go Fiber, Go Gin, PostgreSQL, Docker, Sistem Informasi, Universitas Gunadarma, Backend Engineer jakarta, web developer indonesia, portfolio developer indonesia" />
     <meta name="author" content="Maulana Nur Anfajm (Lananuranf)" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href={canonicalURL} />
@@ -107,7 +107,7 @@ const schemaFAQ = JSON.stringify({
     <meta property="og:image" content={ogImageFull} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf) — Backend engginer Jakarta" />
+    <meta property="og:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf), Backend Engineer Jakarta" />
     <meta property="og:site_name" content="Portfolio Lananuranf" />
     <meta property="og:locale" content="id_ID" />
 
@@ -120,7 +120,7 @@ const schemaFAQ = JSON.stringify({
     <meta name="twitter:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf)" />
 
     <!-- PWA -->
-    <meta name="theme-color" content="#f0f9ff" />
+    <meta name="theme-color" content="#FA699E" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
@@ -128,6 +128,11 @@ const schemaFAQ = JSON.stringify({
 
     <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    />
 
     <!-- Schema.org -->
     <script type="application/ld+json" set:html={schemaPerson} />
@@ -135,7 +140,7 @@ const schemaFAQ = JSON.stringify({
     <script type="application/ld+json" set:html={schemaFAQ} />
     {extraSchema && <script type="application/ld+json" set:html={extraSchema} />}
   </head>
-  <body class="bg-white text-slate-900 antialiased">
+  <body class="bg-surface text-ink font-sans antialiased">
     <slot />
   </body>
 </html>

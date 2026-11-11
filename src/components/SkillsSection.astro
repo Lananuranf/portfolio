@@ -1,92 +1,118 @@
 ---
 // src/components/SkillsSection.astro
-// Ikon brand diambil dari paket `simple-icons` dan di-inline saat build,
-// jadi tidak ada request/JS tambahan di browser.
-import {
-  siJavascript, siTypescript, siReact, siTailwindcss, siVite, siAstro,
-  siGo, siPostgresql, siPostman,
-  siGit, siDocker, siNginx, siUbuntu, siGithubactions,
-} from "simple-icons";
+// Keahlian backend. Ikon dari src/lib/icons.ts (di-inline saat build).
+import { techIcon } from "../lib/icons";
 
-interface Icon { path: string; hex: string }
-interface Skill { name: string; icon?: Icon; fallback?: string; learning?: boolean }
+interface Skill { name: string; icon: string; note?: string }
 interface Group { title: string; desc: string; skills: Skill[] }
 
 const GROUPS: Group[] = [
   {
-    title: "Frontend",
-    desc: "Tampilan web yang nyaman dibuka di HP maupun laptop.",
+    title: "Bahasa & Framework Backend",
+    desc: "REST API dan layanan backend yang saya bangun dan rawat sendiri.",
     skills: [
-      { name: "JavaScript", icon: siJavascript },
-      { name: "TypeScript", icon: siTypescript },
-      { name: "React", icon: siReact },
-      { name: "Tailwind CSS", icon: siTailwindcss },
-      { name: "Vite", icon: siVite },
-      { name: "Astro", icon: siAstro },
+      { name: "Go", icon: "Go" },
+      { name: "Fiber", icon: "Go Fiber" },
+      { name: "Gin", icon: "Go Gin" },
+      { name: "Rust", icon: "Rust" },
+      { name: "Axum", icon: "Axum" },
+      { name: "Tokio", icon: "Tokio" },
     ],
   },
   {
-    title: "Backend & Database",
-    desc: "REST API dan desain tabel relasional untuk aplikasi web.",
+    title: "Database",
+    desc: "Desain skema relasional, migrasi berversi, dan indeks untuk query.",
     skills: [
-      { name: "Go (Fiber, Gin)", icon: siGo },
-      { name: "PostgreSQL", icon: siPostgresql },
-      { name: "Postman", icon: siPostman },
+      { name: "PostgreSQL", icon: "PostgreSQL" },
+      { name: "PostGIS", icon: "PostGIS" },
+      { name: "SQLx", icon: "SQLx" },
+      { name: "GORM", icon: "GORM" },
+      { name: "Redis", icon: "Redis" },
     ],
   },
   {
-    title: "Tools & Deploy",
-    desc: "Git, container Docker, dan deploy aplikasi ke server.",
+    title: "Infrastruktur & Deploy",
+    desc: "Container, reverse proxy, CI/CD, dan server Linux di cloud.",
     skills: [
-      { name: "Git", icon: siGit },
-      { name: "Docker", icon: siDocker },
-      { name: "Linux (Ubuntu)", icon: siUbuntu },
-      { name: "Nginx", icon: siNginx },
-      { name: "GitHub Actions", icon: siGithubactions },
-      { name: "AWS EC2", fallback: "AWS" },
+      { name: "Docker", icon: "Docker" },
+      { name: "Docker Compose", icon: "Docker Compose" },
+      { name: "AWS EC2", icon: "AWS EC2" },
+      { name: "Nginx", icon: "Nginx" },
+      { name: "Caddy", icon: "Caddy" },
+      { name: "GitHub Actions", icon: "GitHub Actions" },
+      { name: "Linux", icon: "Linux" },
+      { name: "Ubuntu", icon: "Ubuntu" },
+    ],
+  },
+  {
+    title: "Tools & Integrasi",
+    desc: "Kontrol versi, uji API, autentikasi, notifikasi, dan penyimpanan objek.",
+    skills: [
+      { name: "Git", icon: "Git" },
+      { name: "Postman", icon: "Postman" },
+      { name: "OpenAPI", icon: "OpenAPI" },
+      { name: "WebSocket", icon: "WebSocket" },
+      { name: "JWT", icon: "JWT" },
+      { name: "FCM", icon: "Firebase Cloud Messaging" },
+      { name: "Cloudflare R2", icon: "Cloudflare R2" },
+      { name: "MinIO (S3)", icon: "MinIO" },
     ],
   },
 ];
+
+const SOFT_SKILLS = [
+  "Debugging sampai akar masalah",
+  "Belajar dari dokumentasi resmi",
+  "Menulis README dan dokumentasi API",
+  "Komunikasi lewat issue dan PR",
+];
 ---
 
-<section id="skills" class="py-24 px-6 bg-slate-50" aria-labelledby="skills-heading">
+<section id="skills" class="py-24 px-6 bg-surface" aria-labelledby="skills-heading">
   <div class="max-w-5xl mx-auto">
 
     <div class="text-center mb-12">
-      <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Yang saya pakai</p>
-      <h2 id="skills-heading" class="text-4xl font-extrabold text-slate-900 mb-3">Keahlian</h2>
-      <p class="text-slate-500 text-sm max-w-xl mx-auto">
-        Teknologi yang sudah saya pakai di proyek kuliah maupun proyek pribadi.
-        Yang bertanda <span class="font-semibold text-amber-600">belajar</span> masih saya dalami.
+      <p class="text-xs font-semibold tracking-widest text-rose-deep uppercase mb-2">Yang saya pakai</p>
+      <h2 id="skills-heading" class="text-4xl font-extrabold text-ink mb-3">
+        <span class="text-gradient-brand">Keahlian</span> Backend
+      </h2>
+      <p class="text-ink-muted text-sm max-w-xl mx-auto">
+        Alat yang saya pakai untuk membangun API, mengelola database,
+        dan deploy layanan ke server.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
       {GROUPS.map((g) => (
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 md:last:col-span-2">
-          <h3 class="font-bold text-slate-900">{g.title}</h3>
-          <p class="text-xs text-slate-500 mt-1 mb-4">{g.desc}</p>
-          <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
-            {g.skills.map((s) => (
-              <li class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700 hover:border-slate-400 transition-colors">
-                {s.icon ? (
-                  <svg viewBox="0 0 24 24" class="w-4 h-4 flex-shrink-0" fill={`#${s.icon.hex}`} aria-hidden="true">
-                    <path d={s.icon.path} />
-                  </svg>
-                ) : (
-                  <span class="w-4 h-4 flex-shrink-0 rounded bg-slate-800 text-[7px] font-bold text-amber-400 flex items-center justify-center leading-none" aria-hidden="true">
-                    {s.fallback}
-                  </span>
-                )}
-                {s.name}
-                {s.learning && (
-                  <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5">belajar</span>
-                )}
-              </li>
-            ))}
+        <div class="bg-white rounded-2xl border border-line p-6 shadow-sm">
+          <h3 class="font-bold text-ink">{g.title}</h3>
+          <p class="text-xs text-ink-muted mt-1 mb-5">{g.desc}</p>
+          <ul class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 list-none p-0 m-0">
+            {g.skills.map((s) => {
+              const icon = techIcon(s.icon);
+              return (
+                <li class="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line bg-white text-sm font-medium text-ink transition-colors hover:border-pink-brand hover:bg-pink-soft/40">
+                  {icon ? (
+                    <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center [&>svg]:w-7 [&>svg]:h-7" set:html={icon.svg} />
+                  ) : (
+                    <span class="w-8 h-8 flex-shrink-0 rounded-lg bg-lavender-soft" aria-hidden="true" />
+                  )}
+                  <span class="leading-tight">{s.name}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ))}
+    </div>
+
+    <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 justify-center text-center">
+      <span class="text-xs font-semibold tracking-widest text-ink-muted uppercase">Soft skill</span>
+      <ul class="flex flex-wrap justify-center gap-2 list-none p-0 m-0">
+        {SOFT_SKILLS.map((s) => (
+          <li class="px-3 py-1.5 rounded-full bg-lavender-soft text-lavender-deep text-sm font-medium">{s}</li>
+        ))}
+      </ul>
     </div>
 
   </div>

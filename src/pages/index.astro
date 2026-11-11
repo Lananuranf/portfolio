@@ -12,13 +12,12 @@ import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
-  title="Maulana Nur Anfajm (Lananuranf) — Backend engginer"
-  description="Portfolio Maulana Nur Anfajm alias Lananuranf, Backend engginer dan mahasiswa Sistem Informasi Universitas Gunadarma semester 7. Membangun aplikasi web dengan React, TypeScript, Go, dan PostgreSQL. Terbuka untuk magang dan proyek freelance."
+  title="Maulana Nur Anfajm (Lananuranf) | Backend Engineer"
+  description="Portfolio Maulana Nur Anfajm alias Lananuranf, Backend Engineer dan mahasiswa Sistem Informasi Universitas Gunadarma. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker. Terbuka untuk magang dan proyek freelance."
   canonicalURL="https://lananuranf.my.id/"
 >
   <MainLayout />
   <main id="main-content">
-    <!-- client:load = hydrate React segera, tapi HTML sudah ada di SSR output -->
     <HeroIsland client:load />
     <AboutSection />
     <SkillsSection />

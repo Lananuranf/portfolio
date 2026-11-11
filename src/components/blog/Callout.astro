@@ -1,16 +1,17 @@
 ---
 // src/components/blog/Callout.astro — kotak catatan: info, tips, peringatan, atau cek hasil.
+// Dibedakan lewat warna garis kiri + label, semua dari palet brand.
 interface Props { type?: "info" | "tip" | "warn" | "check"; title?: string }
 const { type = "info", title } = Astro.props;
 const STYLE = {
-  info:  { box: "bg-sky-50 border-sky-200",         head: "text-sky-800",     label: "Catatan" },
-  tip:   { box: "bg-violet-50 border-violet-200",   head: "text-violet-800",  label: "Tips" },
-  warn:  { box: "bg-amber-50 border-amber-200",     head: "text-amber-800",   label: "Perhatian" },
-  check: { box: "bg-emerald-50 border-emerald-200", head: "text-emerald-800", label: "Cek hasilnya" },
+  info:  { box: "bg-lavender-soft border-lavender",       head: "text-lavender-deep", label: "Catatan" },
+  tip:   { box: "bg-pink-soft border-pink-brand",         head: "text-rose-deep",     label: "Tips" },
+  warn:  { box: "bg-pink-soft border-rose-brand",         head: "text-rose-deep",     label: "Perhatian" },
+  check: { box: "bg-white border-lavender-deep",          head: "text-lavender-deep", label: "Cek hasilnya" },
 }[type];
 ---
 
-<aside class={`not-prose my-6 rounded-2xl border p-5 text-sm leading-relaxed text-slate-700 ${STYLE.box}`}>
+<aside class={`not-prose my-6 rounded-2xl border border-l-4 p-5 text-sm leading-relaxed text-ink ${STYLE.box}`}>
   <p class={`font-semibold mb-1.5 ${STYLE.head}`}>{title ?? STYLE.label}</p>
-  <div class="[&_code]:bg-white/70 [&_code]:px-1 [&_code]:rounded [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_p+p]:mt-2"><slot /></div>
+  <div class="[&_code]:bg-white/80 [&_code]:px-1 [&_code]:rounded [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_p+p]:mt-2"><slot /></div>
 </aside>

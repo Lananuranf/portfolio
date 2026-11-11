@@ -1,197 +1,155 @@
 ---
-// src/components/ProjectsSection.astro — Studi kasus detail, SEO-rich content
+// src/components/ProjectsSection.astro — Studi kasus proyek backend.
 import { getRepoProof, formatBulanTahun, GITHUB_USER } from '../lib/github';
+import { techIcon } from '../lib/icons';
 
-const PROJECTS = [
+interface Project {
+  id: string;
+  num: string;
+  title: string;
+  subtitle: string;
+  repo?: string;
+  detail?: string;
+  tech: string[];
+  summary: string;
+  problem: string;
+  built: string;
+  result: string;
+}
+
+const PROJECTS: Project[] = [
+  {
+    id: "ruang-rasa",
+    num: "01",
+    title: "Ruang Rasa API",
+    subtitle: "Reservasi & discovery restoran · Rust · VPS Ubuntu",
+    repo: "ruang-rasa-app",
+    detail: "/projects/ruang-rasa/",
+    tech: ["Rust", "Axum", "PostgreSQL", "PostGIS", "WebSocket", "Docker Compose", "Caddy"],
+    summary: "Backend untuk aplikasi Android Ruang Rasa yang menangani login OTP, pencarian restoran terdekat, reservasi meja, dan chat real-time.",
+    problem: "Dua orang bisa memesan meja yang sama di jam yang sama, dan retry dari HP bisa membuat pesanan ganda.",
+    built: "Workspace Rust empat crate di atas PostgreSQL 16 + PostGIS. Chat memakai WebSocket dan Postgres LISTEN/NOTIFY.",
+    result: "Reservasi dikunci dengan SELECT … FOR UPDATE dan Idempotency-Key. Dari 50 request paralel untuk kursi terakhir, tepat 1 yang lolos.",
+  },
   {
     id: "letta-school",
-    num: "01",
-    title: "Letta School",
-    subtitle: "Sistem manajemen sekolah · Fullstack",
-    category: "Aplikasi Web",
-    repo: "letta-school" as string | undefined,
-    accent: "from-cyan-500 to-blue-600",
-    border: "border-cyan-200",
-    techBadges: [
-      { label:"React",      color:"bg-cyan-50 text-cyan-700 border-cyan-200" },
-      { label:"Go Fiber",   color:"bg-sky-50 text-sky-700 border-sky-200" },
-      { label:"PostgreSQL", color:"bg-blue-50 text-blue-700 border-blue-200" },
-      { label:"Docker",     color:"bg-indigo-50 text-indigo-700 border-indigo-200" },
-      { label:"AWS EC2",    color:"bg-orange-50 text-orange-700 border-orange-200" },
-      { label:"GitHub Actions", color:"bg-green-50 text-green-700 border-green-200" },
-    ],
-    summary: "Sistem manajemen sekolah dengan login JWT dan tiga peran pengguna: admin, guru, dan siswa. Berjalan di AWS EC2 dengan Docker, dan setiap perubahan di branch main ter-deploy otomatis lewat GitHub Actions.",
-    problem: "Sekolah Letta mengelola data siswa, guru, absensi, dan laporan akademik secara manual di spreadsheet. Data mudah salah ketik, tidak aman, dan sulit dibuka beberapa orang sekaligus.",
-    solution: "Saya membangun aplikasi web dengan backend Go Fiber, frontend React, dan database PostgreSQL. Hak akses dibagi tiga: admin mengelola semua data, guru mengelola kelas dan nilai, siswa melihat data pribadinya.",
-    notes: "Middleware Go Fiber memeriksa token JWT dan peran pengguna di setiap endpoint. Setiap push ke branch main otomatis di-build dan di-deploy ke EC2 lewat GitHub Actions.",
+    num: "02",
+    title: "Letta School API",
+    subtitle: "Manajemen sekolah · Go Fiber · AWS EC2",
+    repo: "letta-school",
+    detail: "/projects/letta-school/",
+    tech: ["Go Fiber", "PostgreSQL", "JWT", "Docker Compose", "Nginx", "AWS EC2", "GitHub Actions"],
+    summary: "REST API manajemen sekolah dengan login JWT dan tiga peran, yaitu admin, guru, dan siswa.",
+    problem: "Data siswa, absensi, dan nilai sebelumnya dikelola di spreadsheet tanpa kontrol akses.",
+    built: "API Go Fiber dengan PostgreSQL. Middleware memeriksa JWT dan peran sebelum request sampai ke handler.",
+    result: "Setiap push ke main ter-deploy ke EC2 lewat GitHub Actions dan Docker Compose. Versi baru aktif dalam 2–3 menit.",
   },
   {
     id: "ecommerce",
-    num: "02",
-    title: "Toko Online dengan Docker",
-    subtitle: "Aplikasi web fullstack · Docker Compose",
-    category: "Aplikasi Web",
-    repo: "ecommerce-fullstack",
-    accent: "from-violet-500 to-purple-600",
-    border: "border-violet-200",
-    techBadges: [
-      { label:"React",      color:"bg-cyan-50 text-cyan-700 border-cyan-200" },
-      { label:"Go Gin",     color:"bg-sky-50 text-sky-700 border-sky-200" },
-      { label:"GORM",       color:"bg-slate-50 text-slate-700 border-slate-200" },
-      { label:"PostgreSQL", color:"bg-blue-50 text-blue-700 border-blue-200" },
-      { label:"Docker",     color:"bg-indigo-50 text-indigo-700 border-indigo-200" },
-      { label:"Nginx",      color:"bg-green-50 text-green-700 border-green-200" },
-      { label:"AWS EC2",    color:"bg-orange-50 text-orange-700 border-orange-200" },
-    ],
-    summary: "Toko online dengan backend Go Gin + GORM, frontend React, dan PostgreSQL. Semua service berjalan dengan Docker Compose di AWS EC2, dengan Nginx sebagai reverse proxy dan SSL.",
-    problem: "Saya ingin aplikasi yang berjalan sama persis di laptop dan di server, tanpa mengulang setup manual setiap kali pindah mesin.",
-    solution: "Kode backend saya bagi tiga lapisan: handler (HTTP), service (logika bisnis), dan repository (akses database). Semua service ditulis di docker-compose.yml, jadi aplikasi bisa dinyalakan dengan satu perintah.",
-    notes: "Konfigurasi rahasia disimpan di file .env yang tidak ikut di-commit. Data PostgreSQL disimpan di volume supaya tidak hilang saat container dibuat ulang, dan setiap container punya health check.",
-  },
-  {
-    id: "portfolio",
     num: "03",
-    title: "Website Portfolio Pribadi",
-    subtitle: "Website statis · Performa & SEO",
-    category: "Website",
-    repo: undefined as string | undefined,
-    accent: "from-slate-700 to-slate-900",
-    border: "border-slate-200",
-    techBadges: [
-      { label:"Astro",        color:"bg-orange-50 text-orange-700 border-orange-200" },
-      { label:"TypeScript",   color:"bg-blue-50 text-blue-700 border-blue-200" },
-      { label:"React",        color:"bg-cyan-50 text-cyan-700 border-cyan-200" },
-      { label:"Tailwind CSS", color:"bg-sky-50 text-sky-700 border-sky-200" },
-      { label:"Vercel",       color:"bg-slate-50 text-slate-700 border-slate-200" },
-    ],
-    summary: "Website yang sedang Anda buka: portfolio dan blog teknis yang dibangun dengan Astro, React, dan Tailwind CSS, lalu di-deploy ke Vercel.",
-    problem: "Saya butuh satu tempat untuk menampilkan proyek, keahlian, dan tulisan teknis yang cepat dibuka, mudah ditemukan di Google, dan gampang dirawat.",
-    solution: "Halaman dirender statis dengan Astro, jadi JavaScript hanya dimuat untuk bagian interaktif yang memakai React. Data proyek diambil dari GitHub API saat build, dan waktu baca artikel dihitung otomatis dari isinya.",
-    notes: "Setiap halaman punya structured data (schema.org), sitemap, dan meta Open Graph. Ikon brand ditanam langsung ke HTML saat build, jadi browser tidak perlu mengunduh file ikon terpisah.",
+    title: "Toko Online API",
+    subtitle: "Backend toko online · Go Gin · AWS EC2",
+    repo: "ecommerce-fullstack",
+    tech: ["Go Gin", "GORM", "PostgreSQL", "Docker Compose", "Nginx", "AWS EC2"],
+    summary: "Backend toko online dengan Go Gin dan GORM di atas PostgreSQL.",
+    problem: "Setup manual harus diulang setiap kali pindah dari laptop ke server.",
+    built: "Kode dibagi ke handler, service, dan repository. Database, API, dan Nginx ada di satu docker-compose.yml.",
+    result: "Health check membuat API menunggu database siap. Seluruh stack menyala dengan satu perintah di laptop maupun di EC2.",
   },
 ];
 
-// Bukti kepemilikan diambil dari GitHub API saat build (tanggal repo dibuat & jumlah commit asli).
 const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo) : Promise.resolve(null)));
 ---
 
-<section
-  id="projects"
-  class="px-6 py-24"
-  style="background: linear-gradient(160deg,#ffffff 0%,#f8fafc 45%,#f5f3ff 100%);"
-  aria-labelledby="projects-heading"
->
+<section id="projects" class="px-4 sm:px-6 py-24 bg-surface" aria-labelledby="projects-heading">
   <div class="max-w-6xl mx-auto">
 
-    <div class="text-center mb-14">
-      <p class="text-sm font-semibold tracking-widest text-slate-400 uppercase mb-2">Yang pernah saya buat</p>
-      <h2 id="projects-heading" class="text-4xl font-extrabold text-slate-900">Proyek</h2>
-      <p class="text-slate-500 mt-2 text-sm max-w-xl mx-auto">
-        Beberapa proyek yang saya kerjakan sendiri, lengkap dengan masalah, solusi, dan teknologi yang dipakai.
+    <div class="text-center mb-12">
+      <h2 id="projects-heading" class="text-4xl font-extrabold text-ink">Proyek <span class="text-gradient-brand">Backend</span></h2>
+      <p class="text-ink-muted mt-3 text-sm max-w-xl mx-auto leading-relaxed">
+        Tiga API yang saya kerjakan sendiri dari skema database sampai deploy.
       </p>
     </div>
 
-    <div class="flex flex-col gap-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {PROJECTS.map((p, idx) => {
         const proof = proofs[idx];
+        const points = [
+          { label: "Masalah", text: p.problem },
+          { label: "Yang dibangun", text: p.built },
+          { label: "Hasil", text: p.result },
+        ];
         return (
-        <article
-          class={`bg-white rounded-3xl border ${p.border} shadow-sm overflow-hidden`}
-          aria-labelledby={`project-title-${p.id}`}
-        >
-          <div class="flex flex-col lg:flex-row">
+        <article class="bg-white rounded-2xl border border-line shadow-sm p-6 flex flex-col gap-4" aria-labelledby={`project-title-${p.id}`}>
+          <div class="flex items-start gap-3">
+            <span class="text-2xl font-black text-gradient-brand leading-none">{p.num}</span>
+            <div>
+              <h3 id={`project-title-${p.id}`} class="text-lg font-bold text-ink leading-snug">{p.title}</h3>
+              <p class="text-xs text-ink-muted mt-0.5">{p.subtitle}</p>
+            </div>
+          </div>
 
-            <!-- Left: number + title + tech -->
-            <div class="lg:w-2/5 p-6 md:p-8 flex flex-col gap-4">
-              <div class="flex items-start gap-3">
-                <span class={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br ${p.accent} leading-none`}>
-                  {p.num}
+          <p class="text-ink-muted text-sm leading-relaxed">{p.summary}</p>
+
+          <dl class="flex flex-col gap-2.5">
+            {points.map(pt => (
+              <div>
+                <dt class="text-[11px] font-semibold text-rose-deep uppercase tracking-wide">{pt.label}</dt>
+                <dd class="text-sm text-ink-muted leading-relaxed">{pt.text}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <ul class="flex flex-wrap gap-1.5" aria-label="Teknologi">
+            {p.tech.map(label => {
+              const icon = techIcon(label);
+              return (
+                <li class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border border-line bg-surface text-ink">
+                  {icon && <span class="w-3.5 h-3.5 shrink-0 [&>svg]:w-full [&>svg]:h-full" set:html={icon.svg} />}
+                  {label}
+                </li>
+              );
+            })}
+          </ul>
+
+          <div class="mt-auto pt-4 border-t border-line flex flex-col gap-3">
+            {proof ? (
+              <a href={proof.commitsUrl} target="_blank" rel="noopener noreferrer"
+                class="flex items-center gap-2 text-[11px] text-ink-muted hover:text-rose-deep transition-colors"
+                aria-label={`Riwayat commit ${GITHUB_USER} di repo ${proof.repo}`}>
+                <img src={`https://github.com/${GITHUB_USER}.png?size=48`} alt="" width="20" height="20" loading="lazy" class="w-5 h-5 rounded-full border border-line shrink-0" />
+                <span class="truncate">
+                  {[
+                    `@${GITHUB_USER}`,
+                    proof.myCommits !== null && `${proof.myCommits} commit`,
+                    proof.sharePct !== null && `${proof.sharePct}% dari total`,
+                    formatBulanTahun(proof.createdAt) && `sejak ${formatBulanTahun(proof.createdAt)}`,
+                  ].filter(Boolean).join(" · ")}
                 </span>
-                <div>
-                  <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{p.category}</p>
-                  <h3 id={`project-title-${p.id}`} class="text-xl font-bold text-slate-900 leading-snug mt-0.5">
-                    {p.title}
-                  </h3>
-                  <p class="text-sm text-slate-500 mt-0.5">{p.subtitle}</p>
-                </div>
-              </div>
-
-              <p class="text-slate-600 text-sm leading-relaxed">{p.summary}</p>
-
-              <!-- Tech badges -->
-              <div class="flex flex-wrap gap-1.5">
-                {p.techBadges.map(t => (
-                  <span class={`text-xs font-medium px-2.5 py-1 rounded-full border ${t.color}`}>{t.label}</span>
-                ))}
-              </div>
-
-              <!-- Bukti pembuat (data asli dari GitHub) -->
-              <div class="mt-auto pt-4 border-t border-slate-100">
-                {proof ? (
-                  <a href={proof.commitsUrl} target="_blank" rel="noopener noreferrer"
-                    class="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-3 hover:border-slate-900 hover:bg-white transition-colors"
-                    aria-label={`Riwayat commit ${GITHUB_USER} di repo ${proof.repo}`}>
-                    <img src={`https://github.com/${GITHUB_USER}.png?size=80`} alt={`Avatar GitHub ${GITHUB_USER}`}
-                      width="36" height="36" loading="lazy" class="w-9 h-9 rounded-full border border-slate-200 flex-shrink-0" />
-                    <div class="min-w-0 flex-1">
-                      <p class="text-xs font-semibold text-slate-800 truncate">
-                        Dibuat oleh <span class="text-slate-900">@{GITHUB_USER}</span>
-                        {proof.sharePct !== null && <span class="ml-1 text-emerald-600">· {proof.sharePct}% commit</span>}
-                      </p>
-                      <p class="text-[11px] text-slate-500 truncate">
-                        {[
-                          formatBulanTahun(proof.createdAt) && `Sejak ${formatBulanTahun(proof.createdAt)}`,
-                          proof.myCommits !== null && `${proof.myCommits} commit`,
-                          `github.com/${GITHUB_USER}/${proof.repo}`,
-                        ].filter(Boolean).join(" · ")}
-                      </p>
-                    </div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-slate-400 group-hover:text-slate-900 flex-shrink-0" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
-                  </a>
-                ) : (
-                  <div class="flex items-center gap-3 rounded-2xl border border-dashed border-slate-200 p-3">
-                    <img src={`https://github.com/${GITHUB_USER}.png?size=80`} alt={`Avatar GitHub ${GITHUB_USER}`}
-                      width="36" height="36" loading="lazy" class="w-9 h-9 rounded-full border border-slate-200 flex-shrink-0" />
-                    <div>
-                      <p class="text-xs font-semibold text-slate-800">Dibuat oleh @{GITHUB_USER}</p>
-                      <p class="text-[11px] text-slate-500">Repositori privat</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              </a>
+            ) : (
+              <p class="flex items-center gap-2 text-[11px] text-ink-muted">
+                <img src={`https://github.com/${GITHUB_USER}.png?size=48`} alt="" width="20" height="20" loading="lazy" class="w-5 h-5 rounded-full border border-line shrink-0" />
+                @{GITHUB_USER} · repositori privat
+              </p>
+            )}
+            <div class="flex flex-wrap gap-2">
+              {p.detail && (
+                <a href={p.detail} class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-ink text-white text-xs font-semibold hover:bg-lavender-deep transition-colors">
+                  Studi kasus <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                </a>
+              )}
+              {proof && (
+                <a href={`https://github.com/${GITHUB_USER}/${proof.repo}`} target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-line text-ink text-xs font-semibold hover:border-rose-brand hover:text-rose-deep transition-colors">
+                  Repo GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                </a>
+              )}
             </div>
-
-            <!-- Right: case study detail -->
-            <div class="lg:w-3/5 p-6 md:p-8 bg-slate-50/50 border-t lg:border-t-0 lg:border-l border-slate-100 flex flex-col gap-4">
-              <p class="text-xs font-bold tracking-widest text-slate-400 uppercase">Studi Kasus</p>
-
-              <div>
-                <p class="text-xs font-semibold text-rose-600 uppercase tracking-wide mb-1">Masalah</p>
-                <p class="text-slate-600 text-sm leading-relaxed">{p.problem}</p>
-              </div>
-
-              <div>
-                <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Solusi</p>
-                <p class="text-slate-600 text-sm leading-relaxed">{p.solution}</p>
-              </div>
-
-              <div>
-                <p class="text-xs font-semibold text-violet-600 uppercase tracking-wide mb-1">Catatan Teknis</p>
-                <p class="text-slate-600 text-sm leading-relaxed">{p.notes}</p>
-              </div>
-            </div>
-
           </div>
         </article>
         );
       })}
-    </div>
-
-    <!-- CTA -->
-    <div class="text-center mt-12">
-      <a href="/blog/" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-700 transition-colors text-sm">
-        Baca artikel teknis saya →
-      </a>
     </div>
 
   </div>

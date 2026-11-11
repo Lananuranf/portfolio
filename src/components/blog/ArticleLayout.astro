@@ -3,6 +3,7 @@
 // SEO + schema, header, statistik pembaca real-time, progres baca, profil penulis, dan ajakan kontak.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import Footer from "../Footer.astro";
 import {
     countWords,
     readingMinutes,
@@ -74,16 +75,16 @@ const articleSchema = JSON.stringify({
     <div class="fixed top-0 left-0 right-0 h-1 z-60" aria-hidden="true">
         <div
             id="read-progress"
-            class="h-full w-0 bg-linear-to-r from-sky-500 to-blue-600"
+            class="h-full w-0 bg-gradient-brand"
         ></div>
     </div>
     <div
         id="read-remaining"
-        class="fixed bottom-5 right-5 z-50 px-3.5 py-2 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur opacity-0 translate-y-2 transition-all duration-300 pointer-events-none"
+        class="fixed bottom-5 right-5 z-50 px-3.5 py-2 rounded-full bg-ink/90 text-white text-xs font-semibold shadow-lg backdrop-blur opacity-0 translate-y-2 transition-all duration-300 pointer-events-none"
         aria-live="polite"
     ></div>
 
-    <main class="pt-20 bg-slate-50 min-h-screen">
+    <main id="main-content" class="pt-20 bg-surface min-h-screen">
         <article
             id="article-body"
             data-words={wordCount}
@@ -93,7 +94,7 @@ const articleSchema = JSON.stringify({
         >
             <a
                 href="/blog/"
-                class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors mb-8"
+                class="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-rose-deep transition-colors mb-8"
             >
                 <svg
                     viewBox="0 0 24 24"
@@ -113,8 +114,8 @@ const articleSchema = JSON.stringify({
             </a>
 
             <header class="mb-10">
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4 text-xs text-slate-500">
-                    <span class="font-semibold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-200">
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4 text-xs text-ink-muted">
+                    <span class="font-semibold px-2.5 py-1 rounded-full bg-pink-soft text-rose-deep ring-1 ring-pink-brand/50">
                         {category}
                     </span>
                     <time datetime={datePublished}>{dateLabel}</time>
@@ -124,24 +125,24 @@ const articleSchema = JSON.stringify({
                     </span>
                 </div>
 
-                <h1 class="text-3xl md:text-[2.5rem] font-extrabold text-slate-900 leading-tight tracking-tight mb-4">
+                <h1 class="text-3xl md:text-[2.5rem] font-extrabold text-ink leading-tight tracking-tight mb-4">
                     {title}
                 </h1>
-                <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+                <p class="text-ink-muted text-base md:text-lg leading-relaxed">
                     {desc}
                 </p>
 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-6 border-t border-line">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-slate-900 grid place-items-center text-white text-sm font-bold shadow-md shadow-slate-900/20">
+                        <div class="w-10 h-10 rounded-full bg-ink grid place-items-center text-white text-sm font-bold shadow-md shadow-ink/20">
                             L
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-slate-900">
+                            <p class="text-sm font-semibold text-ink">
                                 Maulana Nur Anfajm
                             </p>
-                            <p class="text-xs text-slate-500">
-                                Backend engginer
+                            <p class="text-xs text-ink-muted">
+                                Backend Engineer
                             </p>
                         </div>
                     </div>
@@ -152,7 +153,7 @@ const articleSchema = JSON.stringify({
                         hidden
                         class="flex flex-wrap items-center gap-2 text-xs"
                     >
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-slate-200 text-slate-600 shadow-sm">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-line text-ink-muted shadow-sm">
                             <svg
                                 viewBox="0 0 24 24"
                                 fill="none"
@@ -165,22 +166,22 @@ const articleSchema = JSON.stringify({
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                             <span>
-                                <b data-stat="views" class="text-slate-900">
+                                <b data-stat="views" class="text-ink">
                                     0
                                 </b>{" "}
                                 kali dibaca
                             </span>
                         </span>
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 ring-1 ring-emerald-200 text-emerald-700 shadow-sm">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-lavender-soft ring-1 ring-lavender text-lavender-deep shadow-sm">
                             <span class="relative flex w-2 h-2">
-                                <span class="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75"></span>
-                                <span class="relative w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span class="absolute inset-0 rounded-full bg-rose-brand animate-ping opacity-75"></span>
+                                <span class="relative w-2 h-2 rounded-full bg-rose-brand"></span>
                             </span>
                             <span>
                                 <b data-stat="live">0</b> sedang membaca
                             </span>
                         </span>
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-slate-200 text-slate-600 shadow-sm">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-line text-ink-muted shadow-sm">
                             <svg
                                 viewBox="0 0 24 24"
                                 fill="none"
@@ -194,7 +195,7 @@ const articleSchema = JSON.stringify({
                             </svg>
                             <span>
                                 Terakhir dibaca{" "}
-                                <b data-stat="last" class="text-slate-900">
+                                <b data-stat="last" class="text-ink">
                                     —
                                 </b>
                             </span>
@@ -205,60 +206,60 @@ const articleSchema = JSON.stringify({
 
             <div
                 class="prose prose-slate max-w-none
-                  prose-headings:font-extrabold prose-headings:text-slate-900 prose-headings:tracking-tight
+                  prose-headings:font-extrabold prose-headings:text-ink prose-headings:tracking-tight
                   prose-h2:mt-12 prose-h2:mb-4 prose-h3:mt-8
-                  prose-a:text-sky-600 prose-a:no-underline hover:prose-a:underline
-                  prose-code:before:content-none prose-code:after:content-none prose-code:bg-slate-200/60 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-medium prose-code:text-slate-800
+                  prose-a:text-rose-deep prose-a:no-underline hover:prose-a:underline
+                  prose-code:before:content-none prose-code:after:content-none prose-code:bg-pink-soft prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-medium prose-code:text-ink
                   prose-li:my-1"
             >
                 <slot />
             </div>
 
-            <div class="flex flex-wrap gap-2 mt-12 pt-8 border-t border-slate-200">
+            <div class="flex flex-wrap gap-2 mt-12 pt-8 border-t border-line">
                 {tags.map((t) => (
-                    <span class="text-xs font-medium px-3 py-1.5 bg-white ring-1 ring-slate-200 text-slate-600 rounded-full">
+                    <span class="text-xs font-medium px-3 py-1.5 bg-white ring-1 ring-line text-ink-muted rounded-full">
                         {t}
                     </span>
                 ))}
             </div>
 
-            <div class="mt-8 flex items-start gap-4 p-6 bg-white rounded-2xl ring-1 ring-slate-200 shadow-sm">
-                <div class="w-12 h-12 shrink-0 rounded-full bg-slate-900 grid place-items-center text-white font-bold shadow-md shadow-slate-900/20">
+            <div class="mt-8 flex items-start gap-4 p-6 bg-white rounded-2xl ring-1 ring-line shadow-sm">
+                <div class="w-12 h-12 shrink-0 rounded-full bg-ink grid place-items-center text-white font-bold shadow-md shadow-ink/20">
                     L
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900">
+                    <p class="font-semibold text-ink">
                         Maulana Nur Anfajm{" "}
-                        <span class="font-normal text-slate-400">
+                        <span class="font-normal text-ink-muted">
                             (Lananuranf)
                         </span>
                     </p>
-                    <p class="text-sm text-slate-600 mt-1 leading-relaxed">
-                        Backend engginer dan mahasiswa Sistem Informasi semester
+                    <p class="text-sm text-ink-muted mt-1 leading-relaxed">
+                        Backend Engineer dan mahasiswa Sistem Informasi semester
                         7 di Universitas Gunadarma. Membangun aplikasi web
                         dengan React, TypeScript, Go, dan PostgreSQL.
                     </p>
                     <a
                         href="/"
-                        class="inline-block mt-2 text-sm font-medium text-sky-600 hover:underline"
+                        class="inline-block mt-2 text-sm font-medium text-rose-deep hover:underline"
                     >
                         Lihat portfolio →
                     </a>
                 </div>
             </div>
 
-            <div class="mt-8 p-7 bg-white rounded-3xl ring-1 ring-slate-200 shadow-[0_12px_32px_-12px_rgba(15,23,42,0.18)] text-center">
-                <p class="font-bold text-lg text-slate-900 mb-1">
+            <div class="mt-8 p-7 bg-white rounded-3xl ring-1 ring-line shadow-[0_12px_32px_-12px_rgba(15,23,42,0.18)] text-center">
+                <p class="font-bold text-lg text-ink mb-1">
                     Ada pertanyaan atau masukan?
                 </p>
-                <p class="text-sm text-slate-500 mb-5 max-w-md mx-auto">
+                <p class="text-sm text-ink-muted mb-5 max-w-md mx-auto">
                     Silakan hubungi saya. Saya dengan senang hati membantu dan
                     berdiskusi lebih lanjut.
                 </p>
                 <div class="flex justify-center gap-3 flex-wrap">
                     <a
                         href="mailto:lananuranf@gmail.com"
-                        class="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-full text-sm shadow-md shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-px transition-all"
+                        class="px-5 py-2.5 bg-ink text-white font-semibold rounded-full text-sm shadow-md shadow-ink/20 hover:bg-rose-deep hover:-translate-y-px transition-all"
                     >
                         Kirim Email
                     </a>
@@ -266,7 +267,7 @@ const articleSchema = JSON.stringify({
                         href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="px-5 py-2.5 bg-white ring-1 ring-slate-200 text-slate-700 font-semibold rounded-full text-sm shadow-sm hover:ring-slate-400 transition-all"
+                        class="px-5 py-2.5 bg-white ring-1 ring-line text-ink font-semibold rounded-full text-sm shadow-sm hover:ring-rose-brand transition-all"
                     >
                         LinkedIn
                     </a>
@@ -274,7 +275,7 @@ const articleSchema = JSON.stringify({
                         href="https://github.com/Lananuranf"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="px-5 py-2.5 bg-white ring-1 ring-slate-200 text-slate-700 font-semibold rounded-full text-sm shadow-sm hover:ring-slate-400 transition-all"
+                        class="px-5 py-2.5 bg-white ring-1 ring-line text-ink font-semibold rounded-full text-sm shadow-sm hover:ring-rose-brand transition-all"
                     >
                         GitHub
                     </a>
@@ -282,6 +283,7 @@ const articleSchema = JSON.stringify({
             </div>
         </article>
     </main>
+    <Footer />
 </BaseLayout>
 
 <script>

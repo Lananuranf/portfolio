@@ -128,17 +128,17 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
 
   <h2>Hasil</h2>
   <h3>Skenario <code>/users</code> (JSON, 50 data)</h3>
-  <div class="not-prose overflow-x-auto my-5 rounded-2xl ring-1 ring-slate-200 bg-white shadow-sm">
+  <div class="not-prose overflow-x-auto my-5 rounded-2xl ring-1 ring-line bg-white shadow-sm">
     <table class="w-full text-sm">
-      <thead class="bg-slate-50 text-slate-600">
+      <thead class="bg-lavender-soft text-ink-muted">
         <tr><th class="text-left font-semibold px-4 py-3">Metrik</th><th class="text-right font-semibold px-4 py-3">Go Fiber</th><th class="text-right font-semibold px-4 py-3">Express</th></tr>
       </thead>
-      <tbody class="divide-y divide-slate-100 text-slate-700">
-        <tr><td class="px-4 py-3">Throughput (median)</td><td class="px-4 py-3 text-right font-semibold text-slate-900">25.862 req/s</td><td class="px-4 py-3 text-right">12.260 req/s</td></tr>
+      <tbody class="divide-y divide-line text-ink">
+        <tr><td class="px-4 py-3">Throughput (median)</td><td class="px-4 py-3 text-right font-semibold text-ink">25.862 req/s</td><td class="px-4 py-3 text-right">12.260 req/s</td></tr>
         <tr><td class="px-4 py-3">Rentang 5 putaran</td><td class="px-4 py-3 text-right">17.232 – 27.207</td><td class="px-4 py-3 text-right">12.125 – 12.398</td></tr>
-        <tr><td class="px-4 py-3">Latency p50</td><td class="px-4 py-3 text-right font-semibold text-slate-900">3,2 ms</td><td class="px-4 py-3 text-right">7,9 ms</td></tr>
-        <tr><td class="px-4 py-3">Latency p99</td><td class="px-4 py-3 text-right">13,2 ms</td><td class="px-4 py-3 text-right font-semibold text-slate-900">11,7 ms</td></tr>
-        <tr><td class="px-4 py-3">Memori puncak</td><td class="px-4 py-3 text-right font-semibold text-slate-900">± 18 MB</td><td class="px-4 py-3 text-right">± 103 MB</td></tr>
+        <tr><td class="px-4 py-3">Latency p50</td><td class="px-4 py-3 text-right font-semibold text-ink">3,2 ms</td><td class="px-4 py-3 text-right">7,9 ms</td></tr>
+        <tr><td class="px-4 py-3">Latency p99</td><td class="px-4 py-3 text-right">13,2 ms</td><td class="px-4 py-3 text-right font-semibold text-ink">11,7 ms</td></tr>
+        <tr><td class="px-4 py-3">Memori puncak</td><td class="px-4 py-3 text-right font-semibold text-ink">± 18 MB</td><td class="px-4 py-3 text-right">± 103 MB</td></tr>
       </tbody>
     </table>
   </div>
@@ -171,18 +171,18 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
 
   <h2>Jadi, pilih yang mana?</h2>
   <div class="not-prose grid sm:grid-cols-2 gap-4 my-6">
-    <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm">
-      <p class="font-bold text-slate-900 mb-2">Pilih Go Fiber jika…</p>
-      <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1.5">
+    <div class="rounded-2xl bg-white p-5 ring-1 ring-line shadow-sm">
+      <p class="font-bold text-ink mb-2">Pilih Go Fiber jika…</p>
+      <ul class="text-sm text-ink-muted list-disc pl-5 space-y-1.5">
         <li>Server kecil dan RAM terbatas.</li>
         <li>Butuh throughput tinggi atau banyak pekerjaan berat di CPU.</li>
         <li>Ingin hasil build berupa satu file yang mudah di-deploy.</li>
         <li>Tim nyaman dengan bahasa bertipe statis.</li>
       </ul>
     </div>
-    <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm">
-      <p class="font-bold text-slate-900 mb-2">Pilih Express jika…</p>
-      <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1.5">
+    <div class="rounded-2xl bg-white p-5 ring-1 ring-line shadow-sm">
+      <p class="font-bold text-ink mb-2">Pilih Express jika…</p>
+      <ul class="text-sm text-ink-muted list-disc pl-5 space-y-1.5">
         <li>Tim sudah terbiasa dengan JavaScript/TypeScript.</li>
         <li>Ingin berbagi kode dan tipe data dengan frontend.</li>
         <li>Butuh ekosistem paket npm yang sangat luas.</li>

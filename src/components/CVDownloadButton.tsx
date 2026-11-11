@@ -7,7 +7,7 @@ export default function CVDownloadButton(): ReactElement {
     <a
       href="/cv.pdf"
       download="CV_Maulana_Nur_Anfajm.pdf"
-      className="flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 text-sm"
+      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-line bg-white text-sm font-semibold text-ink transition-colors duration-200 hover:border-rose-brand hover:text-rose-deep"
       aria-label="Unduh CV Maulana Nur Anfajm (PDF)"
     >
       <svg
