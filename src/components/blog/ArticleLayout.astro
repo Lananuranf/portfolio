@@ -1,9 +1,8 @@
 ---
 // src/components/blog/ArticleLayout.astro — kerangka semua artikel blog:
-// SEO + schema, header, statistik pembaca real-time, progres baca, profil penulis, dan ajakan kontak.
+// SEO + schema, header, statistik pembaca real-time, dan progres baca.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
-import Footer from "../Footer.astro";
 import {
     countWords,
     readingMinutes,
@@ -11,9 +10,11 @@ import {
 } from "../../lib/readingTime";
 
 interface Props {
-    slug: string; // contoh: "cara-deploy-react-go-docker-aws"
+    slug: string; // contoh: "go-fiber-vs-nodejs-performa"
     file: string; // path file halaman, untuk menghitung jumlah kata
     title: string;
+    /** Judul pendek untuk <title> (maks. 60 karakter, termasuk " | Lananuranf"). */
+    seoTitle?: string;
     desc: string;
     datePublished: string; // YYYY-MM-DD
     dateModified?: string;
@@ -27,6 +28,7 @@ const {
     slug,
     file,
     title,
+    seoTitle,
     desc,
     datePublished,
     dateModified = datePublished,
@@ -42,9 +44,11 @@ const readMinutes = readingMinutes(wordCount);
 const articleSchema = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: title,
+    // Google menyarankan headline maks. 110 karakter.
+    headline: title.length <= 110 ? title : (seoTitle?.replace(/ \| Lananuranf$/, "") ?? title.slice(0, 110)),
     description: desc,
     url: url,
+    image: "https://lananuranf.my.id/og-image.png",
     datePublished: datePublished,
     dateModified: dateModified,
     inLanguage: "id",
@@ -54,7 +58,8 @@ const articleSchema = JSON.stringify({
         alternateName: "Lananuranf",
         url: "https://lananuranf.my.id/",
     },
-    publisher: { "@type": "Person", name: "Maulana Nur Anfajm" },
+    publisher: { "@type": "Person", name: "Maulana Nur Anfajm", url: "https://lananuranf.my.id/" },
+    isPartOf: { "@type": "Blog", name: "Blog Lananuranf", url: "https://lananuranf.my.id/blog/" },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     keywords: keywords,
     articleSection: category,
@@ -64,9 +69,16 @@ const articleSchema = JSON.stringify({
 ---
 
 <BaseLayout
-    title={`${title} | Lananuranf`}
+    title={seoTitle ?? `${title} | Lananuranf`}
     description={desc}
     canonicalURL={url}
+    ogType="article"
+    publishedTime={`${datePublished}T08:00:00+07:00`}
+    modifiedTime={`${dateModified}T08:00:00+07:00`}
+    breadcrumbs={[
+        { name: "Blog", url: "https://lananuranf.my.id/blog/" },
+        { name: title, url },
+    ]}
     extraSchema={articleSchema}
 >
     <MainLayout />
@@ -78,13 +90,9 @@ const articleSchema = JSON.stringify({
             class="h-full w-0 bg-gradient-brand"
         ></div>
     </div>
-    <div
-        id="read-remaining"
-        class="fixed bottom-5 right-5 z-50 px-3.5 py-2 rounded-full bg-ink/90 text-white text-xs font-semibold shadow-lg backdrop-blur opacity-0 translate-y-2 transition-all duration-300 pointer-events-none"
-        aria-live="polite"
-    ></div>
 
     <main id="main-content" class="pt-20 bg-surface min-h-screen">
+        <div class="max-w-6xl mx-auto lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-8 lg:px-6">
         <article
             id="article-body"
             data-words={wordCount}
@@ -147,10 +155,9 @@ const articleSchema = JSON.stringify({
                         </div>
                     </div>
 
-                    <!-- Statistik pembaca real-time (disembunyikan bila layanan belum aktif) -->
+                    <!-- Statistik pembaca real-time (angka "—" bila layanan belum merespons) -->
                     <div
                         id="live-stats"
-                        hidden
                         class="flex flex-wrap items-center gap-2 text-xs"
                     >
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-line text-ink-muted shadow-sm">
@@ -167,7 +174,7 @@ const articleSchema = JSON.stringify({
                             </svg>
                             <span>
                                 <b data-stat="views" class="text-ink">
-                                    0
+                                    —
                                 </b>{" "}
                                 kali dibaca
                             </span>
@@ -178,7 +185,7 @@ const articleSchema = JSON.stringify({
                                 <span class="relative w-2 h-2 rounded-full bg-rose-brand"></span>
                             </span>
                             <span>
-                                <b data-stat="live">0</b> sedang membaca
+                                <b data-stat="live">—</b> sedang membaca
                             </span>
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white ring-1 ring-line text-ink-muted shadow-sm">
@@ -204,8 +211,18 @@ const articleSchema = JSON.stringify({
                 </div>
             </header>
 
+            <!-- Daftar isi (mobile/tablet), diisi oleh skrip dari h2/h3 -->
+            <details id="toc-mobile" hidden class="lg:hidden glass-card rounded-2xl mb-8 overflow-hidden">
+                <summary class="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer select-none text-sm font-semibold text-ink list-none">
+                    Daftar isi
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="toc-chevron w-4 h-4 transition-transform motion-reduce:transition-none" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" /></svg>
+                </summary>
+                <ol data-toc-list class="px-2 pb-3 flex flex-col gap-0.5"></ol>
+            </details>
+
             <div
-                class="prose prose-slate max-w-none
+                id="article-prose"
+                class="article-prose prose prose-slate max-w-none
                   prose-headings:font-extrabold prose-headings:text-ink prose-headings:tracking-tight
                   prose-h2:mt-12 prose-h2:mb-4 prose-h3:mt-8
                   prose-a:text-rose-deep prose-a:no-underline hover:prose-a:underline
@@ -223,67 +240,24 @@ const articleSchema = JSON.stringify({
                 ))}
             </div>
 
-            <div class="mt-8 flex items-start gap-4 p-6 bg-white rounded-2xl ring-1 ring-line shadow-sm">
-                <div class="w-12 h-12 shrink-0 rounded-full bg-ink grid place-items-center text-white font-bold shadow-md shadow-ink/20">
-                    L
-                </div>
-                <div>
-                    <p class="font-semibold text-ink">
-                        Maulana Nur Anfajm{" "}
-                        <span class="font-normal text-ink-muted">
-                            (Lananuranf)
-                        </span>
-                    </p>
-                    <p class="text-sm text-ink-muted mt-1 leading-relaxed">
-                        Backend Engineer dan mahasiswa Sistem Informasi semester
-                        7 di Universitas Gunadarma. Membangun aplikasi web
-                        dengan React, TypeScript, Go, dan PostgreSQL.
-                    </p>
-                    <a
-                        href="/"
-                        class="inline-block mt-2 text-sm font-medium text-rose-deep hover:underline"
-                    >
-                        Lihat portfolio →
-                    </a>
-                </div>
-            </div>
-
-            <div class="mt-8 p-7 bg-white rounded-3xl ring-1 ring-line shadow-[0_12px_32px_-12px_rgba(15,23,42,0.18)] text-center">
-                <p class="font-bold text-lg text-ink mb-1">
-                    Ada pertanyaan atau masukan?
-                </p>
-                <p class="text-sm text-ink-muted mb-5 max-w-md mx-auto">
-                    Silakan hubungi saya. Saya dengan senang hati membantu dan
-                    berdiskusi lebih lanjut.
-                </p>
-                <div class="flex justify-center gap-3 flex-wrap">
-                    <a
-                        href="mailto:lananuranf@gmail.com"
-                        class="px-5 py-2.5 bg-ink text-white font-semibold rounded-full text-sm shadow-md shadow-ink/20 hover:bg-rose-deep hover:-translate-y-px transition-all"
-                    >
-                        Kirim Email
-                    </a>
-                    <a
-                        href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="px-5 py-2.5 bg-white ring-1 ring-line text-ink font-semibold rounded-full text-sm shadow-sm hover:ring-rose-brand transition-all"
-                    >
-                        LinkedIn
-                    </a>
-                    <a
-                        href="https://github.com/Lananuranf"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="px-5 py-2.5 bg-white ring-1 ring-line text-ink font-semibold rounded-full text-sm shadow-sm hover:ring-rose-brand transition-all"
-                    >
-                        GitHub
-                    </a>
-                </div>
-            </div>
         </article>
+
+        <!-- Daftar isi (desktop): sidebar lengket -->
+        <aside id="toc-desktop" hidden aria-label="Daftar isi" class="hidden lg:block">
+            <div class="sticky top-24 mt-12 md:mt-14 glass-card rounded-2xl p-3 max-h-[calc(100vh-8rem)] overflow-y-auto">
+                <p class="px-2.5 pt-1 pb-2 text-xs font-semibold tracking-widest uppercase text-rose-deep">Daftar isi</p>
+                <ol data-toc-list class="flex flex-col gap-0.5"></ol>
+            </div>
+        </aside>
+        </div>
     </main>
-    <Footer />
+
+    <button id="to-top" type="button" aria-label="Kembali ke atas" title="Kembali ke atas"
+        class="to-top glass-card fixed right-4 z-40 w-11 h-11 rounded-full grid place-items-center text-rose-deep hover:text-ink">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="w-5 h-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m-6 6 6-6 6 6" /></svg>
+    </button>
+    <div id="blog-toast" role="status" aria-live="polite"
+        class="blog-toast fixed left-1/2 z-[70] px-4 py-2 rounded-full bg-ink text-white text-xs font-medium shadow-lg max-w-[calc(100vw-2rem)]"></div>
 </BaseLayout>
 
 <script>
@@ -293,12 +267,9 @@ const articleSchema = JSON.stringify({
         "article-body",
     ) as HTMLElement | null;
 
-    // ── Progres & sisa waktu baca, dihitung dari posisi scroll ──
+    // ── Garis progres baca di atas layar, dihitung dari posisi scroll ──
     const bar = document.getElementById("read-progress");
-    const pill = document.getElementById("read-remaining");
-    if (article && bar && pill) {
-        const words = Number(article.dataset.words) || 0;
-        const wpm = Number(article.dataset.wpm) || 200;
+    if (article && bar) {
         let ticking = false;
         const update = () => {
             ticking = false;
@@ -309,14 +280,6 @@ const articleSchema = JSON.stringify({
                     ? Math.min(1, Math.max(0, -rect.top / scrollable))
                     : 1;
             bar.style.width = `${(progress * 100).toFixed(1)}%`;
-            const leftMin = Math.ceil((words * (1 - progress)) / wpm);
-            pill.textContent =
-                progress >= 0.98
-                    ? "Selesai dibaca ✓"
-                    : `Sisa ± ${leftMin} menit · ${Math.round(progress * 100)}%`;
-            const show = progress > 0.02;
-            pill.classList.toggle("opacity-0", !show);
-            pill.classList.toggle("translate-y-2", !show);
         };
         const onScroll = () => {
             if (!ticking) {
@@ -338,6 +301,7 @@ const articleSchema = JSON.stringify({
         const sid = sessionId();
         const hitKey = `viewed:${slug}`;
         let lastRead: number | null = null;
+        let loaded = false;
         let timer: number | undefined;
 
         const render = () => {
@@ -360,7 +324,6 @@ const articleSchema = JSON.stringify({
                 });
                 const d = await r.json();
                 if (!r.ok || !d.enabled) {
-                    box.hidden = true;
                     return false;
                 }
                 if (hit) {
@@ -374,7 +337,7 @@ const articleSchema = JSON.stringify({
                 el("live").textContent = String(Math.max(1, d.live));
                 lastRead = d.lastRead;
                 render();
-                box.hidden = false;
+                loaded = true;
                 return true;
             } catch {
                 return false;
@@ -385,7 +348,7 @@ const articleSchema = JSON.stringify({
         const start = async () => {
             if (timer || disabled) return;
             timer = window.setInterval(beat, 15000);
-            if ((await beat()) === false && box.hidden) {
+            if ((await beat()) === false && !loaded) {
                 disabled = true;
                 stop();
             }
@@ -420,4 +383,164 @@ const articleSchema = JSON.stringify({
                 setTimeout(() => (btn.textContent = "Salin"), 1800);
             });
         });
+
+    // ── Interaksi artikel: daftar isi, jangkar heading, reveal, tombol ke atas ──
+    {
+        const root = document.documentElement;
+        const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const prose = document.getElementById("article-prose");
+        const toast = document.getElementById("blog-toast");
+        let toastTimer: number | undefined;
+        const showToast = (msg: string) => {
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add("is-shown");
+            window.clearTimeout(toastTimer);
+            toastTimer = window.setTimeout(() => toast.classList.remove("is-shown"), 1800);
+        };
+
+        const headings = prose
+            ? Array.from(prose.querySelectorAll<HTMLHeadingElement>("h2, h3"))
+            : [];
+        const used = new Set<string>();
+        const slugify = (t: string) =>
+            t.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "bagian";
+
+        const tocLinks: HTMLAnchorElement[][] = [];
+        const lists = Array.from(document.querySelectorAll<HTMLOListElement>("[data-toc-list]"));
+        const mobile = document.getElementById("toc-mobile") as HTMLDetailsElement | null;
+
+        headings.forEach((h) => {
+            const text = (h.textContent ?? "").trim();
+            if (!h.id) {
+                let id = slugify(text), i = 2;
+                while (used.has(id) || document.getElementById(id)) id = `${slugify(text)}-${i++}`;
+                h.id = id;
+            }
+            used.add(h.id);
+
+            // Jangkar "#" — klik menyalin tautan ke bagian ini
+            const a = document.createElement("a");
+            a.href = `#${h.id}`;
+            a.className = "h-anchor";
+            a.textContent = "#";
+            a.setAttribute("aria-label", `Salin tautan ke bagian: ${text}`);
+            a.addEventListener("click", async (e) => {
+                e.preventDefault();
+                const url = `${location.origin}${location.pathname}#${h.id}`;
+                history.replaceState(null, "", `#${h.id}`);
+                h.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+                try {
+                    await navigator.clipboard.writeText(url);
+                    showToast("Tautan bagian disalin");
+                } catch {
+                    showToast("Gagal menyalin tautan");
+                }
+            });
+            h.append(a);
+
+            const group: HTMLAnchorElement[] = [];
+            lists.forEach((ol) => {
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+                link.href = `#${h.id}`;
+                link.textContent = text;
+                link.className = h.tagName === "H3" ? "toc-link toc-sub" : "toc-link";
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    history.replaceState(null, "", `#${h.id}`);
+                    h.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+                    if (mobile && ol.closest("#toc-mobile")) mobile.open = false;
+                });
+                li.append(link);
+                ol.append(li);
+                group.push(link);
+            });
+            tocLinks.push(group);
+        });
+
+        if (headings.length >= 2) {
+            mobile?.removeAttribute("hidden");
+            document.getElementById("toc-desktop")?.removeAttribute("hidden");
+        }
+
+        // Sorot bagian aktif
+        const setActive = (idx: number) =>
+            tocLinks.forEach((g, i) =>
+                g.forEach((l) => {
+                    l.classList.toggle("is-active", i === idx);
+                    if (i === idx) l.setAttribute("aria-current", "location");
+                    else l.removeAttribute("aria-current");
+                }),
+            );
+        if (headings.length && "IntersectionObserver" in window) {
+            const visible = new Set<Element>();
+            const io = new IntersectionObserver(
+                (entries) => {
+                    for (const en of entries) en.isIntersecting ? visible.add(en.target) : visible.delete(en.target);
+                    let idx = -1;
+                    if (visible.size) {
+                        idx = headings.findIndex((h) => visible.has(h));
+                    } else {
+                        // tidak ada heading di zona baca: pakai heading terakhir di atas layar
+                        headings.forEach((h, i) => { if (h.getBoundingClientRect().top < 120) idx = i; });
+                    }
+                    if (idx >= 0) setActive(idx);
+                },
+                { rootMargin: "-88px 0px -60% 0px", threshold: 0 },
+            );
+            headings.forEach((h) => io.observe(h));
+        }
+
+        // Scroll reveal untuk heading, gambar/kode, callout, tabel
+        if (prose && root.classList.contains("js-reveal") && "IntersectionObserver" in window) {
+            const tableWraps = Array.from(prose.querySelectorAll("table")).map(
+                (t) => (t.parentElement && t.parentElement !== prose ? t.parentElement : t) as HTMLElement,
+            );
+            const targets = Array.from(
+                new Set([
+                    ...prose.querySelectorAll<HTMLElement>(":scope > h2, :scope > h3, :scope > figure, [data-code-block], [data-callout], :scope > img"),
+                    ...tableWraps,
+                ]),
+            ).filter((el) => !el.hasAttribute("data-reveal"));
+            const rio = new IntersectionObserver(
+                (entries) => {
+                    for (const en of entries) {
+                        if (en.isIntersecting) { en.target.classList.add("is-in"); rio.unobserve(en.target); }
+                    }
+                },
+                { rootMargin: "0px 0px -8% 0px", threshold: 0.01 },
+            );
+            targets.forEach((el) => {
+                el.setAttribute("data-reveal", "");
+                // yang sudah terlihat (mis. dibuka lewat #jangkar) langsung tampil
+                if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-in");
+                else rio.observe(el);
+            });
+        }
+
+        // Tombol kembali ke atas
+        const top = document.getElementById("to-top");
+        if (top) {
+            let ticking = false;
+            const check = () => {
+                ticking = false;
+                top.classList.toggle("is-shown", window.scrollY > 600);
+            };
+            window.addEventListener("scroll", () => {
+                if (!ticking) { ticking = true; requestAnimationFrame(check); }
+            }, { passive: true });
+            check();
+            top.addEventListener("click", () => {
+                window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+            });
+        }
+
+        // Buka langsung ke #jangkar setelah id dibuat
+        if (location.hash) {
+            const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+            if (t && headings.includes(t as HTMLHeadingElement)) t.scrollIntoView({ block: "start" });
+        }
+    }
 </script>

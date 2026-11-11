@@ -30,10 +30,10 @@ const WAYS = [
 ];
 ---
 
-<section id="about" class="px-5 md:px-12 py-20 md:py-28 bg-white border-y border-line" aria-labelledby="about-heading">
+<section id="about" class="glass-scene scene-sky px-5 md:px-12 py-20 md:py-28 bg-white border-y border-line" aria-labelledby="about-heading">
     <div class="max-w-5xl mx-auto grid gap-12 md:grid-cols-[18rem_1fr] md:gap-14">
         <!-- Foto + fakta singkat -->
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-5" data-reveal>
             <img
                 src="/about.png"
                 alt="Foto setengah badan Maulana Nur Anfajm"
@@ -43,7 +43,7 @@ const WAYS = [
                 loading="lazy"
                 decoding="async"
             />
-            <dl class="rounded-2xl border border-line bg-surface p-5 flex flex-col gap-4 text-sm">
+            <dl class="glass-card rounded-2xl p-5 flex flex-col gap-4 text-sm">
                 {FACTS.map((f) => (
                     <div>
                         <dt class="font-mono text-xs uppercase tracking-wider text-ink-muted">{f.label}</dt>
@@ -55,7 +55,7 @@ const WAYS = [
 
         <!-- Teks -->
         <div class="flex flex-col gap-6">
-            <div>
+            <div data-reveal>
                 <p class="text-xs font-semibold tracking-widest uppercase text-rose-deep mb-2">Tentang saya</p>
                 <h2 id="about-heading" class="text-3xl md:text-4xl font-extrabold tracking-tight text-ink">
                     Senang di balik layar aplikasi
@@ -69,8 +69,8 @@ const WAYS = [
                     logika di server dan cara datanya disimpan.
                 </p>
                 <p>
-                    Proyek di sini saya kerjakan sendiri sampai bisa diakses. Letta School dan Toko Online pernah
-                    berjalan di AWS EC2 dengan Docker, sedangkan Ruang Rasa sekarang jalan di VPS Ubuntu.
+                    Ruang Rasa saya kerjakan sendiri sampai berjalan di VPS Ubuntu. Dua proyek lain berasal dari kuliah:
+                    backend toko online Hii Stranger (proyek capstone tim, Go) dan Laundry Lastri (Laravel), yang menjadi bahan Penulisan Ilmiah saya.
                     <strong class="font-semibold text-ink">Ruang Rasa</strong> juga proyek terbaru saya, backend
                     reservasi restoran yang saya tulis dengan Rust (Axum) dan PostgreSQL/PostGIS.
                 </p>
@@ -78,7 +78,7 @@ const WAYS = [
 
             <ul class="grid gap-4 sm:grid-cols-2" aria-label="Cara saya bekerja">
                 {WAYS.map((w) => (
-                    <li class="rounded-2xl border border-line bg-white p-5">
+                    <li class="glass-card lift rounded-2xl p-5" data-reveal>
                         <span class="grid h-10 w-10 place-items-center rounded-xl bg-lavender-soft text-lavender-deep" aria-hidden="true">
                             <svg
                                 viewBox="0 0 24 24"

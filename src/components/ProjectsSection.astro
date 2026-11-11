@@ -8,6 +8,7 @@ interface Project {
   num: string;
   title: string;
   subtitle: string;
+  badge?: string;
   repo?: string;
   detail?: string;
   tech: string[];
@@ -23,7 +24,6 @@ const PROJECTS: Project[] = [
     num: "01",
     title: "Ruang Rasa API",
     subtitle: "Reservasi & discovery restoran · Rust · VPS Ubuntu",
-    repo: "ruang-rasa-app",
     detail: "/projects/ruang-rasa/",
     tech: ["Rust", "Axum", "PostgreSQL", "PostGIS", "WebSocket", "Docker Compose", "Caddy"],
     summary: "Backend untuk aplikasi Android Ruang Rasa yang menangani login OTP, pencarian restoran terdekat, reservasi meja, dan chat real-time.",
@@ -32,42 +32,42 @@ const PROJECTS: Project[] = [
     result: "Reservasi dikunci dengan SELECT … FOR UPDATE dan Idempotency-Key. Dari 50 request paralel untuk kursi terakhir, tepat 1 yang lolos.",
   },
   {
-    id: "letta-school",
+    id: "capstone-hi",
     num: "02",
-    title: "Letta School API",
-    subtitle: "Manajemen sekolah · Go Fiber · AWS EC2",
-    repo: "letta-school",
-    detail: "/projects/letta-school/",
-    tech: ["Go Fiber", "PostgreSQL", "JWT", "Docker Compose", "Nginx", "AWS EC2", "GitHub Actions"],
-    summary: "REST API manajemen sekolah dengan login JWT dan tiga peran, yaitu admin, guru, dan siswa.",
-    problem: "Data siswa, absensi, dan nilai sebelumnya dikelola di spreadsheet tanpa kontrol akses.",
-    built: "API Go Fiber dengan PostgreSQL. Middleware memeriksa JWT dan peran sebelum request sampai ke handler.",
-    result: "Setiap push ke main ter-deploy ke EC2 lewat GitHub Actions dan Docker Compose. Versi baru aktif dalam 2–3 menit.",
+    title: "Hii Stranger API",
+    subtitle: "Toko online streetwear · Go · Proyek capstone tim",
+    detail: "/projects/capstone-hi/",
+    tech: ["Go", "PostgreSQL", "pgx", "Redis", "JWT", "Next.js", "Prometheus", "Cloudinary"],
+    summary: "Backend toko online untuk proyek capstone kampus, dikerjakan bersama tim. Bagian saya terutama backend Go dan panel admin.",
+    problem: "Checkout, pembayaran transfer, dan perubahan stok harus tetap benar walau beberapa pelanggan membeli varian yang sama bersamaan.",
+    built: "API Go (net/http + pgx) dengan satu package per fitur: produk, keranjang, order, pembayaran, pengiriman, dan ongkir RajaOngkir.",
+    result: "Baris order dan varian dikunci dengan SELECT … FOR UPDATE saat checkout dan verifikasi bayar. Stok kembali otomatis saat order dibatalkan.",
   },
   {
-    id: "ecommerce",
+    id: "londry-lastri",
     num: "03",
-    title: "Toko Online API",
-    subtitle: "Backend toko online · Go Gin · AWS EC2",
-    repo: "ecommerce-fullstack",
-    tech: ["Go Gin", "GORM", "PostgreSQL", "Docker Compose", "Nginx", "AWS EC2"],
-    summary: "Backend toko online dengan Go Gin dan GORM di atas PostgreSQL.",
-    problem: "Setup manual harus diulang setiap kali pindah dari laptop ke server.",
-    built: "Kode dibagi ke handler, service, dan repository. Database, API, dan Nginx ada di satu docker-compose.yml.",
-    result: "Health check membuat API menunggu database siap. Seluruh stack menyala dengan satu perintah di laptop maupun di EC2.",
+    title: "Laundry Lastri API",
+    subtitle: "Manajemen laundry · Laravel 12 · Proyek kampus",
+    badge: "Penulisan Ilmiah",
+    detail: "/projects/londry-lastri/",
+    tech: ["Laravel", "PHP", "Laravel Sanctum", "SQLite", "MySQL"],
+    summary: "REST API untuk usaha laundry: pelanggan, layanan, order, pembayaran, dan riwayat status cucian. Dibuat sebagai bahan Penulisan Ilmiah.",
+    problem: "Catatan order, cicilan bayar, dan posisi cucian di laundry kecil biasanya hanya ada di buku tulis, jadi sulit dilacak.",
+    built: "API Laravel 12 dengan token Sanctum dan peran admin. Pelanggan bisa membuat order dan jadwal jemput tanpa login.",
+    result: "Total dan sisa tagihan dihitung di server. Pembayaran dan perubahan status disimpan dalam DB::transaction, dan setiap perubahan status tercatat di riwayat.",
   },
 ];
 
 const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo) : Promise.resolve(null)));
 ---
 
-<section id="projects" class="px-4 sm:px-6 py-24 bg-surface" aria-labelledby="projects-heading">
+<section id="projects" class="glass-scene scene-sky px-4 sm:px-6 py-24 bg-surface" aria-labelledby="projects-heading">
   <div class="max-w-6xl mx-auto">
 
-    <div class="text-center mb-12">
+    <div class="text-center mb-12" data-reveal>
       <h2 id="projects-heading" class="text-4xl font-extrabold text-ink">Proyek <span class="text-gradient-brand">Backend</span></h2>
       <p class="text-ink-muted mt-3 text-sm max-w-xl mx-auto leading-relaxed">
-        Tiga API yang saya kerjakan sendiri dari skema database sampai deploy.
+        Satu proyek pribadi dan dua proyek kampus. Semuanya berfokus pada sisi backend: skema database, API, dan aturan bisnis.
       </p>
     </div>
 
@@ -80,12 +80,15 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
           { label: "Hasil", text: p.result },
         ];
         return (
-        <article class="bg-white rounded-2xl border border-line shadow-sm p-6 flex flex-col gap-4" aria-labelledby={`project-title-${p.id}`}>
+        <article data-reveal data-tilt class="glass-card lift rounded-2xl p-6 flex flex-col gap-4" aria-labelledby={`project-title-${p.id}`}>
           <div class="flex items-start gap-3">
             <span class="text-2xl font-black text-gradient-brand leading-none">{p.num}</span>
             <div>
               <h3 id={`project-title-${p.id}`} class="text-lg font-bold text-ink leading-snug">{p.title}</h3>
               <p class="text-xs text-ink-muted mt-0.5">{p.subtitle}</p>
+              {p.badge && (
+                <span class="inline-block mt-2 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-pink-soft text-rose-deep border border-line">{p.badge}</span>
+              )}
             </div>
           </div>
 

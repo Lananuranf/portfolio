@@ -11,7 +11,6 @@ const ICONS = {
 const LINKS = [
   { label: "Tentang",  href: "/#about",    icon: ICONS.user,      hint: "Tentang saya" },
   { label: "Keahlian", href: "/#skills",   icon: ICONS.layers,    hint: "Keahlian" },
-  { label: "Proyek",   href: "/#projects", icon: ICONS.briefcase, hint: "Proyek" },
   { label: "Blog",     href: "/blog/",     icon: ICONS.book,      hint: "Blog" },
   { label: "Kontak",   href: "/#contact",  icon: ICONS.mail,      hint: "Kontak" },
 ];
@@ -30,8 +29,9 @@ const LINKS = [
     aria-label="Navigasi utama"
     class="nav-glass pointer-events-auto relative w-fit lg:w-auto max-w-5xl mx-auto h-11 lg:h-14 px-4 lg:pl-5 lg:pr-1.5 flex items-center justify-between gap-2 rounded-full"
   >
-    <a href="/" class="shrink-0 font-mono text-sm lg:text-base font-semibold tracking-tight text-ink hover:text-rose-deep transition-colors">
-      lananuranf<span class="text-rose-deep" aria-hidden="true">_</span>
+    <a href="/" class="shrink-0 inline-flex items-center gap-2 font-mono text-sm lg:text-base font-semibold tracking-tight text-ink hover:text-rose-deep transition-colors">
+      <svg class="w-7 h-7 lg:w-8 lg:h-8 shrink-0" viewBox="0 0 64 64" aria-hidden="true"><defs> <linearGradient id="logo-crown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE38A"/><stop offset="1" stop-color="#F0B93A"/></linearGradient> <linearGradient id="logo-brim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7D46A"/><stop offset="1" stop-color="#E2A52E"/></linearGradient> </defs> <g transform="translate(0 -4)"> <g stroke="#7A4E0E" stroke-width="1.8" stroke-linejoin="round"> <ellipse cx="32" cy="40" rx="29" ry="10.5" fill="url(#logo-brim)"/> <path d="M18 39.5C18 21 24 13 32 13S46 21 46 39.5C40 42.8 24 42.8 18 39.5Z" fill="url(#logo-crown)"/> <path d="M18.3 31.2C24 34.6 40 34.6 45.7 31.2L46 39.5C40 42.8 24 42.8 18 39.5Z" fill="#D7263D"/> </g> <path d="M8 41.5C14 47 50 47 56 41.5" fill="none" stroke="#C99528" stroke-width="1.2" stroke-linecap="round" opacity=".8"/> <path d="M24 17.5C26 15.5 28.5 14.8 30.5 14.8" fill="none" stroke="#FFF6CF" stroke-width="2" stroke-linecap="round" opacity=".9"/> </g></svg>
+      <span>lananuranf<span class="text-rose-deep" aria-hidden="true">_</span></span>
     </a>
 
     <!-- Desktop (>=1024px): link teks -->
@@ -70,10 +70,11 @@ const LINKS = [
     ))}
     <li aria-hidden="true" class="w-px h-6 mx-0.5 bg-ink/15"></li>
     <li>
-      <a href="/cv.pdf" download aria-label="Unduh CV (PDF)" title="Unduh CV"
-        class="nav-icon flex items-center justify-center w-11 h-11 rounded-full bg-rose-deep text-white hover:bg-ink transition-colors
+      <a href="/cv.pdf" download aria-label="Unduh CV (PDF)" title="Unduh CV (PDF)"
+        class="nav-icon flex flex-col items-center justify-center gap-0.5 w-11 h-11 rounded-full bg-rose-deep text-white hover:bg-ink transition-colors
                shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_6px_16px_-8px_rgba(190,45,101,0.7)]">
-        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS.download} />
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS.download} />
+        <span aria-hidden="true" class="text-[10px] font-bold leading-none tracking-wide">CV</span>
       </a>
     </li>
   </ul>

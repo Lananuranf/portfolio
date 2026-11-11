@@ -81,8 +81,10 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
   slug="go-fiber-vs-nodejs-performa"
   file="src/pages/blog/go-fiber-vs-nodejs-performa.astro"
   title="Go Fiber vs Express.js: Benchmark Performa REST API Secara Langsung"
-  desc="Saya mengukur sendiri throughput, latency, dan pemakaian memori Go Fiber dan Express.js di laptop yang sama. Berikut hasilnya, cara mengulanginya, dan kapan sebaiknya memilih masing-masing."
+  seoTitle="Go Fiber vs Express.js: Benchmark REST API | Lananuranf"
+  desc="Saya mengukur throughput, latency, dan memori Go Fiber dan Express.js di laptop yang sama, lengkap dengan cara mengulanginya dan kapan memilih yang mana."
   datePublished="2026-11-08"
+  dateModified="2026-11-12"
   dateLabel="8 November 2026"
   category="Backend"
   tags={["Go Fiber","Express.js","Node.js","Backend","Benchmark"]}
@@ -98,7 +100,7 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
 
   <Callout type="info" title="Kenapa saya menulis ini">
     <p>
-      Backend proyek saya, <a href="/projects/letta-school/">Letta School</a>, memakai Go Fiber. Saya ingin tahu
+      Saya sering memakai Go Fiber untuk backend. Saya ingin tahu
       seberapa besar selisih performanya dengan Express, framework Node.js yang paling umum. Jadi saya
       mengukurnya sendiri di laptop saya, dengan kode dan cara uji yang bisa kamu ulangi.
     </p>
@@ -191,8 +193,8 @@ hey -z 15s -c 100 http://127.0.0.1:3001/users`;
     </div>
   </div>
   <p>
-    Untuk Letta School, saya tetap memilih Fiber karena aplikasinya berjalan di EC2 dengan RAM 1 GB bersama
-    PostgreSQL, Nginx, dan frontend. Hemat memori di sana lebih berharga daripada selisih throughput-nya.
+    Untuk aplikasi yang berjalan di EC2 dengan RAM 1 GB bersama PostgreSQL, Nginx, dan frontend,
+    saya tetap memilih Fiber. Hemat memori di sana lebih berharga daripada selisih throughput-nya.
   </p>
 
   <h2>Coba ulangi sendiri</h2>

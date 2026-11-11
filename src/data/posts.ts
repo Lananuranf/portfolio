@@ -17,27 +17,36 @@ export interface Post {
 
 const RAW: Post[] = [
   {
+    slug: "/blog/checkout-stok-aman-go-postgresql/",
+    title: "Checkout Tanpa Stok Minus: Mengunci Keranjang dengan FOR UPDATE di Go dan PostgreSQL",
+    desc: "Checkout Hii Stranger (Go, pgx, PostgreSQL) yang menjaga stok tidak minus saat dua orang membeli bersamaan, plus pembatalan yang mengembalikan stok.",
+    date: "12 November 2026",
+    tags: ["Go","PostgreSQL","pgx","Backend","E-commerce"],
+    published: true,
+    file: "src/pages/blog/checkout-stok-aman-go-postgresql.astro",
+  },
+  {
+    slug: "/blog/alur-order-laundry-laravel-12/",
+    title: "Membangun Alur Order Laundry di Laravel 12: Form Publik, Harga per Kg, Riwayat Status, dan Pembayaran Bertahap",
+    desc: "Backend Laundry Lastri (Laravel 12) untuk Penulisan Ilmiah: order dari form publik dalam satu transaksi, harga per kg, riwayat status, dan cicilan.",
+    date: "12 November 2026",
+    tags: ["Laravel","PHP","REST API","Backend","Penulisan Ilmiah"],
+    published: true,
+    file: "src/pages/blog/alur-order-laundry-laravel-12.astro",
+  },
+  {
     slug: "/blog/mencegah-double-booking-reservasi-rust/",
     title: "Mencegah Double Booking di Backend Reservasi Rust dengan SELECT FOR UPDATE dan Idempotency-Key",
-    desc: "Cara saya menjaga kapasitas kursi di backend Ruang Rasa (Rust, Axum, PostgreSQL) tetap benar saat banyak orang memesan bersamaan, lengkap dengan test 50 request paralel.",
+    desc: "Cara saya menjaga kapasitas kursi di backend Ruang Rasa (Rust, Axum, PostgreSQL) tetap benar saat banyak orang memesan bersamaan, diuji 50 request paralel.",
     date: "12 November 2026",
     tags: ["Rust","Axum","PostgreSQL","Backend","Concurrency"],
     published: true,
     file: "src/pages/blog/mencegah-double-booking-reservasi-rust.astro",
   },
   {
-    slug: "/blog/cara-deploy-react-go-docker-aws/",
-    title: "Cara Deploy Aplikasi React + Go Fiber ke AWS EC2 dengan Docker",
-    desc: "Panduan langkah demi langkah untuk pemula: menyiapkan server EC2, Docker Compose, HTTPS, sampai deploy otomatis setiap push ke GitHub.",
-    date: "28 April 2026",
-    tags: ["Docker","AWS EC2","Go Fiber","React","Tutorial"],
-    published: true,
-    file: "src/pages/blog/cara-deploy-react-go-docker-aws.astro",
-  },
-  {
     slug: "/blog/go-fiber-vs-nodejs-performa/",
     title: "Go Fiber vs Express.js: Benchmark Performa REST API Secara Langsung",
-    desc: "Saya mengukur sendiri throughput, latency, dan pemakaian memori Go Fiber dan Express.js di laptop yang sama, lengkap dengan cara mengulanginya dan kapan sebaiknya memilih masing-masing.",
+    desc: "Saya mengukur throughput, latency, dan memori Go Fiber dan Express.js di laptop yang sama, lengkap dengan cara mengulanginya dan kapan memilih yang mana.",
     date: "8 November 2026",
     tags: ["Go Fiber","Express.js","Node.js","Backend","Benchmark"],
     published: true,
@@ -46,7 +55,7 @@ const RAW: Post[] = [
 ];
 
 // Urutan tampil: terbaru di atas.
-export const POSTS: Post[] = [RAW[0], RAW[2], RAW[1], ...RAW.slice(3)].map(p => ({
+export const POSTS: Post[] = RAW.map(p => ({
   ...p,
   readTime: p.published && p.file ? readingTimeLabel(p.file) : undefined,
 }));

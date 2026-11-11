@@ -2,14 +2,16 @@
 // src/pages/blog/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
-import Footer from "../../components/Footer.astro";
 import { POSTS } from "../../data/posts";
+
+const ALL_TAGS = [...new Set(POSTS.flatMap((p) => p.tags))].sort((a, b) => a.localeCompare(b));
 
 const blogSchema = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: "Blog Teknis Lananuranf",
+    name: "Blog Lananuranf",
     url: "https://lananuranf.my.id/blog/",
+    inLanguage: "id",
     author: {
         "@type": "Person",
         name: "Maulana Nur Anfajm",
@@ -26,9 +28,10 @@ const blogSchema = JSON.stringify({
 ---
 
 <BaseLayout
-    title="Blog Teknis · Maulana Nur Anfajm (Lananuranf) | Tutorial Backend Engineering"
-    description="Artikel teknis Maulana Nur Anfajm (Lananuranf): tutorial deploy Go Fiber + Docker ke AWS EC2, benchmark REST API, dan catatan backend lainnya."
+    title="Blog Backend Engineering | Lananuranf"
+    description="Catatan teknis Maulana Nur Anfajm (Lananuranf): checkout aman di Go dan PostgreSQL, reservasi Rust tanpa double booking, Laravel, dan benchmark Go Fiber."
     canonicalURL="https://lananuranf.my.id/blog/"
+    breadcrumbs={[{ name: "Blog", url: "https://lananuranf.my.id/blog/" }]}
     extraSchema={blogSchema}
 >
     <MainLayout />
@@ -60,16 +63,43 @@ const blogSchema = JSON.stringify({
                 <p class="text-xs font-semibold tracking-widest text-rose-deep uppercase mb-2">
                     Artikel teknis
                 </p>
-                <h1 class="text-4xl font-extrabold text-ink">Blog</h1>
+                <h1 class="text-4xl font-extrabold text-ink">Blog Backend</h1>
                 <p class="text-ink-muted mt-2 text-sm max-w-xl">
                     Catatan dan tutorial backend. Langkah di setiap artikel sudah saya coba sendiri.
                 </p>
             </div>
 
-            <div class="flex flex-col gap-6">
+            <!-- Pencarian & filter tag (sisi klien) -->
+            <div class="blog-tools glass-card rounded-2xl p-4 sm:p-5 mb-8 flex flex-col gap-4" data-reveal>
+                <label class="relative block">
+                    <span class="sr-only">Cari artikel</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" /><path stroke-linecap="round" d="m20 20-3.5-3.5" />
+                    </svg>
+                    <input id="blog-search" type="search" autocomplete="off" placeholder="Cari judul, isi ringkas, atau tag…"
+                        class="w-full min-w-0 h-11 pl-10 pr-4 rounded-xl bg-white/80 ring-1 ring-line text-sm text-ink placeholder:text-ink-muted/80 outline-none focus:ring-2 focus:ring-rose-brand transition-shadow" />
+                </label>
+                <div class="flex flex-wrap gap-2" role="group" aria-label="Filter berdasarkan tag">
+                    <button type="button" data-tag="" aria-pressed="true" class="tag-chip">Semua</button>
+                    {ALL_TAGS.map((t) => (
+                        <button type="button" data-tag={t} aria-pressed="false" class="tag-chip font-mono">{t}</button>
+                    ))}
+                </div>
+                <p id="blog-count" class="text-xs text-ink-muted" aria-live="polite"></p>
+            </div>
+
+            <p id="blog-empty" hidden class="post-pop glass-card rounded-2xl p-8 text-center text-sm text-ink-muted mb-6">
+                Tidak ada artikel yang cocok. Coba kata kunci atau tag lain.
+            </p>
+
+            <div id="blog-list" class="flex flex-col gap-6">
                 {POSTS.map((post) => (
                     <article
-                        class={`bg-white rounded-2xl border shadow-sm motion-reduce:transform-none overflow-hidden transition-all duration-200 ${post.published ? "border-line hover:-translate-y-0.5 hover:border-pink-brand hover:shadow-[0_12px_28px_-16px_rgba(217,67,122,0.45)]" : "border-line opacity-70"}`}
+                        data-post
+                        data-reveal
+                        data-tags={post.tags.join("|")}
+                        data-search={`${post.title} ${post.desc} ${post.tags.join(" ")}`.toLowerCase()}
+                        class={`glass-card rounded-2xl overflow-hidden ${post.published ? "lift" : "opacity-70"}`}
                     >
                         <div class="p-7 flex flex-col md:flex-row gap-5">
                             <div class="flex-1 flex flex-col gap-3">
@@ -152,11 +182,53 @@ const blogSchema = JSON.stringify({
             </div>
         </div>
     </main>
-    <Footer />
 </BaseLayout>
 
 <script>
     import { relativeTime } from "../../lib/liveStats";
+
+    // ── Cari & filter tag (sisi klien) ──
+    {
+        const input = document.getElementById("blog-search") as HTMLInputElement | null;
+        const chips = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-tag]"));
+        const posts = Array.from(document.querySelectorAll<HTMLElement>("[data-post]"));
+        const empty = document.getElementById("blog-empty");
+        const count = document.getElementById("blog-count");
+        let tag = "";
+        const apply = () => {
+            const q = (input?.value ?? "").trim().toLowerCase();
+            const words = q.split(/\s+/).filter(Boolean);
+            let n = 0;
+            for (const p of posts) {
+                const hay = p.dataset.search ?? "";
+                const tags = (p.dataset.tags ?? "").split("|");
+                const ok = (!tag || tags.includes(tag)) && words.every((w) => hay.includes(w));
+                if (ok) {
+                    n++;
+                    if (p.hidden) {
+                        p.hidden = false;
+                        p.classList.add("is-in");
+                        p.classList.remove("post-pop");
+                        void p.offsetWidth;
+                        p.classList.add("post-pop");
+                    }
+                } else {
+                    p.hidden = true;
+                }
+            }
+            if (empty) empty.hidden = n > 0;
+            if (count) count.textContent = q || tag ? `${n} dari ${posts.length} artikel` : `${posts.length} artikel`;
+        };
+        input?.addEventListener("input", apply);
+        chips.forEach((c) =>
+            c.addEventListener("click", () => {
+                tag = c.dataset.tag === tag ? "" : (c.dataset.tag ?? "");
+                chips.forEach((x) => x.setAttribute("aria-pressed", String((x.dataset.tag ?? "") === tag)));
+                apply();
+            }),
+        );
+        apply();
+    }
 
     // Statistik pembaca diperbarui setiap 20 detik selama tab terbuka.
     const els = Array.from(

@@ -12,16 +12,16 @@
 <style>
   @page { size: A4; margin: 10mm 14mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --ink: #111827; --text: #1f2937; --muted: #4b5563; --pink: #FA699E; --lilac: #C9B5E0; }
-  body { font-family: Calibri, "Segoe UI", Arial, Helvetica, sans-serif; font-size: 9.6pt; line-height: 1.3; color: var(--text); }
-  header { border-bottom: 2px solid var(--pink); padding-bottom: 6px; margin-bottom: 8px; }
+  :root { --ink: #000; --text: #111; --muted: #444; --rule: #000; --rule-light: #999; }
+  body { font-family: Calibri, "Segoe UI", Arial, Helvetica, sans-serif; font-size: 9.5pt; line-height: 1.27; color: var(--text); }
+  header { border-bottom: 2px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
   h1 { font-size: 20pt; color: var(--ink); letter-spacing: .2px; line-height: 1.1; }
   .role { font-size: 11pt; font-weight: 700; color: var(--ink); margin-top: 2px; }
   .contact { font-size: 9.2pt; color: var(--muted); margin-top: 4px; }
   section { margin-top: 6px; }
   h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 1px; color: var(--ink);
-       border-bottom: 1px solid var(--lilac); padding-bottom: 1px; margin-bottom: 4px; }
-  h2::before { content: ""; display: inline-block; width: 4px; height: 9pt; background: var(--pink); margin-right: 6px; vertical-align: -1px; }
+       border-bottom: 1px solid var(--rule-light); padding-bottom: 1px; margin-bottom: 4px; }
+  h2::before { content: ""; display: inline-block; width: 4px; height: 9pt; background: var(--rule); margin-right: 6px; vertical-align: -1px; }
   p { margin-bottom: 2px; }
   ul { padding-left: 15px; }
   li { margin-bottom: 1px; }
@@ -38,7 +38,7 @@
 
 <header>
   <h1>Maulana Nur Anfajm</h1>
-  <div class="role">Backend Engineer (Junior) · Go · Rust · PostgreSQL</div>
+  <div class="role">Backend Engineer (Junior) · Go · Rust · PHP · PostgreSQL</div>
   <div class="contact">
     Jakarta · lananuranf@gmail.com · +62 859-6023-5008 ·
     lananuranf.my.id · github.com/Lananuranf · linkedin.com/in/maulana-nur-anfajm
@@ -58,8 +58,8 @@
 <section class="skills">
   <h2>Hard Skills</h2>
   <ul>
-    <li><b>Bahasa:</b> Go, Rust, SQL, TypeScript</li>
-    <li><b>Framework &amp; Library:</b> Axum, Tokio, SQLx (Rust); Go Fiber, Go Gin, GORM (Go)</li>
+    <li><b>Bahasa:</b> Go, Rust, PHP, SQL, TypeScript</li>
+    <li><b>Framework &amp; Library:</b> Axum, Tokio, SQLx (Rust); net/http, pgx, Go Fiber, Go Gin, GORM (Go); Laravel 12, Laravel Sanctum (PHP)</li>
     <li><b>Database:</b> PostgreSQL 16, PostGIS (query lokasi), pg_trgm (pencarian teks), migrasi skema up/down, transaksi &amp; row locking</li>
     <li><b>Konsep Backend:</b> REST API, WebSocket, autentikasi OTP + JWT, RBAC, arsitektur berlapis, background job</li>
     <li><b>Infrastruktur/DevOps:</b> Docker, Docker Compose, Linux (Ubuntu), Nginx, Caddy, AWS EC2, GitHub Actions (CI/CD), S3-compatible storage (Cloudflare R2, MinIO), Firebase Cloud Messaging</li>
@@ -70,12 +70,12 @@
 <section class="soft">
   <h2>Soft Skills</h2>
   <ul>
-    <li><b>Manajemen Waktu:</b> menjalani kuliah semester 7 sambil membangun 3 proyek backend (Ruang Rasa, Letta School, Toko Online).</li>
+    <li><b>Manajemen Waktu:</b> menjalani kuliah semester 7 sambil membangun 3 proyek backend (Ruang Rasa, Hii Stranger, Laundry Lastri).</li>
     <li><b>Scrum / Agile:</b> menerapkan sprint di proyek pribadi Ruang Rasa; 9 milestone (0–8), satu sprint satu milestone, commit tiap fitur lolos test.</li>
     <li><b>Manajemen Prioritas:</b> memangkas scope Ruang Rasa sesuai anggaran solo dev; fitur inti dulu, Redis/NATS ditunda sampai dibutuhkan.</li>
     <li><b>Problem Solving:</b> menulis 250+ test otomatis (unit dan integrasi) untuk backend Ruang Rasa; kode harus lolos <i>clippy</i> tanpa warning.</li>
     <li><b>Belajar Mandiri (Adaptif):</b> belajar Go lalu Rust dari dokumentasi resmi, kemudian membangun backend Ruang Rasa dengan Rust dari nol.</li>
-    <li><b>Komunikasi Tertulis:</b> menulis README, kontrak API sebelum coding, dan 3 artikel teknis di lananuranf.my.id/blog.</li>
+    <li><b>Komunikasi Tertulis:</b> menulis README, kontrak API sebelum coding, dan 4 artikel teknis di lananuranf.my.id/blog.</li>
     <!-- TODO: isi bukti kerja tim (tugas kelompok/organisasi) -->
   </ul>
 </section>
@@ -84,7 +84,7 @@
   <h2>Proyek Backend</h2>
 
   <div class="item">
-    <div class="item-head"><span class="item-title">Ruang Rasa: API Reservasi &amp; Discovery Restoran</span><span class="meta">github.com/Lananuranf/ruang-rasa-app</span></div>
+    <div class="item-head"><span class="item-title">Ruang Rasa: API Reservasi &amp; Discovery Restoran</span><span class="meta">lananuranf.my.id/projects/ruang-rasa</span></div>
     <div class="stack">Rust · Axum 0.8 · Tokio · SQLx · PostgreSQL 16 + PostGIS + pg_trgm · WebSocket · Docker Compose · Caddy</div>
     <ul>
       <li>Merancang backend tunggal sebagai workspace Rust 4 crate (api, domain, infra, shared) dengan 11 migrasi skema yang bisa di-rollback.</li>
@@ -95,21 +95,22 @@
   </div>
 
   <div class="item">
-    <div class="item-head"><span class="item-title">Letta School: Sistem Manajemen Sekolah</span><span class="meta">school.lananuranf.my.id</span></div>
-    <div class="stack">Go Fiber · PostgreSQL · Docker · Nginx · AWS EC2 · GitHub Actions</div>
+    <div class="item-head"><span class="item-title">Hii Stranger: API Toko Online Streetwear (Capstone, Tim)</span><span class="meta">lananuranf.my.id/projects/capstone-hi</span></div>
+    <div class="stack">Go (net/http) · pgx · PostgreSQL · Redis · JWT · Next.js · Prometheus</div>
     <ul>
-      <li>Membangun REST API dengan login JWT dan tiga peran (admin, guru, siswa) untuk menggantikan pencatatan manual di spreadsheet.</li>
-      <li>Menulis middleware otorisasi yang memeriksa token dan peran pengguna di setiap endpoint.</li>
-      <li>Berjalan di AWS EC2 (Docker Compose, Nginx + SSL); push ke main di-deploy otomatis lewat GitHub Actions.</li>
+      <li>Mengerjakan sebagian besar backend Go: merapikan arsitektur menjadi satu package per fitur (produk, keranjang, order, pembayaran, pengiriman, ongkir RajaOngkir) dan menyusun migrasi database.</li>
+      <li>Menjaga stok tetap benar saat checkout dan verifikasi pembayaran dengan transaksi PostgreSQL dan kunci baris (<i>SELECT … FOR UPDATE</i>); stok dikembalikan otomatis saat order dibatalkan.</li>
+      <li>Menambahkan pencarian di daftar pembayaran admin dan membuat tampilan panel admin responsif.</li>
     </ul>
   </div>
 
   <div class="item">
-    <div class="item-head"><span class="item-title">Toko Online dengan Docker</span><span class="meta">github.com/Lananuranf/ecommerce-fullstack</span></div>
-    <div class="stack">Go Gin · GORM · PostgreSQL · Docker Compose · Nginx</div>
+    <div class="item-head"><span class="item-title">Laundry Lastri: REST API Manajemen Laundry (Penulisan Ilmiah)</span><span class="meta">lananuranf.my.id/projects/londry-lastri</span></div>
+    <div class="stack">PHP · Laravel 12 · Laravel Sanctum · MySQL/SQLite</div>
     <ul>
-      <li>Menyusun backend Go Gin dalam tiga lapisan: handler (HTTP), service (logika bisnis), dan repository (akses database).</li>
-      <li>Menjalankan seluruh service dengan satu perintah Docker Compose: health check tiap container, volume untuk data PostgreSQL, dan rahasia di file .env yang tidak di-commit.</li>
+      <li>Membangun API untuk pelanggan, layanan, order, dan pembayaran sebagai bahan Penulisan Ilmiah; pelanggan bisa memesan dan menjadwalkan jemput tanpa login.</li>
+      <li>Menghitung total dan sisa tagihan di server (harga per kg, per item, atau flat) dan mendukung pembayaran bertahap.</li>
+      <li>Menyimpan pembayaran dan perubahan status dalam <i>DB::transaction</i>; setiap perubahan status tercatat di tabel riwayat. Autentikasi admin memakai token Sanctum.</li>
     </ul>
   </div>
 </section>

@@ -1,9 +1,9 @@
 ---
 // src/components/ContactSection.astro
 // Ikon brand dari paket pihak ketiga, di-inline saat build (tanpa JS di browser):
-// - simple-icons: Gmail, WhatsApp, GitHub
+// - simple-icons: Gmail, GitHub
 // - Font Awesome Free Brands: LinkedIn (simple-icons tidak lagi menyediakan logo LinkedIn)
-import { siGmail, siWhatsapp, siGithub } from "simple-icons";
+import { siGmail, siGithub } from "simple-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
 const [liW, liH, , , liPath] = faLinkedin.icon;
@@ -17,15 +17,6 @@ const CONTACTS = [
         viewBox: "0 0 24 24",
         path: siGmail.path,
         external: false,
-    },
-    {
-        name: "WhatsApp",
-        value: "+62 859-6023-5008",
-        href: "https://wa.me/6285960235008",
-        hex: `#${siWhatsapp.hex}`,
-        viewBox: "0 0 24 24",
-        path: siWhatsapp.path,
-        external: true,
     },
     {
         name: "GitHub",
@@ -48,9 +39,9 @@ const CONTACTS = [
 ];
 ---
 
-<section id="contact" class="px-5 md:px-12 py-20 md:py-28 bg-white border-t border-line" aria-labelledby="contact-heading">
+<section id="contact" class="glass-scene scene-sky px-5 md:px-12 py-20 md:py-28 bg-white border-t border-line" aria-labelledby="contact-heading">
     <div class="max-w-5xl mx-auto grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-center">
-        <div>
+        <div data-reveal>
             <p class="text-xs font-semibold tracking-widest uppercase text-rose-deep mb-2">Kontak</p>
             <h2 id="contact-heading" class="text-3xl md:text-4xl font-extrabold tracking-tight text-ink">
                 Mari ngobrol
@@ -63,13 +54,13 @@ const CONTACTS = [
 
         <ul class="grid gap-3 sm:grid-cols-2">
             {CONTACTS.map((c) => (
-                <li>
+                <li data-reveal>
                     <a
                         href={c.href}
                         target={c.external ? "_blank" : undefined}
                         rel={c.external ? "noopener noreferrer" : undefined}
                         aria-label={`${c.name}: ${c.value}${c.external ? " (tab baru)" : ""}`}
-                        class="group flex items-center gap-4 rounded-2xl border border-line bg-white p-4 transition-[border-color,box-shadow] duration-200 hover:border-pink-brand hover:shadow-[0_12px_28px_-16px_rgba(217,67,122,0.45)]"
+                        class="glass-card lift group flex items-center gap-4 rounded-2xl p-4"
                     >
                         <span
                             class="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-line bg-surface"

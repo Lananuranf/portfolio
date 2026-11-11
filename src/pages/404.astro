@@ -1,0 +1,25 @@
+---
+// src/pages/404.astro — halaman tidak ditemukan (tidak diindeks).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="Halaman Tidak Ditemukan | Lananuranf"
+  description="Halaman yang kamu cari tidak ada atau sudah dipindahkan."
+  canonicalURL="https://lananuranf.my.id/404/"
+  noindex
+>
+  <MainLayout />
+  <main id="main-content" class="pt-28 pb-20 px-5 min-h-[70vh] flex flex-col items-center justify-center text-center bg-surface">
+    <p class="font-mono text-sm text-rose-deep mb-3">404</p>
+    <h1 class="text-3xl md:text-4xl font-extrabold text-ink mb-4">Halaman tidak ditemukan</h1>
+    <p class="text-ink-muted max-w-md mb-8">Halaman ini tidak ada atau sudah saya hapus. Coba mulai dari beranda atau baca artikel di blog.</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <a href="/" class="px-5 py-2.5 rounded-full bg-gradient-brand text-white font-semibold">Ke beranda</a>
+      <a href="/blog/" class="px-5 py-2.5 rounded-full ring-1 ring-pink-brand/50 text-ink font-semibold">Buka blog</a>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,204 @@
+---
+// src/pages/projects/londry-lastri.astro — Studi kasus Laundry Lastri (Laravel), bahan Penulisan Ilmiah.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import Footer from "../../components/Footer.astro";
+import { techIcon } from "../../lib/icons";
+
+
+const TECH = ["Laravel", "PHP", "Laravel Sanctum", "SQLite", "MySQL"];
+
+const STATS = [
+  { value: "8", label: "tabel inti, dari pelanggan sampai pengantaran" },
+  { value: "9", label: "status cucian, termasuk batal" },
+  { value: "3", label: "status bayar: unpaid, partial, paid" },
+  { value: "1", label: "endpoint publik untuk pesan tanpa login" },
+];
+
+const TABLES = [
+  { name: "customers", desc: "Data pelanggan. Order publik mencari pelanggan dari nomor HP, atau membuat yang baru." },
+  { name: "services", desc: "Master layanan, misalnya cuci kiloan, cuci setrika, dan setrika saja." },
+  { name: "orders, order_items", desc: "Header transaksi dan rincian item. Subtotal, diskon, pajak, dan biaya tambahan disimpan terpisah." },
+  { name: "payments", desc: "Riwayat pembayaran per order, sehingga cicilan tercatat satu per satu." },
+  { name: "order_status_histories", desc: "Jejak setiap perubahan status: dari apa, ke apa, dan kapan." },
+  { name: "deliveries", desc: "Jadwal jemput dan antar cucian." },
+];
+
+const PAYMENT_FLOW = [
+  { title: "Validasi", desc: "Data pembayaran diperiksa dengan aturan validasi Laravel." },
+  { title: "Cek sisa tagihan", desc: "Nominal tidak boleh melebihi amount_due order." },
+  { title: "Simpan dalam satu transaksi", desc: "Di dalam DB::transaction: record payment disimpan, amount_paid ditambah, amount_due dikurangi, lalu payment_status diperbarui dari unpaid ke partial atau paid. Kalau satu langkah gagal, semuanya dibatalkan." },
+];
+
+const ENDPOINTS = [
+  { group: "Auth", items: ["POST /register", "POST /login", "POST /logout"] },
+  { group: "Publik", items: ["POST /public/orders"] },
+  { group: "Master data", items: ["GET /customers", "POST /customers", "GET /services", "POST /services"] },
+  { group: "Order", items: ["GET /orders", "POST /orders", "PUT /orders/{id}", "POST /order-items"] },
+  { group: "Pembayaran", items: ["GET /orders/{order}/payments", "POST /orders/{order}/payments"] },
+  { group: "Status", items: ["GET /orders/{order}/statuses", "POST /orders/{order}/statuses"] },
+];
+
+const projectSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  name: "Laundry Lastri API",
+  description: "REST API manajemen laundry dengan Laravel 12 dan Sanctum: pelanggan, layanan, order, pembayaran bertahap, dan riwayat status. Dibuat untuk Penulisan Ilmiah.",
+  programmingLanguage: ["PHP", "SQL"],
+  url: "https://lananuranf.my.id/projects/londry-lastri/",
+  image: "https://lananuranf.my.id/og-image.png",
+  inLanguage: "id",
+  dateModified: "2026-11-12",
+  author: { "@type": "Person", name: "Maulana Nur Anfajm", alternateName: "Lananuranf", url: "https://lananuranf.my.id/" },
+});
+---
+
+<BaseLayout
+  title="Laundry Lastri: REST API Laundry dengan Laravel | Lananuranf"
+  description="Studi kasus Laundry Lastri, REST API laundry dengan Laravel 12 dan Sanctum untuk Penulisan Ilmiah: order, pembayaran bertahap, dan riwayat status cucian."
+  canonicalURL="https://lananuranf.my.id/projects/londry-lastri/"
+  breadcrumbs={[{ name: "Laundry Lastri", url: "https://lananuranf.my.id/projects/londry-lastri/" }]}
+  extraSchema={projectSchema}
+>
+  <MainLayout />
+
+  <main class="pt-20 min-h-screen bg-surface text-ink">
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 py-14">
+      <a href="/#projects" class="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-rose-deep transition-colors mb-8">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+        Kembali ke Proyek
+      </a>
+
+      <header class="mb-10">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-pink-soft text-rose-deep border border-line">Penulisan Ilmiah</span>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-pink-soft text-rose-deep border border-line">Backend API</span>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-lavender-soft text-lavender-deep border border-line">Laravel 12</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-3">
+          Laundry Lastri API: <span class="text-gradient-brand">backend manajemen laundry</span>
+        </h1>
+        <p class="text-ink-muted text-base leading-relaxed">
+          Laundry Lastri adalah REST API untuk usaha laundry. Proyek ini saya buat sebagai bahan Penulisan Ilmiah di kampus. Admin mencatat pelanggan, layanan, order, dan pembayaran, sedangkan pelanggan bisa memesan dan menjadwalkan jemput tanpa harus punya akun.
+        </p>
+
+        <a href="/blog/alur-order-laundry-laravel-12/"
+          class="group mt-6 flex items-center gap-4 rounded-2xl border border-line bg-white p-4 hover:border-rose-brand transition-colors">
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold">Repositori bersifat privat</p>
+            <p class="text-xs text-ink-muted">Cuplikan kode dan penjelasan alurnya ada di artikel blog.</p>
+          </div>
+          <span class="text-xs font-semibold text-ink-muted group-hover:text-rose-deep whitespace-nowrap">Baca artikel →</span>
+        </a>
+      </header>
+
+      <ul class="flex flex-wrap gap-2 mb-8 p-4 bg-white rounded-2xl border border-line" aria-label="Teknologi">
+        {TECH.map((label) => {
+          const icon = techIcon(label);
+          return (
+            <li class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 bg-surface border border-line rounded-full">
+              {icon && <span class="w-3.5 h-3.5 shrink-0 [&>svg]:w-full [&>svg]:h-full" set:html={icon.svg} />}
+              {label}
+            </li>
+          );
+        })}
+      </ul>
+
+      <dl class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
+        {STATS.map((s) => (
+          <div class="rounded-2xl bg-white border border-line p-4">
+            <dt class="sr-only">{s.label}</dt>
+            <dd class="text-2xl font-extrabold text-gradient-brand leading-none">{s.value}</dd>
+            <dd class="text-xs text-ink-muted mt-2 leading-snug">{s.label}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div class="flex flex-col gap-12">
+        <section aria-labelledby="masalah">
+          <h2 id="masalah" class="text-xl font-bold mb-3">Masalah</h2>
+          <div class="bg-white border border-line rounded-2xl p-5 text-ink-muted text-sm leading-relaxed flex flex-col gap-2">
+            <p>Di laundry kecil, order, pembayaran, dan posisi cucian sering hanya dicatat di buku. Pemilik sulit menjawab pertanyaan sederhana seperti "cucian saya sudah sampai mana?" atau "berapa sisa yang belum dibayar?".</p>
+            <p>Pembayaran juga tidak selalu lunas sekaligus. Pelanggan bisa membayar uang muka dulu, lalu melunasi saat mengambil cucian, jadi sistem perlu mencatat cicilan dengan benar.</p>
+          </div>
+        </section>
+        <section aria-labelledby="arsitektur">
+          <h2 id="arsitektur" class="text-xl font-bold mb-3">Struktur data</h2>
+          <p class="text-sm text-ink-muted leading-relaxed mb-4">API Laravel 12 di bawah prefix <code class="font-mono text-ink">/api/v1</code>. Login memakai token Laravel Sanctum dengan masa aktif yang diperpanjang selama token dipakai. Endpoint pengelolaan hanya bisa diakses peran admin. Database SQLite dipakai saat pengembangan dan MySQL untuk produksi.</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            {TABLES.map((t) => (
+              <div class="bg-white border border-line rounded-2xl p-4">
+                <p class="font-mono text-sm font-semibold text-rose-deep">{t.name}</p>
+                <p class="text-sm text-ink-muted leading-relaxed mt-1">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section aria-labelledby="status">
+          <h2 id="status" class="text-xl font-bold mb-3">Alur status cucian</h2>
+          <div class="bg-white border border-line rounded-2xl p-5 text-sm text-ink-muted leading-relaxed flex flex-col gap-2">
+            <p class="font-mono text-[12px] text-ink break-words">pending → received → washing → drying → ironing → ready → delivered → completed</p>
+            <p>Order bisa dibatalkan (cancelled) dari status mana pun. Perubahan status dan pencatatan riwayatnya dijalankan dalam satu <code class="font-mono text-ink">DB::transaction</code>, jadi status order dan isi tabel riwayat tidak pernah berbeda.</p>
+          </div>
+        </section>
+        <section aria-labelledby="pembayaran">
+          <h2 id="pembayaran" class="text-xl font-bold mb-3">Pencatatan pembayaran</h2>
+          <ol class="flex flex-col gap-3">
+            {PAYMENT_FLOW.map((f, i) => (
+              <li class="flex gap-4 bg-white border border-line rounded-2xl p-4">
+                <span class="w-7 h-7 shrink-0 rounded-full bg-pink-soft text-rose-deep text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                <div>
+                  <p class="font-semibold text-sm">{f.title}</p>
+                  <p class="text-sm text-ink-muted leading-relaxed mt-1">{f.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+        <section aria-labelledby="keputusan">
+          <h2 id="keputusan" class="text-xl font-bold mb-3">Keputusan teknis lain</h2>
+          <div class="bg-white border border-line rounded-2xl p-5 text-ink-muted text-sm leading-relaxed flex flex-col gap-2">
+            <p><strong class="text-ink">Total dihitung di server.</strong> total_amount = subtotal − diskon + pajak + biaya tambahan, lalu amount_due = total − yang sudah dibayar. Nilai ini dihitung ulang setiap order diubah, bukan diambil dari client.</p>
+            <p><strong class="text-ink">Order publik yang atomik.</strong> <code class="font-mono text-ink">POST /public/orders</code> mencari atau membuat pelanggan dari nomor HP, menghitung subtotal dari item, lalu membuat order, item, dan jadwal jemput dalam satu transaksi.</p>
+            <p><strong class="text-ink">Validasi yang cocok untuk API.</strong> Order publik memakai <code class="font-mono text-ink">Validator::make()</code> supaya error validasi selalu kembali sebagai JSON, bukan redirect seperti di route web.</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="endpoint">
+          <h2 id="endpoint" class="text-xl font-bold mb-3">Endpoint utama</h2>
+          <p class="text-sm text-ink-muted leading-relaxed mb-4">Semua di bawah prefix <code class="font-mono text-ink">/api/v1</code>. Selain auth dan order publik, semua endpoint butuh token dan peran admin.</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            {ENDPOINTS.map((g) => (
+              <div class="bg-white border border-line rounded-2xl p-4">
+                <p class="text-xs font-semibold text-lavender-deep uppercase tracking-wide mb-2">{g.group}</p>
+                <ul class="flex flex-col gap-1">
+                  {g.items.map((e) => {
+                    const [method, ...rest] = e.split(" ");
+                    return (
+                      <li class="font-mono text-[12px] leading-relaxed break-all">
+                        <span class={method === "GET" ? "text-lavender-deep font-bold" : "text-rose-deep font-bold"}>{method}</span>{" "}
+                        <span class="text-ink">{rest.join(" ")}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </div>
+
+      <div class="mt-12 p-6 bg-white border border-line rounded-2xl text-center">
+        <p class="font-bold mb-1">Mau bahas proyek ini lebih jauh?</p>
+        <p class="text-sm text-ink-muted mb-4">Saya senang menjelaskan detail implementasinya, atau membicarakan peluang magang dan kerja di bidang backend.</p>
+        <div class="flex justify-center gap-3 flex-wrap">
+          <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-ink text-white font-semibold rounded-xl text-sm hover:bg-lavender-deep transition-colors">Kirim Email</a>
+          <a href="/blog/alur-order-laundry-laravel-12/" class="px-5 py-2.5 border border-line bg-white text-ink font-semibold rounded-xl text-sm hover:border-rose-brand transition-colors">Baca artikel</a>
+          <a href="/#projects" class="px-5 py-2.5 border border-line bg-white text-ink font-semibold rounded-xl text-sm hover:border-rose-brand transition-colors">Proyek lain</a>
+        </div>
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

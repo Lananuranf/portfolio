@@ -2,27 +2,60 @@
 // src/layouts/BaseLayout.astro
 import '../styles/global.css';
 
+interface Crumb { name: string; url: string; }
 interface Props {
   title?: string;
   description?: string;
   canonicalURL?: string;
   ogImage?: string;
+  ogImageAlt?: string;
+  /** "article" untuk artikel blog (memunculkan article:published_time). */
+  ogType?: "website" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Person, WebSite, dan FAQ hanya dipasang di beranda. */
+  isHome?: boolean;
+  /** Jejak halaman untuk BreadcrumbList (tanpa Beranda, ditambahkan otomatis). */
+  breadcrumbs?: Crumb[];
   extraSchema?: string;
+  /** true untuk halaman yang tidak boleh diindeks (mis. 404). */
+  noindex?: boolean;
 }
 
 const {
   title = "Maulana Nur Anfajm (Lananuranf) | Backend Engineer",
-  description = "Portfolio Maulana Nur Anfajm alias Lananuranf, Backend Engineer dan mahasiswa Sistem Informasi Universitas Gunadarma semester 7. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker. Terbuka untuk magang dan proyek freelance.",
-  canonicalURL = Astro.url.href,
+  description = "Portfolio Maulana Nur Anfajm (Lananuranf), Backend Engineer dari Jakarta. Membangun REST API dengan Go, Rust, PostgreSQL, dan Docker.",
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   ogImage = "/og-image.png",
+  ogImageAlt = "Portfolio Maulana Nur Anfajm (Lananuranf), Backend Engineer",
+  ogType = "website",
+  publishedTime,
+  modifiedTime,
+  isHome = false,
+  breadcrumbs = [],
   extraSchema = "",
+  noindex = false,
 } = Astro.props;
+
+const schemaBreadcrumb = breadcrumbs.length
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [{ name: "Beranda", url: "https://lananuranf.my.id/" }, ...breadcrumbs].map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    })
+  : "";
 
 const ogImageFull = new URL(ogImage, Astro.site).href;
 
 const schemaPerson = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": "https://lananuranf.my.id/#person",
   "name": "Maulana Nur Anfajm",
   "alternateName": ["Lananuranf", "lananur.anf", "Maulana Anfajm"],
   "url": "https://lananuranf.my.id/",
@@ -30,7 +63,6 @@ const schemaPerson = JSON.stringify({
   "jobTitle": "Backend Engineer",
   "description": "Backend Engineer dan mahasiswa Sistem Informasi semester 7 Universitas Gunadarma Jakarta. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker.",
   "email": "lananuranf@gmail.com",
-  "telephone": "+6285960235008",
   "address": { "@type": "PostalAddress", "addressLocality": "Jakarta", "addressCountry": "ID" },
   "sameAs": [
     "https://github.com/Lananuranf",
@@ -47,6 +79,9 @@ const schemaPerson = JSON.stringify({
 const schemaWebsite = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": "https://lananuranf.my.id/#website",
+  "inLanguage": "id",
+  "author": { "@id": "https://lananuranf.my.id/#person" },
   "name": "Portfolio Maulana Nur Anfajm (Lananuranf)",
   "alternateName": ["Lananuranf Portfolio","Portfolio Lananuranf","Maulana Nur Anfajm Portfolio"],
   "url": "https://lananuranf.my.id/",
@@ -65,7 +100,7 @@ const schemaFAQ = JSON.stringify({
     {
       "@type": "Question",
       "name": "Apa saja proyek Lananuranf?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf: Ruang Rasa, backend aplikasi reservasi restoran (Rust Axum + PostgreSQL/PostGIS); Letta School, sistem manajemen sekolah (Go Fiber + PostgreSQL); toko online dengan Docker (Go Gin + PostgreSQL); dan website portfolio ini (Astro)." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf: Ruang Rasa, backend aplikasi reservasi restoran (Rust Axum + PostgreSQL/PostGIS); Hii Stranger, backend toko online untuk proyek capstone tim (Go + PostgreSQL); Laundry Lastri, API manajemen laundry untuk Penulisan Ilmiah (Laravel 12); dan website portfolio ini (Astro)." }
     },
     {
       "@type": "Question",
@@ -88,11 +123,9 @@ const schemaFAQ = JSON.stringify({
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <title>{title}</title>
-    <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, portofolio lananuranf, portfolio lananuranf, project lananuranf, blog lananuranf, maulana nur anfajm portfolio, maulana anfajm developer, lananuranf github, Backend Engineer, Go Backend Developer, Rust Axum, Go Fiber, Go Gin, PostgreSQL, Docker, Sistem Informasi, Universitas Gunadarma, Backend Engineer jakarta, web developer indonesia, portfolio developer indonesia" />
     <meta name="author" content="Maulana Nur Anfajm (Lananuranf)" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="robots" content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
     <link rel="canonical" href={canonicalURL} />
 
     <!-- Geo -->
@@ -100,16 +133,19 @@ const schemaFAQ = JSON.stringify({
     <meta name="geo.placename" content="Jakarta, Indonesia" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageFull} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf), Backend Engineer Jakarta" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:site_name" content="Portfolio Lananuranf" />
     <meta property="og:locale" content="id_ID" />
+    {ogType === "article" && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {ogType === "article" && (modifiedTime || publishedTime) && <meta property="article:modified_time" content={modifiedTime || publishedTime} />}
+    {ogType === "article" && <meta property="article:author" content="https://lananuranf.my.id/" />}
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -117,14 +153,38 @@ const schemaFAQ = JSON.stringify({
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageFull} />
-    <meta name="twitter:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf)" />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <!-- PWA -->
     <meta name="theme-color" content="#FA699E" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Intro & scroll-reveal: diputuskan sebelum paint (tanpa JS / crawler = halaman normal) -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        try {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          if (/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent)) return;
+          d.classList.add('js-reveal');
+          // sekali per sesi untuk tiap halaman (beranda, indeks blog, tiap artikel)
+          var p = location.pathname.replace(/\/+$/, '') || '/';
+          var k = 'intro-seen:' + p;
+          if (!sessionStorage.getItem(k)) {
+            sessionStorage.setItem(k, '1');
+            d.classList.add('intro-on');
+            // versi singkat di blog agar tidak menunda membaca
+            if (/^\/blog(\/|$)/.test(p)) d.classList.add('intro-short');
+          }
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -135,12 +195,113 @@ const schemaFAQ = JSON.stringify({
     />
 
     <!-- Schema.org -->
-    <script type="application/ld+json" set:html={schemaPerson} />
-    <script type="application/ld+json" set:html={schemaWebsite} />
-    <script type="application/ld+json" set:html={schemaFAQ} />
+    {isHome && <script type="application/ld+json" set:html={schemaPerson} />}
+    {isHome && <script type="application/ld+json" set:html={schemaWebsite} />}
+    {isHome && <script type="application/ld+json" set:html={schemaFAQ} />}
+    {schemaBreadcrumb && <script type="application/ld+json" set:html={schemaBreadcrumb} />}
     {extraSchema && <script type="application/ld+json" set:html={extraSchema} />}
   </head>
   <body class="bg-surface text-ink font-sans antialiased">
+    <!-- Simbol awan kartun (orisinal) dipakai ulang oleh intro & hero -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <symbol id="lc-cloud" viewBox="0 0 220 124">
+        <g style="stroke:var(--cloud-line,#8EC3EC)" stroke-width="7" stroke-linejoin="round" fill="#fff">
+          <circle cx="56" cy="78" r="32" /><circle cx="94" cy="54" r="40" /><circle cx="142" cy="50" r="36" /><circle cx="178" cy="80" r="30" />
+          <rect x="38" y="74" width="158" height="40" rx="20" />
+        </g>
+        <g fill="#fff">
+          <circle cx="56" cy="78" r="32" /><circle cx="94" cy="54" r="40" /><circle cx="142" cy="50" r="36" /><circle cx="178" cy="80" r="30" />
+          <rect x="38" y="74" width="158" height="40" rx="20" />
+        </g>
+        <g fill="none" style="stroke:var(--cloud-curl,#A9D3F3)" stroke-width="4.5" stroke-linecap="round">
+          <path d="M82 74c-10-1-14-14-6-20 7-5 16 0 14 8-1 5-7 6-9 2" />
+          <path d="M152 70c10-1 14-14 6-20-7-5-16 0-14 8 1 5 7 6 9 2" />
+          <path d="M120 96c-6 3-14 0-14-6 0-5 6-7 9-4" />
+          <path d="M50 104q65 10 132 0" opacity=".7" />
+        </g>
+      </symbol>
+    </svg>
+
+    <div id="intro" aria-hidden="true">
+      <svg class="intro-cloud" style="--from:-60vw;--to:-6vw;--t:1.9s;width:min(70vw,520px);left:0;bottom:-4%"><use href="#lc-cloud" /></svg>
+      <svg class="intro-cloud" style="--from:60vw;--to:4vw;--t:1.9s;width:min(66vw,480px);right:0;bottom:6%"><use href="#lc-cloud" /></svg>
+      <svg class="intro-cloud" style="--from:-40vw;--to:30vw;--t:2.1s;width:min(34vw,220px);left:6%;top:12%"><use href="#lc-cloud" /></svg>
+      <svg class="intro-cloud" style="--from:40vw;--to:-26vw;--t:2.1s;width:min(30vw,190px);right:4%;top:26%"><use href="#lc-cloud" /></svg>
+      <svg class="intro-cloud" style="--from:-20vw;--to:12vw;--t:2s;width:min(24vw,140px);left:16%;top:58%;opacity:.9"><use href="#lc-cloud" /></svg>
+      <svg class="intro-hat" viewBox="0 0 64 64">
+        <defs>
+          <linearGradient id="intro-crown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE38A" /><stop offset="1" stop-color="#F0B93A" /></linearGradient>
+          <linearGradient id="intro-brim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7D46A" /><stop offset="1" stop-color="#E2A52E" /></linearGradient>
+        </defs>
+        <g transform="translate(0 -4)">
+          <g stroke="#7A4E0E" stroke-width="1.8" stroke-linejoin="round">
+            <ellipse cx="32" cy="40" rx="29" ry="10.5" fill="url(#intro-brim)" />
+            <path d="M18 39.5C18 21 24 13 32 13S46 21 46 39.5C40 42.8 24 42.8 18 39.5Z" fill="url(#intro-crown)" />
+            <path d="M18.3 31.2C24 34.6 40 34.6 45.7 31.2L46 39.5C40 42.8 24 42.8 18 39.5Z" fill="#D7263D" />
+          </g>
+          <path d="M8 41.5C14 47 50 47 56 41.5" fill="none" stroke="#C99528" stroke-width="1.2" stroke-linecap="round" opacity=".8" />
+          <path d="M24 17.5C26 15.5 28.5 14.8 30.5 14.8" fill="none" stroke="#FFF6CF" stroke-width="2" stroke-linecap="round" opacity=".9" />
+        </g>
+      </svg>
+    </div>
+
     <slot />
+
+    <script>
+      const root = document.documentElement;
+
+      // Lepas overlay intro setelah animasinya selesai (cadangan: timeout)
+      const intro = document.getElementById('intro');
+      if (intro && root.classList.contains('intro-on')) {
+        let finished = false;
+        const done = () => {
+          if (finished) return;
+          finished = true;
+          intro.remove();
+          root.classList.remove('intro-on', 'intro-short');
+          window.dispatchEvent(new CustomEvent('intro:done'));
+        };
+        intro.addEventListener('animationend', (e) => { if (e.target === intro) done(); });
+        setTimeout(done, root.classList.contains('intro-short') ? 1600 : 2600);
+      } else {
+        intro?.remove();
+      }
+
+      // Scroll reveal (bertahap per kelompok saudara)
+      const els = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+      if (root.classList.contains('js-reveal')) {
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            for (const en of entries) {
+              if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
+            }
+          }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+          for (const el of els) {
+            const sibs = el.parentElement ? Array.from(el.parentElement.children).filter((c) => c.hasAttribute('data-reveal')) : [el];
+            el.style.setProperty('--rd', Math.min(sibs.indexOf(el), 6) * 90 + 'ms');
+            io.observe(el);
+          }
+        } else {
+          els.forEach((el) => el.classList.add('is-in'));
+        }
+      }
+
+      // Sorot kursor + tilt ringan pada kartu kaca (hanya pointer halus & tanpa reduced-motion)
+      const fine = window.matchMedia('(pointer: fine)').matches;
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (fine) {
+        document.querySelectorAll<HTMLElement>('.glass-card').forEach((card) => {
+          const tilt = !calm && card.hasAttribute('data-tilt');
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+            card.style.setProperty('--mx', x * 100 + '%');
+            card.style.setProperty('--my', y * 100 + '%');
+            if (tilt) card.style.transform = 'perspective(900px) rotateX(' + ((0.5 - y) * 5).toFixed(2) + 'deg) rotateY(' + ((x - 0.5) * 6).toFixed(2) + 'deg) translateY(-4px)';
+          });
+          card.addEventListener('pointerleave', () => { if (tilt) card.style.transform = ''; });
+        });
+      }
+    </script>
   </body>
 </html>

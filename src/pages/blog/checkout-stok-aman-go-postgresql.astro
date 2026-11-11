@@ -1,0 +1,268 @@
+---
+// src/pages/blog/checkout-stok-aman-go-postgresql.astro
+import ArticleLayout from '../../components/blog/ArticleLayout.astro';
+import CodeBlock from '../../components/blog/CodeBlock.astro';
+import Callout from '../../components/blog/Callout.astro';
+
+const codeLock = `func lockCartLines(ctx context.Context, tx pgx.Tx, userID string, ids []string) ([]cartLine, error) {
+	query := \`SELECT ci.id, v.id, ci.quantity, v.stock, v.size, p.id, p.name, p.status,
+	          -- ... harga satuan, subtotal, dan berat per baris
+	            FROM cart_items ci
+	            JOIN product_variants v ON v.id = ci.variant_id
+	            JOIN products p ON p.id = v.product_id
+	           WHERE ci.user_id = $1\`
+	args := []any{userID}
+	if len(ids) > 0 {
+		query += \` AND ci.id = ANY($2::uuid[])\`
+		args = append(args, ids)
+	}
+	query += \` ORDER BY v.id, ci.id FOR UPDATE OF ci, v\`
+	// ... jalankan query dan scan ke []cartLine
+}`;
+
+const codeCheck = `need := map[string]int{}
+for _, l := range lines {
+	weight += l.WeightGram
+	if l.ProductStatus != product.StatusActive {
+		return Order{}, ErrProductUnavailable
+	}
+	need[l.VariantID] += l.Quantity
+	if need[l.VariantID] > l.Stock {
+		return Order{}, ErrInsufficientStock
+	}
+	// ... jumlahkan subtotal dengan big.Rat
+}
+if weight != ship.WeightGram {
+	return Order{}, ErrCartChanged
+}`;
+
+const codeReduce = `for variantID, qty := range need {
+	if _, err := tx.Exec(ctx,
+		\`UPDATE product_variants SET stock = stock - $2 WHERE id = $1\`, variantID, qty); err != nil {
+		return Order{}, wrap("checkout reduce stock", err)
+	}
+}
+if _, err := tx.Exec(ctx,
+	\`DELETE FROM cart_items WHERE id = ANY($1::uuid[])\`, cartIDs); err != nil {
+	return Order{}, wrap("checkout clear cart", err)
+}
+if err := tx.Commit(ctx); err != nil {
+	return Order{}, wrap("checkout commit", err)
+}`;
+
+const codeRestore = `err = tx.QueryRow(ctx, \`SELECT order_status, user_id FROM orders WHERE id = $1 FOR UPDATE\`, id).Scan(&from, &owner)
+// ... cek pemilik, aturan transisi, dan guard
+
+if c.to == StatusCancelled {
+	// Stok dikembalikan sesuai jumlah yang dipesan.
+	_, err := tx.Exec(ctx,
+		\`UPDATE product_variants v
+		    SET stock = v.stock + s.qty
+		   FROM (SELECT variant_id, SUM(quantity) AS qty
+		           FROM order_items WHERE order_id = $1
+		          GROUP BY variant_id) s
+		  WHERE v.id = s.variant_id\`, id)
+	if err != nil {
+		return Order{}, wrap("update status restore stock", err)
+	}
+}`;
+
+const codeExpire = `func (s *Service) ExpireUnpaid(ctx context.Context) (int, error) {
+	ids, err := s.repo.ExpiredIDs(ctx, expireBatch)
+	if err != nil {
+		return 0, err
+	}
+	reason := "Batas waktu pembayaran habis"
+	n := 0
+	for _, id := range ids {
+		o, err := s.repo.transition(ctx, id, change{
+			to:      StatusCancelled,
+			allowed: func(from string) bool { return from == StatusPendingPayment },
+			guard:   stillExpired,
+			reason:  &reason,
+		})
+		if errors.Is(err, ErrProofUnderReview) || errors.Is(err, ErrInvalidTransition) || errors.Is(err, ErrNotFound) {
+			continue
+		}
+		if err != nil {
+			return n, err
+		}
+		n++
+		s.notifyStatus(ctx, o, nil)
+	}
+	return n, nil
+}`;
+
+const codeGuard = `func stillExpired(ctx context.Context, tx pgx.Tx, id string) error {
+	var expired bool
+	if err := tx.QueryRow(ctx,
+		\`SELECT payment_due_at < now() FROM orders WHERE id = $1\`, id).Scan(&expired); err != nil {
+		return wrap("check expiry", err)
+	}
+	if !expired {
+		return ErrInvalidTransition
+	}
+	return noProofUnderReview(ctx, tx, id)
+}`;
+---
+
+<ArticleLayout
+  slug="checkout-stok-aman-go-postgresql"
+  file="src/pages/blog/checkout-stok-aman-go-postgresql.astro"
+  title="Checkout Tanpa Stok Minus: Mengunci Keranjang dengan FOR UPDATE di Go dan PostgreSQL"
+  seoTitle="Checkout Tanpa Stok Minus di Go dan PostgreSQL | Lananuranf"
+  desc="Checkout Hii Stranger (Go, pgx, PostgreSQL) yang menjaga stok tidak minus saat dua orang membeli bersamaan, plus pembatalan yang mengembalikan stok."
+  datePublished="2026-11-12"
+  dateLabel="12 November 2026"
+  category="Backend"
+  tags={["Go","PostgreSQL","pgx","Backend","E-commerce"]}
+  keywords="checkout toko online go postgresql pgx select for update stok minus race condition keranjang pembatalan otomatis order kembalikan stok capstone indonesia"
+>
+  <p>
+    <a href="/projects/capstone-hi/">Hii Stranger</a> adalah toko online yang saya kerjakan sebagai proyek capstone.
+    Backend-nya REST API Go dengan PostgreSQL dan driver pgx v5, sedangkan frontend-nya Next.js 16. Pelanggan
+    memilih varian produk (ukuran tertentu), memasukkannya ke keranjang, mengecek ongkir, lalu checkout dan membayar
+    lewat QRIS. Admin memverifikasi bukti bayar secara manual.
+  </p>
+  <p>
+    Bagian yang paling lama saya pikirkan adalah checkout. Stok disimpan per varian di tabel
+    <code>product_variants</code>, dan stok itu berkurang saat order dibuat. Artinya ada dua hal yang harus benar:
+    stok tidak boleh minus walaupun dua orang checkout di detik yang sama, dan stok harus kembali kalau order
+    akhirnya batal atau tidak dibayar. Tulisan ini membahas cara saya menangani keduanya.
+  </p>
+
+  <h2>Ringkasan</h2>
+  <ul>
+    <li>Checkout berjalan di satu transaksi. Baris keranjang dan baris varian dikunci dengan <code>FOR UPDATE OF ci, v</code> sebelum stok dicek.</li>
+    <li>Kunci diambil dengan urutan tetap (<code>ORDER BY v.id, ci.id</code>) supaya dua checkout yang menyentuh varian sama tidak saling menunggu selamanya.</li>
+    <li>Stok dikurangi, keranjang dikosongkan, order dan tagihan dibuat, semuanya di-commit bersamaan.</li>
+    <li>Pembatalan, baik oleh admin, pelanggan, maupun otomatis karena lewat batas bayar, memakai satu fungsi <code>transition</code> yang mengembalikan stok di transaksi yang sama.</li>
+  </ul>
+
+  <h2>Masalahnya: cek stok lalu kurangi</h2>
+  <p>
+    Versi naif checkout kira-kira begini: baca stok varian, bandingkan dengan jumlah di keranjang, lalu jalankan
+    <code>UPDATE</code>. Kalau dua pelanggan membeli varian terakhir pada saat yang hampir bersamaan, keduanya bisa
+    membaca stok 1, keduanya lolos pengecekan, dan keduanya mengurangi stok. Hasilnya stok jadi -1 dan ada satu
+    pesanan yang barangnya tidak ada.
+  </p>
+  <p>
+    Di PostgreSQL dengan isolasi bawaan <code>READ COMMITTED</code>, pembacaan biasa tidak menahan transaksi lain.
+    Jadi pengecekan dan pengurangan harus berada di bawah kunci yang sama.
+  </p>
+
+  <h2>Mengunci keranjang dan varian sekaligus</h2>
+  <p>
+    Fungsi <code>Checkout</code> di repository order membuka transaksi, memastikan user boleh memesan, lalu
+    memanggil <code>lockCartLines</code>. Query di dalamnya membaca item keranjang beserta stok varian dan
+    langsung mengunci kedua barisnya:
+  </p>
+  <CodeBlock code={codeLock} label="backend/internal/app/api/order/repository.go" />
+  <p>
+    <code>FOR UPDATE OF ci, v</code> mengunci baris <code>cart_items</code> dan <code>product_variants</code> yang
+    terlibat. Tabel <code>products</code> tidak ikut dikunci karena yang saya butuhkan hanya statusnya, dan
+    mengunci baris produk akan menahan checkout lain untuk varian berbeda dari produk yang sama tanpa alasan.
+  </p>
+  <p>
+    Transaksi kedua yang menyentuh varian yang sama akan menunggu di query ini sampai transaksi pertama selesai.
+    Begitu dilepas, ia membaca stok yang sudah dikurangi, jadi pengecekan berikutnya memakai angka yang benar.
+  </p>
+
+  <h3>Kenapa ada ORDER BY sebelum FOR UPDATE</h3>
+  <p>
+    Bayangkan pelanggan A punya varian X dan Y di keranjang, pelanggan B punya Y dan X. Kalau A mengunci X dulu
+    dan B mengunci Y dulu, masing-masing lalu menunggu baris yang dipegang lawannya. PostgreSQL akan mendeteksi
+    deadlock dan membatalkan salah satunya. Dengan <code>ORDER BY v.id, ci.id</code>, semua checkout mengambil
+    kunci dalam urutan yang sama, sehingga situasi saling tunggu seperti itu tidak terjadi.
+  </p>
+
+  <h2>Mengecek stok di dalam transaksi</h2>
+  <p>
+    Setelah baris terkunci, pengecekan dilakukan di Go. Satu varian bisa muncul di lebih dari satu baris keranjang,
+    jadi jumlahnya saya kumpulkan dulu di map <code>need</code> sebelum dibandingkan dengan stok:
+  </p>
+  <CodeBlock code={codeCheck} label="backend/internal/app/api/order/repository.go" />
+  <p>
+    Ada satu pengecekan lain di sini yang awalnya tidak saya rencanakan, yaitu berat. Ongkir dihitung dari berat
+    total keranjang sebelum checkout. Kalau pelanggan menambah barang di tab lain setelah cek ongkir, berat yang
+    terkunci tidak sama lagi dengan berat yang dipakai untuk ongkir. Daripada menagih ongkir yang salah,
+    checkout ditolak dengan <code>ErrCartChanged</code>, dan handler mengubahnya menjadi respons 409 dengan pesan
+    "Isi keranjang berubah. Silakan cek ongkir ulang lalu checkout lagi." Stok yang tidak cukup juga dijawab 409
+    dengan pesan "Stok tidak mencukupi."
+  </p>
+  <Callout type="info" title="Uang dihitung dengan big.Rat">
+    Subtotal dan ongkir dijumlahkan dengan <code>math/big.Rat</code> lalu dikirim ke PostgreSQL sebagai
+    <code>numeric</code>. Saya menghindari <code>float64</code> untuk nominal rupiah supaya tidak ada selisih
+    pembulatan saat admin mencocokkan mutasi QRIS.
+  </Callout>
+
+  <h2>Mengurangi stok dan mengosongkan keranjang</h2>
+  <p>
+    Setelah order, item order, dan tagihan QRIS tersimpan, stok dikurangi sesuai map <code>need</code> dan item
+    keranjang yang dibeli dihapus. Semua itu masih di transaksi yang sama:
+  </p>
+  <CodeBlock code={codeReduce} label="backend/internal/app/api/order/repository.go" />
+  <p>
+    Di awal fungsi ada <code>defer func() {"{"} _ = tx.Rollback(ctx) {"}"}()</code>. Kalau ada langkah yang gagal
+    sebelum <code>Commit</code>, semua perubahan dibatalkan. Kalau commit sudah berhasil, rollback tersebut tidak
+    berpengaruh apa-apa. Pola ini membuat saya tidak perlu menulis rollback di setiap cabang error.
+  </p>
+
+  <h2>Mengembalikan stok saat order batal</h2>
+  <p>
+    Stok yang sudah dipotong harus kembali kalau order dibatalkan. Order di Hii Stranger punya beberapa status:
+    <code>pending_payment</code>, <code>paid</code>, <code>processing</code>, <code>shipped</code>,
+    <code>completed</code>, dan <code>cancelled</code>. Perubahan status apa pun lewat satu fungsi,
+    <code>transition</code>, yang mengunci baris order dulu lalu memeriksa apakah perpindahannya diizinkan.
+    Kalau tujuannya <code>cancelled</code>, stok dikembalikan berdasarkan isi <code>order_items</code>:
+  </p>
+  <CodeBlock code={codeRestore} label="backend/internal/app/api/order/repository.go" />
+  <p>
+    Karena baris order dikunci dengan <code>FOR UPDATE</code>, dua permintaan pembatalan untuk order yang sama
+    tidak bisa jalan berbarengan. Permintaan kedua akan membaca status yang sudah <code>cancelled</code>, gagal di
+    aturan transisi, dan stok tidak dikembalikan dua kali.
+  </p>
+
+  <h2>Pembatalan otomatis untuk order yang tidak dibayar</h2>
+  <p>
+    Setiap order punya <code>payment_due_at</code>, yaitu waktu checkout ditambah jumlah jam dari pengaturan
+    <code>payment_window_hours</code> (bawaannya 24 jam). Tanpa pembatalan otomatis, order yang ditinggal
+    pelanggan akan menahan stok selamanya.
+  </p>
+  <p>
+    Saya tidak memakai cron terpisah. Saat server start, sebuah goroutine menjalankan <code>RunExpiry</code>
+    yang memanggil <code>ExpireUnpaid</code> setiap 5 menit dan berhenti ketika server dimatikan. Fungsi itu
+    mengambil paling banyak 100 order yang lewat batas, lalu membatalkannya satu per satu lewat
+    <code>transition</code> yang sama:
+  </p>
+  <CodeBlock code={codeExpire} label="backend/internal/app/api/order/service.go" />
+  <p>
+    Daftar ID diambil tanpa kunci, jadi status order bisa berubah di antara pengambilan daftar dan pembatalan.
+    Misalnya pelanggan baru saja mengunggah bukti transfer. Karena itu <code>transition</code> menerima
+    <code>guard</code> yang dijalankan setelah baris order terkunci:
+  </p>
+  <CodeBlock code={codeGuard} label="backend/internal/app/api/order/repository.go" />
+  <p>
+    Guard ini memeriksa ulang dua hal di dalam transaksi: order memang masih lewat batas bayar, dan tidak ada bukti
+    bayar yang sedang menunggu verifikasi admin. Kalau pelanggan sudah mengunggah bukti, order dilewati dan admin
+    yang memutuskan. Error seperti itu sengaja di-<code>continue</code> supaya satu order tidak menghentikan
+    pembatalan order lain di batch yang sama. Setiap order yang batal juga memicu email notifikasi status ke
+    pelanggan.
+  </p>
+  <Callout type="tip" title="Satu jalur untuk semua perubahan status">
+    Sebelumnya saya sempat tergoda menulis query pembatalan khusus untuk job otomatis. Dengan memakai
+    <code>transition</code> yang sama, aturan pengembalian stok cukup ditulis di satu tempat, dan perilaku
+    pembatalan dari admin, pelanggan, maupun job selalu sama.
+  </Callout>
+
+  <h2>Yang saya pelajari</h2>
+  <ul>
+    <li>Pengecekan stok yang benar harus berada di bawah kunci yang sama dengan pengurangannya. Validasi di frontend atau query baca biasa tidak cukup.</li>
+    <li>Urutan pengambilan kunci perlu ditentukan sejak awal supaya tidak berujung deadlock.</li>
+    <li>Pekerjaan latar belakang yang membaca data tanpa kunci harus memeriksa ulang kondisinya setelah mengunci baris.</li>
+  </ul>
+  <p>
+    Gambaran fitur lain di proyek ini, seperti cek ongkir RajaOngkir, verifikasi bukti QRIS, dan dashboard admin,
+    ada di <a href="/projects/capstone-hi/">halaman proyek Hii Stranger</a>.
+  </p>
+</ArticleLayout>

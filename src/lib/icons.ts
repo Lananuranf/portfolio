@@ -6,6 +6,7 @@ import {
   siRust, siTokio, siPostgresql, siGo, siGin, siDocker, siNginx, siCaddy,
   siGithubactions, siRedis, siJsonwebtokens, siLinux, siUbuntu, siGit,
   siPostman, siFirebase, siCloudflare, siMinio, siOpenapiinitiative,
+  siLaravel, siPhp, siNextdotjs, siPrometheus, siSqlite, siMysql, siCloudinary,
 } from "simple-icons";
 
 export interface TechIcon { svg: string; hex: string }
@@ -62,6 +63,15 @@ const ICONS: Record<string, TechIcon> = {
   "Cloudflare R2": fromSimple(siCloudflare),
   "MinIO": fromSimple(siMinio),
   "OpenAPI": fromSimple(siOpenapiinitiative),
+  "Laravel": fromSimple(siLaravel),
+  "Laravel Sanctum": fromSimple(siLaravel),
+  "PHP": fromSimple(siPhp),
+  "Next.js": fromSimple(siNextdotjs),
+  "Prometheus": fromSimple(siPrometheus),
+  "SQLite": fromSimple(siSqlite),
+  "MySQL": fromSimple(siMysql),
+  "Cloudinary": fromSimple(siCloudinary),
+  "pgx": postgres,
 };
 
 const LOOKUP = new Map(

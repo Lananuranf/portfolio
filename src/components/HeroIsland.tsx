@@ -1,6 +1,6 @@
 // src/components/HeroIsland.tsx — Hero (React island untuk animasi masuk).
 // Foto profil diambil dari /public/Profile.jpg. Animasi dimatikan bila pengguna memilih reduced motion.
-import { type ReactElement } from "react";
+import { useEffect, useState, type ReactElement, type CSSProperties } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { siGithub, siInstagram } from "simple-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -19,10 +19,26 @@ const SOCIAL = [
   { name: "Instagram", url: "https://www.instagram.com/lananur.anf/", viewBox: "0 0 24 24", path: siInstagram.path },
 ];
 
-const STACK = ["Go", "Rust", "PostgreSQL", "Docker"];
+const STACK = ["Go", "Rust", "PHP", "PostgreSQL", "Docker"];
 
 export default function HeroIsland(): ReactElement {
   const reduce = useReducedMotion();
+
+  // Tunda animasi masuk sampai overlay intro (BaseLayout) selesai, agar tidak berjalan tersembunyi.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (!document.documentElement.classList.contains("intro-on")) {
+      setReady(true);
+      return;
+    }
+    const go = () => setReady(true);
+    window.addEventListener("intro:done", go, { once: true });
+    const t = window.setTimeout(go, 3000);
+    return () => {
+      window.removeEventListener("intro:done", go);
+      window.clearTimeout(t);
+    };
+  }, []);
 
   const container: Variants = {
     hidden: {},
@@ -35,6 +51,13 @@ export default function HeroIsland(): ReactElement {
         show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
       };
 
+  // Awan dekoratif (simbol #lc-cloud didefinisikan di BaseLayout)
+  const clouds = [
+    { cls: "w-36 sm:w-48", style: { top: "16%", left: "-3%", "--op": 0.85, "--dx": "90px", "--dur": "15s" } },
+    { cls: "w-28 sm:w-40", style: { top: "9%", right: "6%", "--op": 0.7, "--dx": "-75px", "--dur": "12s" } },
+    { cls: "hidden md:block w-44", style: { bottom: "8%", left: "38%", "--op": 0.6, "--dx": "100px", "--dur": "17s" } },
+  ] as unknown as { cls: string; style: CSSProperties }[];
+
   return (
     <section
       id="home"
@@ -45,13 +68,20 @@ export default function HeroIsland(): ReactElement {
           "radial-gradient(60% 50% at 85% 10%, #FFE4EF 0%, transparent 70%), radial-gradient(50% 45% at 0% 90%, #F1EBF8 0%, transparent 70%), #FFFBFD",
       }}
     >
+      <div className="hero-clouds" aria-hidden="true">
+        {clouds.map((c, i) => (
+          <svg key={i} className={`hero-cloud ${c.cls}`} style={c.style} viewBox="0 0 220 124" focusable="false">
+            <use href="#lc-cloud" />
+          </svg>
+        ))}
+      </div>
       <div className="relative max-w-5xl mx-auto grid gap-12 md:grid-cols-[1fr_auto] md:items-center">
         {/* Teks */}
         <motion.div
           className="flex flex-col items-start gap-5 order-2 md:order-1"
           variants={container}
           initial="hidden"
-          animate="show"
+          animate={ready ? "show" : "hidden"}
         >
           <motion.p
             variants={item}
@@ -129,7 +159,7 @@ export default function HeroIsland(): ReactElement {
         <motion.div
           className="order-1 md:order-2 justify-self-center"
           initial={reduce ? false : { opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={ready || reduce ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <div className="rounded-[2rem] bg-gradient-brand p-1.5 shadow-[0_24px_48px_-24px_rgba(217,67,122,0.55)]">

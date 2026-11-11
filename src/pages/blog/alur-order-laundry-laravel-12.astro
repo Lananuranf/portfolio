@@ -1,0 +1,271 @@
+---
+// src/pages/blog/alur-order-laundry-laravel-12.astro
+import ArticleLayout from '../../components/blog/ArticleLayout.astro';
+import CodeBlock from '../../components/blog/CodeBlock.astro';
+import Callout from '../../components/blog/Callout.astro';
+
+const codeRoutes = `Route::post('/public/orders', [PublicOrderController::class, 'store']);
+
+Route::middleware(['auth:sanctum', 'token.activity', 'admin'])->group(function () {
+    Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('services', ServiceController::class);
+    Route::apiResource('orders', OrderController::class);
+    // ... order-items, statuses, payments
+});`;
+
+const codeValidate = `$validator = Validator::make($request->all(), [
+    'customer.name' => ['required', 'string', 'max:255'],
+    'customer.phone' => ['required', 'string', 'max:20'],
+    'customer.email' => ['nullable', 'email', 'max:255'],
+    'customer.address' => ['required', 'string'],
+    'pickup.address' => ['required', 'string'],
+    'pickup.scheduled_at' => ['nullable', 'date'],
+    'items' => ['required', 'array', 'min:1'],
+    'items.*.service_id' => ['required', 'exists:services,id'],
+    'items.*.qty' => ['required', 'integer', 'min:1'],
+    'items.*.weight_kg' => ['nullable', 'numeric', 'min:0'],
+    // ... notes untuk customer, pickup, dan item
+]);`;
+
+const codeCustomer = `$customer = Customer::where('phone', $customerData['phone'])->first();
+if ($customer) {
+    $customer->update([
+        'name'    => $customerData['name'],
+        'email'   => $customerData['email']   ?? $customer->email,
+        'address' => $customerData['address'] ?? $customer->address,
+        'notes'   => $customerData['notes']   ?? $customer->notes,
+    ]);
+} else {
+    $customer = Customer::create([
+        'customer_code' => $this->generateCustomerCode(),
+        'name'          => $customerData['name'],
+        'phone'         => $customerData['phone'],
+        // ... email, address, notes
+    ]);
+}`;
+
+const codePrice = `$service = Service::findOrFail($item['service_id']);
+$qty      = (int)   $item['qty'];
+$unitPrice = (float) $service->unit_price;
+$weightKg = isset($item['weight_kg']) ? (float) $item['weight_kg'] : null;
+
+if ($service->pricing_model === 'per_kg') {
+    if ($weightKg === null || $weightKg <= 0) {
+        $field = 'items.' . $index . '.weight_kg';
+        throw ValidationException::withMessages([
+            $field => ['weight_kg wajib diisi dan lebih dari 0 untuk layanan per_kg.'],
+        ]);
+    }
+    $lineTotal = $weightKg * $unitPrice;
+} elseif ($service->pricing_model === 'per_item') {
+    $lineTotal = $qty * $unitPrice;
+} else {
+    $lineTotal = $unitPrice;
+}
+$subtotal += $lineTotal;`;
+
+const codeStatus = `if ($order->status === 'completed') {
+    return response()->json([
+        'message' => 'Order ini sudah selesai. Tidak bisa mengubah status lagi.',
+    ], 422);
+}
+// ... tolak juga kalau status baru sama dengan status sekarang
+
+DB::transaction(function () use ($order, $validated) {
+    $changedAt = $validated['changed_at'] ?? now();
+    $orderUpdate = ['status' => $validated['status']];
+    if ($validated['status'] === 'completed') {
+        $orderUpdate['completed_at'] = $changedAt;
+    }
+    if ($validated['status'] === 'cancelled') {
+        $orderUpdate['completed_at'] = null;
+    }
+    $order->update($orderUpdate);
+
+    OrderStatusHistory::create([
+        'order_id'           => $order->id,
+        'status'             => $validated['status'],
+        'changed_by_user_id' => auth()->id(),
+        'changed_at'         => $changedAt,
+        'notes'              => $validated['notes'] ?? null,
+    ]);
+});`;
+
+const codePay = `$payment = DB::transaction(function () use ($order, $validated) {
+    $payment = Payment::create([
+        'order_id'       => $order->id,
+        'payment_number' => 'PAY' . now()->format('ymdHis'),
+        'method'         => $validated['method'],
+        'amount'         => $validated['amount'],
+        'paid_by_user_id' => auth()->id(),
+        // ... payment_date, reference_no, notes
+    ]);
+
+    $newAmountPaid = (float) $order->amount_paid + (float) $validated['amount'];
+    $newAmountDue  = (float) $order->total_amount - $newAmountPaid;
+    $newPaymentStatus = $newAmountDue > 0.01 ? 'partial' : 'paid';
+
+    $order->update([
+        'amount_paid'    => $newAmountPaid,
+        'amount_due'     => max(0, $newAmountDue),
+        'payment_status' => $newPaymentStatus,
+    ]);
+    return $payment;
+});`;
+---
+
+<ArticleLayout
+  slug="alur-order-laundry-laravel-12"
+  file="src/pages/blog/alur-order-laundry-laravel-12.astro"
+  title="Membangun Alur Order Laundry di Laravel 12: Form Publik, Harga per Kg, Riwayat Status, dan Pembayaran Bertahap"
+  seoTitle="Alur Order Laundry di Laravel 12 | Lananuranf"
+  desc="Backend Laundry Lastri (Laravel 12) untuk Penulisan Ilmiah: order dari form publik dalam satu transaksi, harga per kg, riwayat status, dan cicilan."
+  datePublished="2026-11-12"
+  dateLabel="12 November 2026"
+  category="Backend"
+  tags={["Laravel","PHP","REST API","Backend","Penulisan Ilmiah"]}
+  keywords="laravel 12 aplikasi laundry rest api db transaction harga per kg riwayat status order audit trail pembayaran cicil sanctum penulisan ilmiah indonesia"
+>
+  <p>
+    <a href="/projects/londry-lastri/">Laundry Lastri</a> adalah backend REST API untuk mengelola usaha laundry.
+    Saya membuatnya sebagai bahan Penulisan Ilmiah di kampus, jadi selain kodenya, saya juga harus bisa menjelaskan
+    alasan di balik setiap keputusan teknis. Stack-nya Laravel 12 dan PHP 8.2, SQLite saat development dan MySQL untuk
+    production, dengan Laravel Sanctum untuk login admin.
+  </p>
+  <p>
+    Cakupannya mengikuti kebutuhan laundry kecil: data pelanggan, master layanan, order beserta item, status
+    pengerjaan, pembayaran, dan penjemputan sederhana. Tulisan ini membahas empat bagian yang paling banyak saya
+    utak-atik: order dari form publik, perhitungan harga, riwayat status, dan pembayaran bertahap.
+  </p>
+
+  <h2>Ringkasan</h2>
+  <ul>
+    <li>Pelanggan bisa membuat order tanpa login lewat <code>POST /api/v1/public/orders</code>. Pelanggan, order, item, dan jadwal jemput dibuat di satu <code>DB::transaction</code>.</li>
+    <li>Harga dihitung di server berdasarkan <code>pricing_model</code> layanan: <code>per_kg</code>, <code>per_item</code>, atau <code>flat</code>.</li>
+    <li>Status order hanya diubah lewat endpoint khusus yang selalu menulis baris baru di <code>order_status_histories</code>.</li>
+    <li>Pembayaran boleh dicicil. Status <code>unpaid</code>, <code>partial</code>, dan <code>paid</code> dihitung server dari nominal, tidak dikirim oleh client.</li>
+  </ul>
+
+  <h2>Pembagian route: publik dan admin</h2>
+  <p>
+    Semua route ada di <code>routes/api.php</code> dengan prefix <code>v1</code>. Hanya pembuatan order, endpoint SEO,
+    register, dan login yang terbuka. Sisanya butuh token Sanctum dan role admin:
+  </p>
+  <CodeBlock code={codeRoutes} label="routes/api.php" />
+  <p>
+    Middleware <code>admin</code> memeriksa role user, sedangkan <code>token.activity</code> adalah middleware buatan
+    saya untuk memutus sesi yang lama tidak aktif. Dengan pembagian ini, pelanggan cukup mengisi form di website,
+    dan semua pengelolaan dilakukan admin dari panel.
+  </p>
+
+  <h2>Order dari form publik dalam satu transaksi</h2>
+  <p>
+    Satu order dari pelanggan menyentuh empat tabel: <code>customers</code>, <code>orders</code>,
+    <code>order_items</code>, dan <code>deliveries</code> (untuk jadwal jemput). Kalau salah satu gagal disimpan,
+    saya tidak mau ada order tanpa item atau pelanggan baru tanpa order. Karena itu semuanya dibungkus
+    <code>DB::transaction</code> di <code>PublicOrderController</code>.
+  </p>
+  <p>Validasinya memakai notasi titik dan wildcard untuk data bersarang:</p>
+  <CodeBlock code={codeValidate} label="app/Http/Controllers/PublicOrderController.php" />
+  <p>
+    Aturan <code>exists:services,id</code> memastikan setiap item menunjuk layanan yang benar-benar ada sebelum
+    transaksi dimulai. Kalau validasi gagal, respons 422 berisi daftar error per field, misalnya
+    <code>items.0.qty</code>, sehingga form bisa menandai baris yang salah.
+  </p>
+
+  <h3>Pelanggan dikenali dari nomor HP</h3>
+  <p>
+    Pelanggan laundry tidak membuat akun. Jadi saya memakai nomor HP sebagai penanda: kalau nomornya sudah
+    terdaftar, data pelanggan diperbarui, kalau belum, pelanggan baru dibuat dengan kode seperti
+    <code>CUS00001</code>.
+  </p>
+  <CodeBlock code={codeCustomer} label="app/Http/Controllers/PublicOrderController.php" />
+  <p>
+    Dengan cara ini riwayat order pelanggan tetap terkumpul di satu baris <code>customers</code>, walaupun mereka
+    memesan berkali-kali dari form yang sama.
+  </p>
+
+  <h2>Menghitung harga di server</h2>
+  <p>
+    Layanan laundry punya cara hitung yang berbeda. Cuci kiloan dihitung dari berat, cuci satuan seperti bed cover
+    dihitung per buah, dan ada layanan dengan harga tetap. Kolom <code>pricing_model</code> di tabel
+    <code>services</code> berupa enum dengan tiga nilai itu, dan total setiap baris dihitung seperti ini:
+  </p>
+  <CodeBlock code={codePrice} label="app/Http/Controllers/PublicOrderController.php" />
+  <p>
+    Client hanya mengirim <code>service_id</code>, <code>qty</code>, dan <code>weight_kg</code>. Harga satuan
+    selalu diambil dari database, jadi pelanggan tidak bisa mengirim harga sendiri. Untuk layanan
+    <code>per_kg</code>, berat wajib diisi. Karena pengecekan ini baru bisa dilakukan setelah layanannya dibaca,
+    saya melempar <code>ValidationException</code> dari dalam transaksi. Laravel otomatis me-rollback transaksi
+    dan mengembalikan 422 dengan nama field yang tepat, misalnya <code>items.1.weight_kg</code>.
+  </p>
+  <p>
+    Setelah semua item dihitung, order disimpan dengan status <code>pending</code>, <code>payment_status</code>
+    <code>unpaid</code>, dan <code>amount_due</code> sama dengan total. Terakhir dibuat satu baris
+    <code>deliveries</code> bertipe <code>pickup</code> dengan status <code>pending</code> dan kurir yang belum
+    ditentukan. Respons 201 mengembalikan nomor order supaya pelanggan bisa menanyakan statusnya.
+  </p>
+
+  <h2>Riwayat status sebagai audit trail</h2>
+  <p>
+    Order laundry melewati beberapa tahap: <code>pending</code>, <code>received</code>, <code>washing</code>,
+    <code>drying</code>, <code>ironing</code>, <code>ready</code>, <code>delivered</code>, <code>completed</code>,
+    atau <code>cancelled</code>. Untuk laporan, saya perlu tahu status sekarang beserta kapan dan oleh
+    siapa status itu berubah.
+  </p>
+  <p>
+    Saya memisahkan perubahan status ke <code>OrderStatusController</code>. <code>OrderController</code> mengurus
+    data order, sedangkan controller status hanya mengubah status dan mencatat riwayatnya. Keduanya terjadi di
+    satu transaksi:
+  </p>
+  <CodeBlock code={codeStatus} label="app/Http/Controllers/OrderStatusController.php" />
+  <p>
+    Order yang sudah <code>completed</code> dikunci dari perubahan, dan perubahan ke status yang sama ditolak
+    karena tidak ada yang perlu dicatat. Field <code>changed_at</code> boleh dikirim manual untuk kasus admin lupa
+    mencatat saat itu juga. Riwayatnya bisa dibaca lewat <code>GET /api/v1/orders/{"{order}"}/statuses</code>, yang
+    diurutkan dari yang paling lama lewat relasi <code>statusHistories()</code> di model <code>Order</code>,
+    sehingga hasilnya langsung berbentuk timeline.
+  </p>
+  <Callout type="info" title="Kenapa tabel riwayat terpisah">
+    Kalau status hanya disimpan di kolom <code>orders.status</code>, setiap perubahan menimpa nilai sebelumnya.
+    Tabel <code>order_status_histories</code> menyimpan setiap perubahan sebagai baris baru beserta
+    <code>changed_by_user_id</code>, jadi bisa dilacak siapa yang memindahkan order ke tahap berikutnya.
+  </Callout>
+
+  <h2>Pembayaran bertahap</h2>
+  <p>
+    Di laundry, pelanggan sering membayar uang muka saat menitip cucian dan melunasi saat mengambil. Karena itu
+    satu order bisa punya banyak baris <code>payments</code>, dengan metode <code>cash</code>,
+    <code>transfer</code>, <code>qris</code>, atau <code>ewallet</code>. Sebelum transaksi, controller menolak
+    pembayaran untuk order yang sudah lunas dan nominal yang melebihi <code>amount_due</code>. Setelah itu
+    pembayaran dicatat dan saldo order diperbarui bersamaan:
+  </p>
+  <CodeBlock code={codePay} label="app/Http/Controllers/PaymentController.php" />
+  <p>
+    <code>payment_status</code> sengaja tidak diterima dari client. Nilainya diturunkan dari sisa tagihan: masih
+    ada sisa berarti <code>partial</code>, habis berarti <code>paid</code>. Batas <code>0.01</code> dipakai karena
+    nominalnya dihitung sebagai float. Saat pembayaran dihapus, kebalikannya dijalankan di transaksi lain:
+    <code>amount_paid</code> dikurangi, dan status bisa turun lagi ke <code>partial</code> atau
+    <code>unpaid</code>.
+  </p>
+
+  <h2>Kekurangan yang saya catat</h2>
+  <p>
+    Menulis Penulisan Ilmiah membuat saya membaca ulang kode dengan lebih kritis. Beberapa hal yang masih
+    perlu diperbaiki:
+  </p>
+  <ul>
+    <li>Nomor order dibuat dari <code>'ORD'.now()->format('ymdHis')</code>. Kolomnya <code>unique</code>, jadi dua order di detik yang sama tidak akan tersimpan ganda, tetapi order kedua gagal dan pelanggan harus mengirim ulang.</li>
+    <li>Kode pelanggan diambil dari ID terakhir ditambah satu. Pola ini juga bisa bentrok kalau dua pelanggan baru mendaftar bersamaan.</li>
+    <li>Endpoint publik belum diberi rate limit, padahal siapa pun bisa memanggilnya tanpa login.</li>
+    <li>Nominal uang masih dihitung dengan <code>float</code>. Untuk rupiah tanpa desimal ini belum bermasalah, tetapi menyimpan dalam satuan rupiah bulat akan lebih aman.</li>
+  </ul>
+
+  <h2>Penutup</h2>
+  <p>
+    Pelajaran utama dari proyek ini adalah menaruh aturan bisnis di server dan membungkus perubahan yang saling
+    bergantung dalam satu transaksi. Harga, status pembayaran, dan riwayat status semuanya dihitung atau dicatat
+    oleh backend, sehingga data tetap konsisten walaupun client-nya berganti. Detail struktur proyek dan daftar
+    endpoint lengkap ada di <a href="/projects/londry-lastri/">halaman proyek Laundry Lastri</a>.
+  </p>
+</ArticleLayout>
