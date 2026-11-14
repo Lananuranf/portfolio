@@ -75,6 +75,17 @@ export default function HeroIsland(): ReactElement {
           </svg>
         ))}
       </div>
+      {/* Hiasan ramai: burung camar lewat dan bintang berkelip */}
+      <div className="hero-deco" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <svg key={`b${i}`} className={`gull gull-${i}`} viewBox="0 0 40 16" width="34" height="14" fill="none" stroke="#8c7a99" strokeWidth="2" strokeLinecap="round">
+            <path className="wing" d="M2 12 Q 10 0 20 10 Q 30 0 38 12" />
+          </svg>
+        ))}
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <span key={`s${i}`} className={`spark spark-${i}`} />
+        ))}
+      </div>
       <div className="relative max-w-5xl mx-auto grid gap-12 md:grid-cols-[1fr_auto] md:items-center">
         {/* Teks */}
         <motion.div
