@@ -2,43 +2,41 @@
 <!--
   Sumber CV. Edit file ini lalu jalankan:  npm run cv
   Hasilnya ditulis ke public/cv.pdf.
-  Format sengaja ATS-friendly: satu kolom, tanpa tabel/ikon/gambar, font standar,
-  judul bagian standar, teks bisa diseleksi. Aksen warna tipis tetap terbaca hitam-putih.
+  Format ATS-friendly: satu kolom, tanpa tabel/ikon/gambar, font standar (Arial), teks bisa diseleksi.
 -->
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<title>CV - Maulana Nur Anfajm - Backend Engineer</title>
+<title>CV - Maulana Nur Anfajm - Junior Backend Developer</title>
 <style>
-  @page { size: A4; margin: 10mm 14mm; }
+  @page { size: A4; margin: 12mm 15mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --ink: #000; --text: #111; --muted: #444; --rule: #000; --rule-light: #999; }
-  body { font-family: Calibri, "Segoe UI", Arial, Helvetica, sans-serif; font-size: 9.5pt; line-height: 1.27; color: var(--text); }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.35; color: var(--text); }
   header { border-bottom: 2px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
-  h1 { font-size: 20pt; color: var(--ink); letter-spacing: .2px; line-height: 1.1; }
+  h1 { font-size: 20pt; color: var(--ink); line-height: 1.15; }
   .role { font-size: 11pt; font-weight: 700; color: var(--ink); margin-top: 2px; }
-  .contact { font-size: 9.2pt; color: var(--muted); margin-top: 4px; }
-  section { margin-top: 6px; }
+  .contact { font-size: 9pt; color: var(--muted); margin-top: 4px; }
+  section { margin-top: 9px; }
   h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 1px; color: var(--ink);
-       border-bottom: 1px solid var(--rule-light); padding-bottom: 1px; margin-bottom: 4px; }
-  h2::before { content: ""; display: inline-block; width: 4px; height: 9pt; background: var(--rule); margin-right: 6px; vertical-align: -1px; }
+       border-bottom: 1px solid var(--rule-light); padding-bottom: 2px; margin-bottom: 5px; }
   p { margin-bottom: 2px; }
-  ul { padding-left: 15px; }
-  li { margin-bottom: 1px; }
-  .skills li, .soft li { list-style: none; margin-left: -15px; }
+  ul { padding-left: 16px; }
+  li { margin-bottom: 2px; }
+  .skills li, .soft li { list-style: none; margin-left: -16px; }
   b, strong { color: var(--ink); }
-  .item { margin-top: 3px; }
+  .item { margin-top: 5px; }
   .item-head { display: flex; justify-content: space-between; gap: 8px; }
   .item-title { font-weight: 700; color: var(--ink); }
-  .meta { font-size: 9.2pt; color: var(--muted); }
-  .stack { font-size: 9.2pt; color: var(--muted); font-style: italic; margin-bottom: 1px; }
+  .meta { font-size: 9pt; color: var(--muted); }
+  .stack { font-size: 9pt; color: var(--muted); font-style: italic; margin-bottom: 2px; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Maulana Nur Anfajm</h1>
-  <div class="role">Backend Engineer (Junior) · Go · Rust · PHP · PostgreSQL</div>
+  <div class="role">Junior Backend Developer</div>
   <div class="contact">
     Jakarta · lananuranf@gmail.com · +62 859-6023-5008 ·
     lananuranf.my.id · github.com/Lananuranf · linkedin.com/in/maulana-nur-anfajm
@@ -48,82 +46,79 @@
 <section>
   <h2>Profil</h2>
   <p>
-    Mahasiswa Sistem Informasi semester 7 di Universitas Gunadarma yang memilih fokus menjadi backend engineer.
-    Saya paling senang mengerjakan bagian yang tidak terlihat pengguna: desain database, logika bisnis, dan
-    menjaga data tetap benar saat banyak request datang bersamaan. Cara kerja saya: tulis kontrak API dan skema
-    dulu, pisahkan kode per lapisan, lalu kunci perilakunya dengan test sebelum rilis. Mencari posisi magang atau junior backend.
+    Mahasiswa Sistem Informasi semester 7 di Universitas Gunadarma yang sedang mendalami pengembangan backend.
+    Saya sudah membangun tiga proyek REST API dengan PHP (Laravel), Go, dan Rust, dan terbiasa bekerja dengan
+    database relasional. Masih terus belajar, terutama di deployment dan infrastruktur. Saat ini mencari
+    kesempatan magang atau posisi junior backend developer.
   </p>
 </section>
 
 <section class="skills">
   <h2>Hard Skills</h2>
   <ul>
-    <li><b>Bahasa:</b> Go, Rust, PHP, SQL, TypeScript</li>
-    <li><b>Framework &amp; Library:</b> Axum, Tokio, SQLx (Rust); net/http, pgx, Go Fiber, Go Gin, GORM (Go); Laravel 12, Laravel Sanctum (PHP)</li>
-    <li><b>Database:</b> PostgreSQL 16, PostGIS (query lokasi), pg_trgm (pencarian teks), migrasi skema up/down, transaksi &amp; row locking</li>
-    <li><b>Konsep Backend:</b> REST API, WebSocket, autentikasi OTP + JWT, RBAC, arsitektur berlapis, background job</li>
-    <li><b>Infrastruktur/DevOps:</b> Docker, Docker Compose, Linux (Ubuntu), Nginx, Caddy, AWS EC2, GitHub Actions (CI/CD), S3-compatible storage (Cloudflare R2, MinIO), Firebase Cloud Messaging</li>
-    <li><b>Tools:</b> Git, GitHub, Postman, cargo clippy/fmt</li>
+    <li><b>Bahasa pemrograman:</b> PHP (Laravel), Go (dasar), Rust (dasar)</li>
+    <li><b>Backend:</b> REST API, autentikasi OTP dan JWT, RBAC, validasi data (tingkat dasar)</li>
+    <li><b>Database:</b> PostgreSQL, MySQL, migrasi skema, transaksi dan row locking (tingkat dasar)</li>
+    <li><b>Deployment:</b> Docker (dasar), AWS EC2 (sedang belajar dengan free tier), GitHub Actions (dasar)</li>
+    <li><b>Tools:</b> Git, GitHub, Postman</li>
   </ul>
 </section>
 
 <section class="soft">
   <h2>Soft Skills</h2>
   <ul>
-    <li><b>Manajemen Waktu:</b> menjalani kuliah semester 7 sambil membangun 3 proyek backend (Ruang Rasa, Hii Stranger, Laundry Lastri).</li>
-    <li><b>Scrum / Agile:</b> menerapkan sprint di proyek pribadi Ruang Rasa; 9 milestone (0–8), satu sprint satu milestone, commit tiap fitur lolos test.</li>
-    <li><b>Manajemen Prioritas:</b> memangkas scope Ruang Rasa sesuai anggaran solo dev; fitur inti dulu, Redis/NATS ditunda sampai dibutuhkan.</li>
-    <li><b>Problem Solving:</b> menulis 250+ test otomatis (unit dan integrasi) untuk backend Ruang Rasa; kode harus lolos <i>clippy</i> tanpa warning.</li>
-    <li><b>Belajar Mandiri (Adaptif):</b> belajar Go lalu Rust dari dokumentasi resmi, kemudian membangun backend Ruang Rasa dengan Rust dari nol.</li>
-    <li><b>Komunikasi Tertulis:</b> menulis README, kontrak API sebelum coding, dan 4 artikel teknis di lananuranf.my.id/blog.</li>
-    <!-- TODO: isi bukti kerja tim (tugas kelompok/organisasi) -->
+    <li><b>Manajemen Waktu:</b> menjalani kuliah semester 7 sambil mengerjakan tiga proyek backend.</li>
+    <li><b>Belajar Mandiri:</b> mempelajari Go dan Rust dari dokumentasi resmi dan menerapkannya di proyek.</li>
+    <li><b>Komunikasi Tertulis:</b> menulis README dan artikel teknis di lananuranf.my.id/blog.</li>
+    <li><b>Kerja Tim:</b> berkontribusi di sisi backend pada proyek capstone Hii Stranger bersama tim.</li>
   </ul>
 </section>
 
 <section>
-  <h2>Proyek Backend</h2>
+  <h2>Proyek</h2>
 
   <div class="item">
-    <div class="item-head"><span class="item-title">Ruang Rasa: API Reservasi &amp; Discovery Restoran</span><span class="meta">lananuranf.my.id/projects/ruang-rasa</span></div>
-    <div class="stack">Rust · Axum 0.8 · Tokio · SQLx · PostgreSQL 16 + PostGIS + pg_trgm · WebSocket · Docker Compose · Caddy</div>
+    <div class="item-head"><span class="item-title">Ruang Rasa: API Reservasi Restoran (Proyek Pribadi)</span><span class="meta">lananuranf.my.id/projects/ruang-rasa</span></div>
+    <div class="stack">Rust · Axum · PostgreSQL · Docker Compose</div>
     <ul>
-      <li>Merancang backend tunggal sebagai workspace Rust 4 crate (api, domain, infra, shared) dengan 11 migrasi skema yang bisa di-rollback.</li>
-      <li>Mencegah overbooking dengan transaksi PostgreSQL dan kunci baris (<i>FOR UPDATE</i>) saat menghitung ulang kapasitas slot; pengingat reservasi lewat background job dan push FCM.</li>
-      <li>Membangun chat real-time lewat WebSocket yang disebar memakai Postgres LISTEN/NOTIFY, login OTP + JWT, pencarian restoran terdekat (PostGIS) dan pencarian teks (pg_trgm), serta upload media lewat presigned URL ke storage S3-compatible (R2/MinIO).</li>
-      <li>Menyiapkan deploy produksi dengan Docker Compose dan Caddy (HTTPS otomatis, kompresi) di VPS Ubuntu 2 GB.</li>
+      <li>Membangun backend untuk aplikasi reservasi restoran: login dengan OTP dan JWT, pencarian restoran, dan reservasi meja.</li>
+      <li>Mencegah dua orang memesan meja yang sama dengan transaksi PostgreSQL dan row locking (<i>FOR UPDATE</i>).</li>
+      <li>Menjalankan backend dengan Docker Compose di VPS Ubuntu.</li>
     </ul>
   </div>
 
   <div class="item">
-    <div class="item-head"><span class="item-title">Hii Stranger: API Toko Online Streetwear (Capstone, Tim)</span><span class="meta">lananuranf.my.id/projects/capstone-hi</span></div>
-    <div class="stack">Go (net/http) · pgx · PostgreSQL · Redis · JWT · Next.js · Prometheus</div>
+    <div class="item-head"><span class="item-title">Hii Stranger: API Toko Online (Capstone, Tim)</span><span class="meta">lananuranf.my.id/projects/capstone-hi</span></div>
+    <div class="stack">Go · PostgreSQL · JWT</div>
     <ul>
-      <li>Mengerjakan sebagian besar backend Go: merapikan arsitektur menjadi satu package per fitur (produk, keranjang, order, pembayaran, pengiriman, ongkir RajaOngkir) dan menyusun migrasi database.</li>
-      <li>Menjaga stok tetap benar saat checkout dan verifikasi pembayaran dengan transaksi PostgreSQL dan kunci baris (<i>SELECT … FOR UPDATE</i>); stok dikembalikan otomatis saat order dibatalkan.</li>
-      <li>Menambahkan pencarian di daftar pembayaran admin dan membuat tampilan panel admin responsif.</li>
+      <li>Berkontribusi di backend Go: fitur produk, keranjang, order, dan pembayaran, serta migrasi database.</li>
+      <li>Menjaga stok tetap benar saat checkout dengan transaksi PostgreSQL dan row locking; stok dikembalikan saat order dibatalkan.</li>
     </ul>
   </div>
 
   <div class="item">
     <div class="item-head"><span class="item-title">Laundry Lastri: REST API Manajemen Laundry (Penulisan Ilmiah)</span><span class="meta">lananuranf.my.id/projects/londry-lastri</span></div>
-    <div class="stack">PHP · Laravel 12 · Laravel Sanctum · MySQL/SQLite</div>
+    <div class="stack">PHP · Laravel · Laravel Sanctum · MySQL</div>
     <ul>
-      <li>Membangun API untuk pelanggan, layanan, order, dan pembayaran sebagai bahan Penulisan Ilmiah; pelanggan bisa memesan dan menjadwalkan jemput tanpa login.</li>
-      <li>Menghitung total dan sisa tagihan di server (harga per kg, per item, atau flat) dan mendukung pembayaran bertahap.</li>
-      <li>Menyimpan pembayaran dan perubahan status dalam <i>DB::transaction</i>; setiap perubahan status tercatat di tabel riwayat. Autentikasi admin memakai token Sanctum.</li>
+      <li>Membangun API untuk pelanggan, layanan, order, dan pembayaran sebagai bahan Penulisan Ilmiah.</li>
+      <li>Menghitung total dan sisa tagihan di server, mendukung pembayaran bertahap, dan mencatat riwayat perubahan status order.</li>
+      <li>Autentikasi admin memakai token Laravel Sanctum.</li>
     </ul>
   </div>
 </section>
 
 <section>
   <h2>Pendidikan</h2>
-  <div class="item-head"><span class="item-title">Universitas Gunadarma, Jakarta</span><span class="meta">Semester 7 · Sedang berjalan<!-- TODO: isi tahun masuk dan perkiraan lulus, mis. 2022 - 2026 --></span></div>
-  <p>S1 Sistem Informasi<!-- TODO: isi IPK bila >= 3,00, mis. " · IPK 3,xx/4,00" --></p>
-  <!-- TODO: mata kuliah relevan (Basis Data, Jaringan Komputer, Rekayasa Perangkat Lunak) bila ingin ditampilkan -->
+  <div class="item-head"><span class="item-title">Universitas Gunadarma, Jakarta</span><span class="meta">Semester 7 · Sedang berjalan</span></div>
+  <p>S1 Sistem Informasi</p>
 </section>
 
 <section>
   <h2>Lainnya</h2>
   <ul>
-    <li><b>Bahasa:</b> Indonesia (penutur asli)<!-- TODO: isi tingkat bahasa Inggris, mis. "Inggris (membaca dokumentasi teknis)" atau skor TOEFL/IELTS bila ada --></li>
-    <!-- TODO: Sertifikasi (mis. AWS Certified Cloud Practitioner) bila sudah didap
+    <li><b>Bahasa:</b> Indonesia (penutur asli)</li>
+  </ul>
+</section>
+
+</body>
+</html>
