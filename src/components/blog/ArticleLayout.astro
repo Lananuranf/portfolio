@@ -22,6 +22,8 @@ interface Props {
     category: string;
     tags: string[];
     keywords: string;
+    /** Proyek terkait untuk tautan balik. */
+    project?: { name: string; href: string };
 }
 
 const {
@@ -36,6 +38,7 @@ const {
     category,
     tags,
     keywords,
+    project,
 } = Astro.props;
 const url = `https://lananuranf.my.id/blog/${slug}/`;
 const wordCount = countWords(file);
@@ -150,7 +153,7 @@ const articleSchema = JSON.stringify({
                                 Maulana Nur Anfajm
                             </p>
                             <p class="text-xs text-ink-muted">
-                                Backend Engineer
+                                Junior Backend Developer
                             </p>
                         </div>
                     </div>
@@ -231,6 +234,12 @@ const articleSchema = JSON.stringify({
             >
                 <slot />
             </div>
+
+            {project && (
+                <p class="mt-12 text-sm text-ink-muted">
+                    Proyek terkait: <a href={project.href} class="font-semibold text-rose-deep hover:underline">Studi kasus {project.name}</a>
+                </p>
+            )}
 
             <div class="flex flex-wrap gap-2 mt-12 pt-8 border-t border-line">
                 {tags.map((t) => (

@@ -124,10 +124,11 @@ const codePay = `$payment = DB::transaction(function () use ($order, $validated)
   dateLabel="12 November 2026"
   category="Backend"
   tags={["Laravel","PHP","REST API","Backend","Penulisan Ilmiah"]}
+  project={{ name: "Laundry Lastri", href: "/projects/laundry-lastri/" }}
   keywords="laravel 12 aplikasi laundry rest api db transaction harga per kg riwayat status order audit trail pembayaran cicil sanctum penulisan ilmiah indonesia"
 >
   <p>
-    <a href="/projects/londry-lastri/">Laundry Lastri</a> adalah backend REST API untuk mengelola usaha laundry.
+    <a href="/projects/laundry-lastri/">Laundry Lastri</a> adalah backend REST API untuk mengelola usaha laundry.
     Saya membuatnya sebagai bahan Penulisan Ilmiah di kampus, jadi selain kodenya, saya juga harus bisa menjelaskan
     alasan di balik setiap keputusan teknis. Stack-nya Laravel 12 dan PHP 8.2, SQLite saat development dan MySQL untuk
     production, dengan Laravel Sanctum untuk login admin.
@@ -266,6 +267,6 @@ const codePay = `$payment = DB::transaction(function () use ($order, $validated)
     Pelajaran utama dari proyek ini adalah menaruh aturan bisnis di server dan membungkus perubahan yang saling
     bergantung dalam satu transaksi. Harga, status pembayaran, dan riwayat status semuanya dihitung atau dicatat
     oleh backend, sehingga data tetap konsisten walaupun client-nya berganti. Detail struktur proyek dan daftar
-    endpoint lengkap ada di <a href="/projects/londry-lastri/">halaman proyek Laundry Lastri</a>.
+    endpoint lengkap ada di <a href="/projects/laundry-lastri/">halaman proyek Laundry Lastri</a>.
   </p>
 </ArticleLayout>

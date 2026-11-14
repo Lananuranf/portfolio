@@ -23,11 +23,11 @@ interface Props {
 }
 
 const {
-  title = "Maulana Nur Anfajm (Lananuranf) | Backend Engineer",
-  description = "Portfolio Maulana Nur Anfajm (Lananuranf), Backend Engineer dari Jakarta. Membangun REST API dengan Go, Rust, PostgreSQL, dan Docker.",
+  title = "Maulana Nur Anfajm (Lananuranf) | Junior Backend Developer",
+  description = "Portfolio Maulana Nur Anfajm (Lananuranf), Junior Backend Developer dari Jakarta. Membangun REST API dengan Go, Rust, PostgreSQL, dan Docker.",
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   ogImage = "/og-image.png",
-  ogImageAlt = "Portfolio Maulana Nur Anfajm (Lananuranf), Backend Engineer",
+  ogImageAlt = "Portfolio Maulana Nur Anfajm (Lananuranf), Junior Backend Developer",
   ogType = "website",
   publishedTime,
   modifiedTime,
@@ -57,11 +57,11 @@ const schemaPerson = JSON.stringify({
   "@type": "Person",
   "@id": "https://lananuranf.my.id/#person",
   "name": "Maulana Nur Anfajm",
-  "alternateName": ["Lananuranf","lananur.anf","lananur anf","Lananur","Lananuranf Maulana","Lananuran","Lanannuranf","Lananuranff","Lanan Nur Anf","Maulana Anfajm","Maulana Nur Anfajm","Maulana Nur Anfaj","Maulana Nur Anfajim","Maulana Nur Anfazm","Maulana Nur Anfam","Maulana Nur Anfajn","Maulana Nur Anpajm"],
+  "alternateName": ["Lananuranf"],
   "url": "https://lananuranf.my.id/",
   "image": "https://lananuranf.my.id/og-image.png",
   "jobTitle": "Junior Backend Developer",
-  "description": "Backend Engineer dan mahasiswa Sistem Informasi semester 7 Universitas Gunadarma Jakarta. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker.",
+  "description": "Junior Backend Developer dan mahasiswa Sistem Informasi semester 7 Universitas Gunadarma Jakarta. Membangun REST API dan layanan backend dengan Go, Rust, PostgreSQL, dan Docker.",
   "email": "lananuranf@gmail.com",
   "address": { "@type": "PostalAddress", "addressLocality": "Jakarta", "addressCountry": "ID" },
   "sameAs": [
@@ -85,7 +85,7 @@ const schemaWebsite = JSON.stringify({
   "name": "Portfolio Maulana Nur Anfajm (Lananuranf)",
   "alternateName": ["Lananuranf Portfolio","Portfolio Lananuranf","Lananur Portfolio","lananuranf.my.id","Maulana Nur Anfajm Portfolio","Maulana Anfajm Portfolio"],
   "url": "https://lananuranf.my.id/",
-  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf), Backend Engineer dan mahasiswa Sistem Informasi dari Jakarta."
+  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf), Junior Backend Developer dan mahasiswa Sistem Informasi dari Jakarta."
 });
 
 const schemaFAQ = JSON.stringify({
@@ -110,12 +110,12 @@ const schemaFAQ = JSON.stringify({
     {
       "@type": "Question",
       "name": "Apakah Lananur, Lananuran, atau Maulana Anfajm itu sama dengan Lananuranf?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Ya. Lananur, Lananuran, lananur.anf, Maulana Anfajm, dan Maulana Nur Anfajm merujuk pada orang yang sama, yaitu Backend Engineer dari Jakarta dengan situs resmi https://lananuranf.my.id/." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Ya. Lananur, Lananuran, lananur.anf, Maulana Anfajm, dan Maulana Nur Anfajm merujuk pada orang yang sama, yaitu Junior Backend Developer dari Jakarta dengan situs resmi https://lananuranf.my.id/." }
     },
     {
       "@type": "Question",
       "name": "Apakah Lananuranf terbuka untuk tawaran kerja?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk peluang kerja sebagai Backend Engineer. Hubungi via email lananuranf@gmail.com atau LinkedIn." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk peluang kerja sebagai Junior Backend Developer. Hubungi via email lananuranf@gmail.com atau LinkedIn." }
     }
   ]
 });
@@ -130,7 +130,6 @@ const schemaFAQ = JSON.stringify({
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Maulana Nur Anfajm (Lananuranf)" />
-    <meta name="keywords" content="Lananuranf, lananur.anf, lananur anf, Lananur, Lananuranf Maulana, Lananuran, Lanannuranf, Lananuranff, Lanan Nur Anf, Maulana Anfajm, Maulana Nur Anfajm, Maulana Nur Anfaj, Maulana Nur Anfajim, Maulana Nur Anfazm, Maulana Nur Anfam, Maulana Nur Anfajn, Maulana Nur Anpajm, backend engineer, Go, Rust, PostgreSQL, portfolio, Jakarta" />
     <meta name="robots" content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
     <link rel="canonical" href={canonicalURL} />
 

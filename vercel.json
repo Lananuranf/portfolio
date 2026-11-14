@@ -19,6 +19,16 @@
       "source": "/blog/cara-deploy-react-go-docker-aws/",
       "destination": "/blog/",
       "statusCode": 301
+    },
+    {
+      "source": "/projects/londry-lastri",
+      "destination": "/projects/laundry-lastri/",
+      "statusCode": 301
+    },
+    {
+      "source": "/projects/londry-lastri/",
+      "destination": "/projects/laundry-lastri/",
+      "statusCode": 301
     }
   ],
   "headers": [

@@ -83,13 +83,15 @@ export default function HeroIsland(): ReactElement {
           initial="hidden"
           animate={ready ? "show" : "hidden"}
         >
-          <motion.p
+          <motion.a
             variants={item}
-            className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold text-ink"
+            href="/#contact"
+            className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold text-ink transition-colors duration-200 hover:border-rose-brand hover:text-rose-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-deep"
           >
             <span className="h-2 w-2 rounded-full bg-rose-brand" aria-hidden="true" />
             Terbuka untuk magang &amp; freelance
-          </motion.p>
+            <span aria-hidden="true">→</span>
+          </motion.a>
 
           <motion.div variants={item}>
             <h1
@@ -99,14 +101,15 @@ export default function HeroIsland(): ReactElement {
               Maulana Nur Anfajm
             </h1>
             <p className="mt-3 text-lg md:text-xl font-semibold text-rose-deep">
-              Junior Backend Developer
+              Junior Backend Developer di Jakarta
               <span className="font-normal text-ink-muted"> · alias Lananuranf</span>
             </p>
           </motion.div>
 
           <motion.p variants={item} className="max-w-xl text-base md:text-lg leading-relaxed text-ink-muted">
-            Halo! Saya sedang mendalami backend: membangun REST API dan merancang database untuk aplikasi web.
-            Sejauh ini saya mengerjakannya dengan PHP (Laravel), Go, dan Rust, dengan PostgreSQL sebagai database.
+            {/* Opsi 2: "Saya mengerjakan sisi server: REST API, skema database, dan aturan bisnis, dengan Go, Rust, dan Laravel." */}
+            Saya membangun REST API dengan Go, Rust, dan Laravel, dengan PostgreSQL sebagai database.
+            Fokus saya skema database dan aturan bisnis di sisi server.
           </motion.p>
 
           <motion.ul variants={item} className="flex flex-wrap gap-2" aria-label="Teknologi utama">
@@ -123,6 +126,7 @@ export default function HeroIsland(): ReactElement {
           <motion.div variants={item} className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href="/#projects"
+              aria-label="Lihat proyek backend: Ruang Rasa, Hii Stranger, dan Laundry Lastri"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-deep text-sm font-semibold text-white transition-colors duration-200 hover:bg-ink"
             >
               Lihat proyek

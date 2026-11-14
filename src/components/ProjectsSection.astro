@@ -10,6 +10,12 @@ interface Project {
   subtitle: string;
   badge?: string;
   repo?: string;
+  /** Slot tautan: tombol hanya dirender bila terisi. */
+  github?: string;
+  demo?: string;
+  screenshot?: { src: string; alt: string };
+  /** TODO: isi dengan angka nyata (jumlah tes, waktu respons, dll). Placeholder "TODO" hanya tampil di dev. */
+  measured: string;
   detail?: string;
   tech: string[];
   summary: string;
@@ -22,9 +28,11 @@ const PROJECTS: Project[] = [
   {
     id: "ruang-rasa",
     num: "01",
+    // TODO(deploy): Ruang Rasa disebut "VPS Ubuntu" dan "AWS EC2" di tempat lain. Tanyakan mana yang benar, lalu samakan.
     title: "Ruang Rasa API",
     subtitle: "Reservasi restoran · Rust · Proyek pribadi",
     detail: "/projects/ruang-rasa/",
+    measured: "TODO: isi jumlah tes dan hasil uji 50 request paralel (angka dari repo)",
     tech: ["Rust", "Axum", "PostgreSQL", "Docker Compose"],
     summary: "Backend untuk aplikasi Android Ruang Rasa yang menangani login OTP, pencarian restoran, dan reservasi meja.",
     problem: "Dua orang bisa memesan meja yang sama di jam yang sama, dan retry dari HP bisa membuat pesanan ganda.",
@@ -37,19 +45,21 @@ const PROJECTS: Project[] = [
     title: "Hii Stranger API",
     subtitle: "Toko online streetwear · Go · Proyek capstone tim",
     detail: "/projects/capstone-hi/",
+    measured: "TODO: isi hasil terukur bagian checkout/stok (mis. jumlah tes, waktu respons)",
     tech: ["Go", "PostgreSQL", "pgx", "JWT"],
-    summary: "Backend toko online untuk proyek capstone kampus, dikerjakan bersama tim. Bagian saya ada di sisi backend Go.",
-    problem: "Checkout, pembayaran transfer, dan perubahan stok harus tetap benar walau beberapa pelanggan membeli varian yang sama bersamaan.",
-    built: "API Go (net/http + pgx) dengan satu package per fitur: produk, keranjang, order, dan pembayaran.",
-    result: "Baris order dan varian dikunci dengan SELECT … FOR UPDATE saat checkout dan verifikasi bayar. Stok kembali otomatis saat order dibatalkan.",
+    summary: "Backend toko online untuk proyek capstone kampus, dikerjakan bersama tim. Peran saya: backend Go, khususnya penguncian stok saat checkout.",
+    problem: "Stok varian tidak boleh minus saat beberapa pelanggan checkout varian yang sama bersamaan.",
+    built: "Bagian checkout di API Go milik tim (net/http + pgx): baris keranjang dan varian dikunci sebelum stok dikurangi.",
+    result: "Penguncian dengan SELECT … FOR UPDATE membuat dua checkout bersamaan untuk varian yang sama diproses bergantian.",
   },
   {
-    id: "londry-lastri",
+    id: "laundry-lastri",
     num: "03",
     title: "Laundry Lastri API",
     subtitle: "Manajemen laundry · Laravel 12 · Proyek kampus",
     badge: "Penulisan Ilmiah",
-    detail: "/projects/londry-lastri/",
+    detail: "/projects/laundry-lastri/",
+    measured: "TODO: isi jumlah tes dan waktu respons endpoint utama (angka dari repo)",
     tech: ["Laravel", "PHP", "Laravel Sanctum", "SQLite", "MySQL"],
     summary: "REST API untuk usaha laundry: pelanggan, layanan, order, pembayaran, dan riwayat status cucian. Dibuat sebagai bahan Penulisan Ilmiah.",
     problem: "Catatan order, cicilan bayar, dan posisi cucian di laundry kecil biasanya hanya ada di buku tulis, jadi sulit dilacak.",
@@ -78,6 +88,7 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
           { label: "Masalah", text: p.problem },
           { label: "Yang dibangun", text: p.built },
           { label: "Hasil", text: p.result },
+          ...(import.meta.env.DEV || !p.measured.startsWith("TODO") ? [{ label: "Hasil terukur", text: p.measured }] : []),
         ];
         return (
         <article data-reveal data-tilt class="glass-card lift rounded-2xl p-6 flex flex-col gap-4" aria-labelledby={`project-title-${p.id}`}>
@@ -91,6 +102,10 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
               )}
             </div>
           </div>
+
+          {p.screenshot && (
+            <img src={p.screenshot.src} alt={p.screenshot.alt} width="640" height="400" loading="lazy" decoding="async" class="w-full h-auto rounded-xl border border-line" />
+          )}
 
           <p class="text-ink-muted text-sm leading-relaxed">{p.summary}</p>
 
@@ -138,14 +153,20 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
             )}
             <div class="flex flex-wrap gap-2">
               {p.detail && (
-                <a href={p.detail} class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-ink text-white text-xs font-semibold hover:bg-lavender-deep transition-colors">
+                <a href={p.detail} aria-label={`Studi kasus ${p.title}`} class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-ink text-white text-xs font-semibold hover:bg-lavender-deep transition-colors">
                   Studi kasus <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
                 </a>
               )}
-              {proof && (
-                <a href={`https://github.com/${GITHUB_USER}/${proof.repo}`} target="_blank" rel="noopener noreferrer"
+              {(p.github || proof) && (
+                <a href={p.github ?? `https://github.com/${GITHUB_USER}/${proof.repo}`} target="_blank" rel="noopener noreferrer" aria-label={`Repo GitHub ${p.title} (tab baru)`}
                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-line text-ink text-xs font-semibold hover:border-rose-brand hover:text-rose-deep transition-colors">
                   Repo GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                </a>
+              )}
+              {p.demo && (
+                <a href={p.demo} target="_blank" rel="noopener noreferrer" aria-label={`Demo ${p.title} (tab baru)`}
+                  class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-line text-ink text-xs font-semibold hover:border-rose-brand hover:text-rose-deep transition-colors">
+                  Demo
                 </a>
               )}
             </div>

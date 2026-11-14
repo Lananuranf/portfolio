@@ -1,6 +1,6 @@
 # lananuranf.my.id
 
-Portfolio Maulana Nur Anfajm (Lananuranf), backend engineer: Go, Rust, PostgreSQL, Docker, AWS EC2.
+Portfolio Maulana Nur Anfajm (Lananuranf), Junior Backend Developer: Go, Rust, PostgreSQL, Docker, AWS EC2.
 
 Dibangun dengan Astro 5 + Tailwind CSS v4, dideploy di Vercel.
 
