@@ -175,6 +175,39 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
 }
 .js-reveal [data-reveal].is-in { opacity: 1; translate: 0 0; }
 
+/* ==== Kartu terbalik: kartu membalik masuk saat discroll ke layar ==== */
+.js-reveal .glass-card[data-reveal].is-in,
+.js-reveal article[data-reveal].is-in {
+  animation: cardFlip .9s cubic-bezier(.2,.8,.2,1) var(--rd, 0ms) backwards;
+  transform-origin: 50% 60%;
+}
+@keyframes cardFlip {
+  0%   { opacity: 0; transform: perspective(900px) rotateY(-100deg) translateY(24px) scale(.94); }
+  60%  { opacity: 1; transform: perspective(900px) rotateY(8deg) translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: perspective(900px) rotateY(0) translateY(0) scale(1); }
+}
+/* Selang-seling arah balik supaya terasa hidup */
+.js-reveal .glass-card[data-reveal]:nth-child(even).is-in { animation-name: cardFlipAlt; }
+@keyframes cardFlipAlt {
+  0%   { opacity: 0; transform: perspective(900px) rotateX(80deg) translateY(28px) scale(.94); }
+  60%  { opacity: 1; transform: perspective(900px) rotateX(-6deg) translateY(-4px); }
+  100% { opacity: 1; transform: perspective(900px) rotateX(0) translateY(0) scale(1); }
+}
+
+/* ==== Kilau lembut yang lewat di kartu saat disentuh ==== */
+.glass-card { position: relative; overflow: hidden; }
+.glass-card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
+  translate: -120% 0; transition: translate .8s cubic-bezier(.2,.7,.2,1);
+}
+.glass-card:hover::after { translate: 120% 0; }
+
+/* ==== Tombol & tautan: memantul halus saat ditekan ==== */
+a.inline-flex:active, button:active { transform: scale(.96); }
+a.inline-flex svg { transition: transform .25s ease; }
+a.inline-flex:hover svg { transform: translateX(3px); }
+
 /* ==== Mengambang halus untuk elemen dekoratif ==== */
 .float-soft { animation: floatSoft 6s ease-in-out infinite; }
 @keyframes floatSoft { 50% { translate: 0 -8px; } }
@@ -237,6 +270,8 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
   .lift, .lift:hover { transform: none; transition: none; }
   .glass-card::before { transition: none; }
   .js-reveal [data-reveal] { opacity: 1; translate: none; }
+  .js-reveal .glass-card[data-reveal].is-in, .js-reveal article[data-reveal].is-in { animation: none; }
+  .glass-card::after { display: none; }
   #intro { display: none !important; }
 }
 

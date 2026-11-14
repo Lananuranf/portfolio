@@ -105,8 +105,8 @@ export default function HeroIsland(): ReactElement {
           </motion.div>
 
           <motion.p variants={item} className="max-w-xl text-base md:text-lg leading-relaxed text-ink-muted">
-            Saya membangun REST API dan merancang database untuk aplikasi web. Sehari-hari saya menulis Go
-            dan Rust dengan PostgreSQL, lalu mengemasnya dengan Docker.
+            Halo! Saya suka membangun REST API dan merancang database untuk aplikasi web. Sehari-hari saya
+            menulis Go dan Rust bersama PostgreSQL, lalu mengemasnya dengan Docker supaya mudah dijalankan di mana saja.
           </motion.p>
 
           <motion.ul variants={item} className="flex flex-wrap gap-2" aria-label="Teknologi utama">
