@@ -99,14 +99,14 @@ export default function HeroIsland(): ReactElement {
               Maulana Nur Anfajm
             </h1>
             <p className="mt-3 text-lg md:text-xl font-semibold text-rose-deep">
-              Backend Engineer
+              Junior Backend Developer
               <span className="font-normal text-ink-muted"> · alias Lananuranf</span>
             </p>
           </motion.div>
 
           <motion.p variants={item} className="max-w-xl text-base md:text-lg leading-relaxed text-ink-muted">
-            Halo! Saya suka membangun REST API dan merancang database untuk aplikasi web. Sehari-hari saya
-            menulis Go dan Rust bersama PostgreSQL, lalu mengemasnya dengan Docker supaya mudah dijalankan di mana saja.
+            Halo! Saya sedang mendalami backend: membangun REST API dan merancang database untuk aplikasi web.
+            Sejauh ini saya mengerjakannya dengan PHP (Laravel), Go, dan Rust, dengan PostgreSQL sebagai database.
           </motion.p>
 
           <motion.ul variants={item} className="flex flex-wrap gap-2" aria-label="Teknologi utama">

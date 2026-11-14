@@ -6,7 +6,7 @@ import Footer from "../../components/Footer.astro";
 import { techIcon } from "../../lib/icons";
 
 
-const TECH = ["Rust", "Axum", "Tokio", "SQLx", "PostgreSQL", "PostGIS", "WebSocket", "JWT", "Docker", "Docker Compose", "Caddy", "Ubuntu", "Firebase Cloud Messaging", "Cloudflare R2", "MinIO"];
+const TECH = ["Rust", "Axum", "PostgreSQL", "JWT", "Docker Compose", "Ubuntu"];
 
 const STATS = [
   { value: "4", label: "crate Rust: api, domain, infra, shared" },
@@ -50,7 +50,7 @@ const projectSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
   name: "Ruang Rasa API",
-  description: "Backend reservasi dan discovery restoran dengan Rust (Axum, Tokio, SQLx), PostgreSQL + PostGIS, chat WebSocket, dan deploy Docker Compose.",
+  description: "Backend reservasi restoran dengan Rust (Axum) dan PostgreSQL, dijalankan dengan Docker Compose.",
   programmingLanguage: ["Rust", "SQL"],
   url: "https://lananuranf.my.id/projects/ruang-rasa/",
   image: "https://lananuranf.my.id/og-image.png",
@@ -62,7 +62,7 @@ const projectSchema = JSON.stringify({
 
 <BaseLayout
   title="Ruang Rasa: Backend Reservasi Restoran Rust | Lananuranf"
-  description="Studi kasus backend Ruang Rasa: Rust (Axum, SQLx), PostgreSQL + PostGIS, reservasi tanpa overbooking, chat WebSocket, dan deploy Docker Compose."
+  description="Studi kasus backend Ruang Rasa: Rust (Axum), PostgreSQL, dan reservasi tanpa overbooking."
   canonicalURL="https://lananuranf.my.id/projects/ruang-rasa/"
   breadcrumbs={[{ name: "Ruang Rasa", url: "https://lananuranf.my.id/projects/ruang-rasa/" }]}
   extraSchema={projectSchema}
