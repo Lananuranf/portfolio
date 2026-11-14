@@ -5,7 +5,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import Footer from "../../components/Footer.astro";
 import { techIcon } from "../../lib/icons";
 
-const TECH = ["Go", "PostgreSQL", "pgx", "Redis", "JWT", "Next.js", "Prometheus", "Cloudinary", "OpenAPI"];
+const TECH = ["Go", "PostgreSQL", "pgx", "JWT"];
 
 const STATS = [
   { value: "18", label: "migrasi SQL, masing-masing dengan down" },
@@ -19,8 +19,8 @@ const PACKAGES = [
   { name: "category, product", desc: "Kategori, produk, varian (ukuran/warna dengan stok sendiri), dan gambar produk." },
   { name: "cart, order", desc: "Keranjang dan checkout. Checkout mengunci varian, mengurangi stok, dan menghitung ulang ongkir di server." },
   { name: "payment, shipment", desc: "Tagihan dengan kode unik transfer, unggah bukti, verifikasi admin, lalu kurir dan nomor resi." },
-  { name: "ongkir", desc: "Wilayah sampai kelurahan dan cek ongkir dari RajaOngkir. Data wilayah di-cache 24 jam supaya kuota API hemat." },
-  { name: "banner, sitesetting, upload", desc: "Banner beranda, mode maintenance, dan unggah gambar admin ke Cloudinary." },
+  { name: "ongkir", desc: "Data wilayah dan cek ongkir dari RajaOngkir." },
+  { name: "banner, sitesetting, upload", desc: "Banner beranda, mode maintenance, dan unggah gambar admin." },
 ];
 
 const ORDER_FLOW = [
@@ -43,7 +43,7 @@ const projectSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
   name: "Hii Stranger API",
-  description: "Backend toko online streetwear untuk proyek capstone tim: Go (net/http + pgx), PostgreSQL, Redis, pembayaran transfer dengan verifikasi admin, dan ongkir RajaOngkir.",
+  description: "Backend toko online streetwear untuk proyek capstone tim: Go (net/http + pgx), PostgreSQL, dan pembayaran transfer dengan verifikasi admin.",
   programmingLanguage: ["Go", "SQL", "TypeScript"],
   url: "https://lananuranf.my.id/projects/capstone-hi/",
   image: "https://lananuranf.my.id/og-image.png",
@@ -55,7 +55,7 @@ const projectSchema = JSON.stringify({
 
 <BaseLayout
   title="Hii Stranger: Backend Toko Online dengan Go | Lananuranf"
-  description="Studi kasus backend toko online Hii Stranger (capstone tim): Go, PostgreSQL, Redis, checkout dengan penguncian stok, transfer bank, dan ongkir RajaOngkir."
+  description="Studi kasus backend toko online Hii Stranger (capstone tim): Go, PostgreSQL, dan checkout dengan penguncian stok."
   canonicalURL="https://lananuranf.my.id/projects/capstone-hi/"
   breadcrumbs={[{ name: "Hii Stranger", url: "https://lananuranf.my.id/projects/capstone-hi/" }]}
   extraSchema={projectSchema}
@@ -144,17 +144,6 @@ const projectSchema = JSON.stringify({
             ))}
           </ol>
         </section>
-        <section aria-labelledby="keputusan">
-          <h2 id="keputusan" class="text-xl font-bold mb-3">Keputusan teknis lain</h2>
-          <div class="bg-white border border-line rounded-2xl p-5 text-ink-muted text-sm leading-relaxed flex flex-col gap-2">
-            <p><strong class="text-ink">Cache respons publik di Redis.</strong> GET produk, kategori, banner, dan pengaturan situs tanpa token dilayani dari cache. Setiap perubahan data lewat API (termasuk checkout yang mengubah stok) menaikkan penghitung generasi, jadi cache lama otomatis tidak terpakai.</p>
-            <p><strong class="text-ink">Lebih sedikit perjalanan ke database.</strong> Daftar dan detail produk serta order memakai <code class="font-mono text-ink">pgx.Batch</code>. Pencarian nama produk dibantu index <code class="font-mono text-ink">pg_trgm</code>.</p>
-            <p><strong class="text-ink">Pembatasan request.</strong> Endpoint login dan reset password punya rate limit yang lebih ketat daripada endpoint publik. Password di-hash dengan bcrypt cost 12.</p>
-            <p><strong class="text-ink">Email di background.</strong> Pemilik toko diberi tahu saat ada order dan bukti bayar baru; pelanggan menerima hasil verifikasi, perubahan status, dan nomor resi. Bila SMTP tidak diisi, email dilewati tanpa error.</p>
-            <p><strong class="text-ink">Monitoring.</strong> Endpoint <code class="font-mono text-ink">/metrics</code> menyediakan metrik untuk Prometheus, dan repo menyertakan dashboard Grafana.</p>
-          </div>
-        </section>
-
         <section aria-labelledby="endpoint">
           <h2 id="endpoint" class="text-xl font-bold mb-3">Endpoint utama</h2>
           <p class="text-sm text-ink-muted leading-relaxed mb-4">Semua di bawah prefix <code class="font-mono text-ink">/api/v1</code>. Ini sebagian dari puluhan route untuk pelanggan dan admin.</p>

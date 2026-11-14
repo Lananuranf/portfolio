@@ -8,36 +8,13 @@ import { techIcon } from "../../lib/icons";
 
 const TECH = ["Rust", "Axum", "PostgreSQL", "JWT", "Docker Compose", "Ubuntu"];
 
-const STATS = [
-  { value: "4", label: "crate Rust: api, domain, infra, shared" },
-  { value: "11", label: "migrasi SQL, masing-masing dengan down" },
-  { value: "252", label: "test; 89 integrasi ke Postgres sungguhan" },
-  { value: "1/50", label: "request paralel lolos untuk kursi terakhir" },
-];
-
-const CRATES = [
-  { name: "api", desc: "Router Axum, DTO, ekstraktor auth, otorisasi per peran, WebSocket chat. Handler dibuat tipis." },
-  { name: "domain", desc: "Aturan bisnis murni tanpa I/O: slot & jam buka, state machine reservasi, kebijakan OTP, skor feed, cursor pagination." },
-  { name: "infra", desc: "Query SQLx, hub chat LISTEN/NOTIFY, presign S3, pengirim FCM & OTP, kripto, job latar." },
-  { name: "shared", desc: "Tipe error bersama yang dirender sebagai application/problem+json (RFC 9457)." },
-];
-
-const ENDPOINTS = [
-  { group: "Auth", items: ["POST /auth/otp/request", "POST /auth/otp/verify", "POST /auth/refresh", "POST /auth/logout"] },
-  { group: "Discovery", items: ["GET /restaurants/nearby", "GET /restaurants/search", "GET /restaurants/map", "GET /restaurants/{id}/eta", "GET /feed"] },
-  { group: "Reservasi", items: ["GET /restaurants/{id}/availability", "POST /reservations", "POST /reservations/{id}/cancel", "POST /merchant/restaurants/{rid}/reservations/{id}/confirm", "POST /merchant/restaurants/{rid}/reservations/check-in"] },
-  { group: "Chat", items: ["GET /chat/ws (upgrade WebSocket)", "POST /chat/conversations", "POST /chat/conversations/{id}/read"] },
-  { group: "Mitra & media", items: ["POST /merchant/restaurants", "POST /merchant/restaurants/{rid}/submit", "POST /merchant/restaurants/{rid}/media/presign"] },
-  { group: "Admin", items: ["POST /admin/merchants/{id}/approve", "POST /admin/reports/{id}/resolve", "GET /admin/audit-logs"] },
-];
-
 const FLOW = [
   { title: "Klaim Idempotency-Key", desc: "Kunci dari header disimpan di tabel idempotency_keys bersama hash body. Key yang sama dengan body sama mengembalikan respons lama; body berbeda ditolak." },
   { title: "Kunci baris area", desc: "SELECT … FROM dining_areas … FOR UPDATE. Request lain untuk area yang sama menunggu giliran di sini sebelum sampai ke INSERT." },
   { title: "Validasi kebijakan", desc: "Slot dicek terhadap jam buka (termasuk jam lewat tengah malam), lead time, batas hari ke depan, dan jumlah tamu maksimal." },
   { title: "Hitung ulang kursi", desc: "SUM(party_size) reservasi aktif yang waktunya beririsan. Kalau sisa kursi kurang, transaksi berhenti dengan RSV_SLOT_UNAVAILABLE." },
-  { title: "Simpan & kabari", desc: "INSERT reservasi (PENDING, atau langsung CONFIRMED bila kebijakan resto mengizinkan), notifikasi, dan pesan SYSTEM di chat." },
-  { title: "Commit", desc: "Respons disimpan ke idempotency_keys. NOTIFY chat ikut terkirim saat commit, jadi tidak ada notifikasi untuk transaksi yang batal." },
+  { title: "Simpan & kabari", desc: "INSERT reservasi dengan status PENDING, atau langsung CONFIRMED bila restoran mengizinkan." },
+  { title: "Commit", desc: "Respons disimpan ke idempotency_keys, lalu transaksi di-commit. Kalau ada langkah yang gagal, semuanya dibatalkan." },
 ];
 
 const STATES = [
@@ -86,7 +63,7 @@ const projectSchema = JSON.stringify({
           Ruang Rasa API: <span class="text-gradient-brand">backend reservasi restoran</span>
         </h1>
         <p class="text-ink-muted text-base leading-relaxed">
-          Ini backend untuk aplikasi Android Ruang Rasa. Di aplikasinya, pengguna melihat suasana dan menu restoran lewat feed, mencari tempat terdekat, memesan meja, lalu chat dengan restorannya. Restoran mendaftar sendiri lewat mode mitra, dan admin menyetujuinya. Tulisan ini membahas sisi server saja.
+          Ini backend untuk aplikasi Android Ruang Rasa, proyek pribadi yang saya kerjakan untuk belajar Rust. Di aplikasinya, pengguna mencari restoran dan memesan meja. Tulisan ini membahas sisi servernya, terutama cara mencegah satu meja terpesan dua kali.
         </p>
 
         <a href="/blog/mencegah-double-booking-reservasi-rust/"
@@ -111,63 +88,12 @@ const projectSchema = JSON.stringify({
         })}
       </ul>
 
-      <dl class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
-        {STATS.map((s) => (
-          <div class="rounded-2xl bg-white border border-line p-4">
-            <dt class="sr-only">{s.label}</dt>
-            <dd class="text-2xl font-extrabold text-gradient-brand leading-none">{s.value}</dd>
-            <dd class="text-xs text-ink-muted mt-2 leading-snug">{s.label}</dd>
-          </div>
-        ))}
-      </dl>
-
       <div class="flex flex-col gap-12">
         <section aria-labelledby="masalah">
           <h2 id="masalah" class="text-xl font-bold mb-3">Masalah</h2>
           <div class="bg-white border border-line rounded-2xl p-5 text-ink-muted text-sm leading-relaxed flex flex-col gap-2">
             <p>Reservasi lewat chat gampang bentrok. Dua orang bisa mendapat meja yang sama di jam yang sama, dan aplikasi di HP yang mengulang request saat sinyal putus-putus bisa membuat pesanan ganda.</p>
-            <p>Di atas itu, satu backend harus melayani feed foto, pencarian berbasis lokasi, chat real-time antara pengunjung dan restoran, upload media, notifikasi, dan moderasi admin. Anggarannya kecil dan dikerjakan sendiri, jadi jumlah komponen yang harus dirawat perlu ditekan.</p>
-          </div>
-        </section>
-
-        <section aria-labelledby="arsitektur">
-          <h2 id="arsitektur" class="text-xl font-bold mb-3">Arsitektur</h2>
-          <p class="text-sm text-ink-muted leading-relaxed mb-4">Satu proses Rust, satu database. PostgreSQL menangani data relasional, lokasi (PostGIS), pencarian teks (pg_trgm), antrean event chat (LISTEN/NOTIFY), dan cache ETA. Aplikasi mengunggah file media langsung ke storage memakai presigned URL, jadi file tidak melewati API.</p>
-
-          <figure class="bg-white border border-line rounded-2xl p-4 sm:p-6" aria-label="Diagram arsitektur Ruang Rasa">
-            <div class="flex flex-col items-stretch gap-2 text-center text-xs sm:text-sm">
-              <div class="rounded-xl border border-line bg-surface px-4 py-3 font-semibold">Aplikasi Android <span class="font-normal text-ink-muted">(HTTPS + WebSocket)</span></div>
-              <div class="text-rose-brand leading-none" aria-hidden="true">▼</div>
-              <div class="rounded-xl border border-line bg-surface px-4 py-3"><span class="font-semibold">Caddy</span> <span class="text-ink-muted">· TLS otomatis, kompresi zstd/gzip, reverse proxy</span></div>
-              <div class="text-rose-brand leading-none" aria-hidden="true">▼</div>
-              <div class="rounded-xl border-2 border-rose-brand bg-pink-soft/50 p-3">
-                <p class="font-bold mb-2">API Rust · Axum + Tokio <span class="font-normal text-ink-muted">(/api/v1)</span></p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  <span class="rounded-lg bg-white border border-line px-2 py-1.5 font-mono">api</span>
-                  <span class="rounded-lg bg-white border border-line px-2 py-1.5 font-mono">domain</span>
-                  <span class="rounded-lg bg-white border border-line px-2 py-1.5 font-mono">infra</span>
-                  <span class="rounded-lg bg-white border border-line px-2 py-1.5 font-mono">shared</span>
-                </div>
-                <p class="text-[11px] text-ink-muted mt-2">Job latar: reservasi tiap 60 detik, bersih-bersih cache ETA tiap 30 menit</p>
-              </div>
-              <div class="text-rose-brand leading-none" aria-hidden="true">▼ ▲</div>
-              <div class="rounded-xl border-2 border-lavender bg-lavender-soft px-4 py-3"><span class="font-semibold">PostgreSQL 16 + PostGIS + pg_trgm</span> <span class="text-ink-muted">· LISTEN/NOTIFY untuk chat</span></div>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 pt-3 border-t border-dashed border-line">
-                <div class="rounded-xl border border-dashed border-line px-3 py-2"><span class="font-semibold">Cloudflare R2 / MinIO</span><br /><span class="text-ink-muted text-[11px]">upload langsung via presigned URL</span></div>
-                <div class="rounded-xl border border-dashed border-line px-3 py-2"><span class="font-semibold">Firebase Cloud Messaging</span><br /><span class="text-ink-muted text-[11px]">push notifikasi & pengingat</span></div>
-                <div class="rounded-xl border border-dashed border-line px-3 py-2"><span class="font-semibold">Google Routes</span><br /><span class="text-ink-muted text-[11px]">ETA on-demand, di-cache di tabel eta_cache</span></div>
-              </div>
-            </div>
-            <figcaption class="text-[11px] text-ink-muted mt-4 text-center">Kotak bertepi putus-putus adalah layanan luar. Di mode dev semuanya bisa jalan lokal. MinIO menggantikan storage, push hanya ditulis ke log, OTP memakai kode tetap, dan ETA memakai estimasi haversine bila tidak ada API key.</figcaption>
-          </figure>
-
-          <div class="grid sm:grid-cols-2 gap-3 mt-4">
-            {CRATES.map((c) => (
-              <div class="bg-white border border-line rounded-2xl p-4">
-                <p class="font-mono text-sm font-bold text-rose-deep">crates/{c.name}</p>
-                <p class="text-sm text-ink-muted leading-relaxed mt-1">{c.desc}</p>
-              </div>
-            ))}
+            <p>Karena itu bagian reservasi saya buat lebih hati-hati: semua langkahnya dijalankan dalam satu transaksi database.</p>
           </div>
         </section>
 
@@ -197,66 +123,19 @@ const projectSchema = JSON.stringify({
                 </div>
               ))}
             </div>
-            <p class="text-xs text-ink-muted leading-relaxed mt-3">Transisi ditulis sebagai fungsi murni di crate domain, lengkap dengan aturan waktu: pembatalan ditutup sesuai batas yang diatur restoran, check-in dibuka sesaat sebelum jadwal, dan no-show baru bisa ditandai setelah masa tenggang. Job latar tiap 60 detik menangani EXPIRED, NO_SHOW, COMPLETED, serta pengingat push H-1 pukul 10.00 dan 2 jam sebelum jadwal.</p>
+            <p class="text-xs text-ink-muted leading-relaxed mt-3">Transisi ditulis sebagai fungsi terpisah, lengkap dengan aturan waktu: pembatalan ditutup sesuai batas yang diatur restoran, check-in dibuka sesaat sebelum jadwal, dan no-show baru bisa ditandai setelah masa tenggang. Job latar tiap 60 detik menangani EXPIRED, NO_SHOW, COMPLETED, serta pengingat push H-1 pukul 10.00 dan 2 jam sebelum jadwal.</p>
           </div>
 
           <div class="mt-5 rounded-2xl border-2 border-rose-brand bg-white p-5">
-            <p class="text-xs font-semibold text-rose-deep uppercase tracking-wide mb-1">Dibuktikan lewat test</p>
+            <p class="text-xs font-semibold text-rose-deep uppercase tracking-wide mb-1">Diuji dengan test</p>
             <p class="text-sm leading-relaxed">Test <code class="font-mono">tc_rsv_03_parallel_overbooking_only_one_wins</code> mengirim 50 request bersamaan untuk kursi yang sama. Hasilnya sesuai harapan. Satu request berhasil, 49 ditolak dengan kode <code class="font-mono">RSV_SLOT_UNAVAILABLE</code>, dan total kursi terpakai tetap dalam kapasitas.</p>
           </div>
         </section>
 
-        <section aria-labelledby="keputusan">
-          <h2 id="keputusan" class="text-xl font-bold mb-3">Keputusan teknis lain</h2>
-          <div class="grid gap-3">
-            <div class="bg-white border border-line rounded-2xl p-5">
-              <p class="font-semibold text-sm">Chat real-time tanpa Redis</p>
-              <p class="text-sm text-ink-muted leading-relaxed mt-1">Satu koneksi WebSocket per pengguna menerima event dari semua percakapannya. Pesan baru disimpan, lalu <code class="font-mono text-ink">pg_notify</code> mengirim payload kecil ke hub yang mendengarkan lewat <code class="font-mono text-ink">PgListener</code>. Hub mencari penerima dari database dan meneruskan lewat channel Tokio. Karena NOTIFY ikut transaksi, pesan yang gagal disimpan tidak pernah tersiar. Redis atau broker pesan baru perlu kalau API dijalankan lebih dari satu instance dengan beban tinggi.</p>
-            </div>
-            <div class="bg-white border border-line rounded-2xl p-5">
-              <p class="font-semibold text-sm">Lokasi dan pencarian di database</p>
-              <p class="text-sm text-ink-muted leading-relaxed mt-1">Kolom <code class="font-mono text-ink">geography(Point, 4326)</code> dengan <code class="font-mono text-ink">ST_DWithin</code> untuk radius dan <code class="font-mono text-ink">ST_Distance</code> untuk jarak. Pencarian nama dan kota memakai operator <code class="font-mono text-ink">%</code> dari pg_trgm dengan index GIN, jadi salah ketik ringan tetap ketemu. ETA dari Google Routes hanya dihitung saat diminta dan disimpan sementara di tabel cache untuk menekan biaya API.</p>
-            </div>
-            <div class="bg-white border border-line rounded-2xl p-5">
-              <p class="font-semibold text-sm">Login OTP dan sesi yang bisa dicabut</p>
-              <p class="text-sm text-ink-muted leading-relaxed mt-1">OTP dibatasi jumlah permintaan per nomor dan per IP, serta jumlah percobaan. Refresh token disimpan sebagai hash dan dirotasi setiap dipakai; kalau token yang sudah dicabut dipakai lagi, seluruh family token itu ikut dicabut. Nomor HP disimpan terenkripsi AES-256-GCM dan dicari lewat hash HMAC.</p>
-            </div>
-            <div class="bg-white border border-line rounded-2xl p-5">
-              <p class="font-semibold text-sm">Error yang konsisten</p>
-              <p class="text-sm text-ink-muted leading-relaxed mt-1">Semua error memakai format <code class="font-mono text-ink">application/problem+json</code> (RFC 9457) dengan kode stabil seperti <code class="font-mono text-ink">RSV_SLOT_UNAVAILABLE</code>, sehingga aplikasi bisa menampilkan pesan yang tepat tanpa membaca teks error.</p>
-            </div>
-          </div>
-        </section>
-
-        <section aria-labelledby="endpoint">
-          <h2 id="endpoint" class="text-xl font-bold mb-3">Endpoint utama</h2>
-          <p class="text-sm text-ink-muted leading-relaxed mb-4">Semua di bawah prefix <code class="font-mono text-ink">/api/v1</code>. Ini sebagian; total ada puluhan route untuk pengunjung, mitra restoran, dan admin.</p>
-          <div class="grid sm:grid-cols-2 gap-3">
-            {ENDPOINTS.map((g) => (
-              <div class="bg-white border border-line rounded-2xl p-4">
-                <p class="text-xs font-semibold text-lavender-deep uppercase tracking-wide mb-2">{g.group}</p>
-                <ul class="flex flex-col gap-1">
-                  {g.items.map((e) => {
-                    const [method, ...rest] = e.split(" ");
-                    return (
-                      <li class="font-mono text-[12px] leading-relaxed break-all">
-                        <span class={method === "GET" ? "text-lavender-deep font-bold" : "text-rose-deep font-bold"}>{method}</span>{" "}
-                        <span class="text-ink">{rest.join(" ")}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section aria-labelledby="deploy">
-          <h2 id="deploy" class="text-xl font-bold mb-3">Deploy dan pengujian</h2>
+          <h2 id="deploy" class="text-xl font-bold mb-3">Deploy</h2>
           <div class="bg-white border border-line rounded-2xl p-5 text-sm text-ink-muted leading-relaxed flex flex-col gap-2">
-            <p>Image API dibangun dengan Dockerfile multi-stage (<code class="font-mono text-ink">rust:1-bookworm</code> untuk build, <code class="font-mono text-ink">debian:bookworm-slim</code> untuk runtime). Skrip PowerShell membangun image di laptop, mengirimnya ke server lewat <code class="font-mono text-ink">scp</code>, lalu menjalankan <code class="font-mono text-ink">docker compose up -d</code>. Server menjalankan tiga container (PostGIS, API, dan Caddy) dengan rotasi log. Hanya Caddy yang membuka port ke luar; database dan API berada di jaringan internal Docker.</p>
-            <p>Server Ubuntu 24.04 disiapkan sekali lewat skrip. Firewall ufw hanya membuka SSH, 80, dan 443, dan login SSH wajib memakai key.</p>
-            <p>Test integrasi memakai <code class="font-mono text-ink">#[sqlx::test]</code>. Setiap test mendapat database Postgres baru yang sudah dimigrasi, jadi race condition diuji ke database asli. Selain overbooking, ada test untuk verifikasi OTP bersamaan, refresh token yang dipakai dua kali, like bersamaan, dan pembuatan restoran bersamaan dengan slug unik.</p>
+            <p>Backend dijalankan dengan Docker Compose di VPS Ubuntu. Saya masih belajar soal deployment, jadi bagian ini masih sederhana dan terus saya perbaiki.</p>
           </div>
         </section>
       </div>
