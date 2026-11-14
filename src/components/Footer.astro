@@ -3,7 +3,21 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-line bg-white px-5 md:px-12 py-6" aria-label="Footer">
+<footer class="relative overflow-hidden border-t border-line bg-white px-5 md:px-12 pb-6 pt-14" aria-label="Footer">
+  <!-- Laut ala One Piece: kapal berlayar di atas ombak -->
+  <div class="sea" aria-hidden="true">
+    <svg class="ship" viewBox="0 0 64 56" width="52" height="46" fill="none" stroke="#6b5a72" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M32 6v32" />
+      <path d="M32 8c10 2 16 8 17 18H32z" fill="#fff" />
+      <path d="M32 12c-8 2-13 7-14 15h14z" fill="#FFE4EF" />
+      <circle cx="40" cy="20" r="1.6" fill="#6b5a72" stroke="none" />
+      <path d="M32 6l8 3-8 3" fill="#FA699E" stroke="#FA699E" />
+      <path d="M8 38h48c-2 9-9 14-24 14S10 47 8 38z" fill="#FF9FC7" />
+      <path d="M8 38h48" />
+    </svg>
+    <svg class="wave wave-back" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20 Q 75 0 150 20 T 300 20 T 450 20 T 600 20 T 750 20 T 900 20 T 1050 20 T 1200 20 V40 H0z" fill="#C9B5E0" opacity=".45"/></svg>
+    <svg class="wave wave-front" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20 Q 75 40 150 20 T 300 20 T 450 20 T 600 20 T 750 20 T 900 20 T 1050 20 T 1200 20 V40 H0z" fill="#FF9FC7" opacity=".5"/></svg>
+  </div>
   <p class="max-w-5xl mx-auto text-center md:text-left text-xs text-ink-muted">
     &copy; {year} Maulana Nur Anfajm. Hak cipta dilindungi.
   </p>

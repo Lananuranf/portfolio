@@ -40,7 +40,28 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
 ::selection { background: #FF9FC7; color: #2A1B33; }
 :focus-visible { outline: 2px solid #FA699E; outline-offset: 3px; border-radius: 6px; }
 
+/* ==== Tema One Piece ==== */
+.sea { position: absolute; left: 0; right: 0; top: 0; height: 44px; overflow: hidden; pointer-events: none; }
+.wave { position: absolute; bottom: 0; left: 0; width: 200%; height: 26px; }
+.wave-back { animation: waveMove 11s linear infinite; }
+.wave-front { animation: waveMove 7s linear infinite reverse; bottom: -6px; }
+@keyframes waveMove { to { translate: -50% 0; } }
+.ship { position: absolute; bottom: 8px; left: -70px; z-index: 1; animation: sail 22s linear infinite, bob 2.4s ease-in-out infinite; }
+@keyframes sail { to { left: calc(100% + 70px); } }
+@keyframes bob { 0%, 100% { transform: translateY(1px) rotate(-3deg); } 50% { transform: translateY(-4px) rotate(3deg); } }
+
+/* Gomu Gomu: tombol melar lalu menyentak balik saat di-hover */
+a.inline-flex:hover { animation: gomu .55s cubic-bezier(.3,1.6,.5,1); }
+@keyframes gomu {
+  0% { transform: scale(1); }
+  30% { transform: scaleX(1.12) scaleY(.9); }
+  60% { transform: scaleX(.96) scaleY(1.05); }
+  100% { transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .wave, .ship, a.inline-flex:hover { animation: none; }
+  .ship { left: 12%; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
