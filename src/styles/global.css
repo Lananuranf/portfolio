@@ -41,23 +41,24 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
 :focus-visible { outline: 2px solid #FA699E; outline-offset: 3px; border-radius: 6px; }
 
 /* ==== Hiasan hero: camar, bintang, bingkai foto, judul berkilau ==== */
-.hero-deco { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.gull { position: absolute; left: -60px; opacity: .8; animation: gullFly 16s linear infinite; }
-.gull .wing { transform-origin: 20px 10px; animation: flap .7s ease-in-out infinite alternate; }
-.gull-0 { top: 24%; animation-duration: 18s; }
-.gull-1 { top: 38%; animation-duration: 23s; animation-delay: -8s; scale: .75; }
-.gull-2 { top: 14%; animation-duration: 28s; animation-delay: -15s; scale: .6; }
-@keyframes gullFly { 0% { translate: 0 0; } 50% { translate: 55vw -22px; } 100% { translate: 112vw 6px; } }
-@keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(.35); } }
-.spark { position: absolute; width: 10px; height: 10px; background: #FFD66B; opacity: 0;
+/* Burung realistis: lapisan tetap di layar, terbang melintasi semua bagian */
+.sky-fx { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+.bird { position: absolute; top: var(--t); left: -80px; opacity: .55; scale: var(--sc, 1);
+  animation: birdFly var(--d, 30s) linear var(--dl, 0s) infinite; }
+.bird svg { display: block; fill: #5b5066; animation: birdBob 2.6s ease-in-out infinite; }
+.bird-rev { left: auto; right: -80px; animation-name: birdFlyRev; }
+.bird-rev svg { transform: scaleX(-1); }
+.bird .wl, .bird .wr { animation: wingBeat .55s ease-in-out infinite alternate; }
+.bird .wl { transform-origin: 30px 15px; }
+.bird .wr { transform-origin: 30px 15px; animation-name: wingBeatR; }
+@keyframes wingBeat { from { transform: rotate(-24deg) scaleY(1.1); } to { transform: rotate(22deg) scaleY(.7); } }
+@keyframes wingBeatR { from { transform: rotate(24deg) scaleY(1.1); } to { transform: rotate(-22deg) scaleY(.7); } }
+@keyframes birdFly { from { translate: 0 0; } to { translate: calc(100vw + 160px) -30px; } }
+@keyframes birdFlyRev { from { translate: 0 0; } to { translate: calc(-100vw - 160px) -30px; } }
+@keyframes birdBob { 50% { translate: 0 -5px; } }
+.sky-fx .spark { position: absolute; width: 10px; height: 10px; background: #FFD66B; opacity: 0;
   clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
   animation: twinkle 3.6s ease-in-out infinite; }
-.spark-0 { top: 20%; left: 12%; }
-.spark-1 { top: 62%; left: 6%; animation-delay: .8s; scale: .7; background: #FF9FC7; }
-.spark-2 { top: 30%; left: 48%; animation-delay: 1.6s; }
-.spark-3 { top: 16%; right: 10%; animation-delay: 2.2s; background: #C9B5E0; }
-.spark-4 { top: 72%; right: 14%; animation-delay: .4s; scale: 1.3; }
-.spark-5 { top: 52%; left: 56%; animation-delay: 2.8s; scale: .6; background: #FF9FC7; }
 @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(90deg); } }
 
 /* Bingkai foto: gradasi berputar halus dan napas lembut */
@@ -408,7 +409,8 @@ a.inline-flex:hover svg { transform: translateX(3px); }
 .blog-toast.is-shown { opacity: 1; translate: -50% 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .gull, .gull .wing, .spark, #home .bg-gradient-brand, .text-gradient-brand, .sea::before, .sea::after { animation: none; }
+  .sky-fx { display: none; }
+  .spark, #home .bg-gradient-brand, .text-gradient-brand, .sea::before, .sea::after { animation: none; }
   .spark { opacity: .8; transform: none; }
   .post-pop, #toc-mobile[open] [data-toc-list] { animation: none; }
   .code-glass, .code-glass:hover, .article-prose img, .article-prose img:hover { transform: none; transition: none; }
