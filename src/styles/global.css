@@ -240,6 +240,12 @@ a.inline-flex:hover svg { transform: translateX(3px); }
   animation: cloudIn 1s ease .2s forwards, cloudDrift var(--dur, 15s) cubic-bezier(.45,.05,.55,.95) infinite alternate;
 }
 .intro-on .hero-cloud { animation-delay: 1.6s, 0s; }
+/* Mobile & tablet: awan ditaruh di tepi layar dan hanya mengintip dari balik foto, tidak tertutup */
+@media (max-width: 1023px) {
+  .hero-cloud:nth-child(1) { top: 92px !important; left: -4% !important; right: auto !important; bottom: auto !important; --dx: 16px !important; }
+  .hero-cloud:nth-child(2) { top: 168px !important; right: -5% !important; left: auto !important; bottom: auto !important; --dx: -16px !important; }
+  .hero-cloud:nth-child(3) { display: none !important; }
+}
 @keyframes cloudIn { to { opacity: var(--op, .7); } }
 @keyframes cloudDrift {
   0%   { translate: 0 0; }
