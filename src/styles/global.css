@@ -53,6 +53,11 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
 .bird .wl, .bird .wr { animation: wingBeat .55s ease-in-out infinite alternate; }
 .bird .wl { transform-origin: 30px 15px; }
 .bird .wr { transform-origin: 30px 15px; animation-name: wingBeatR; }
+/* HP: cukup dua burung, kecil dan samar, supaya tidak mengganggu bacaan */
+@media (max-width: 767px) {
+  .bird:nth-of-type(n+3) { display: none; }
+  .bird { opacity: .28; scale: calc(var(--sc, 1) * .7); }
+}
 @keyframes wingBeat { from { transform: rotate(-24deg) scaleY(1.1); } to { transform: rotate(22deg) scaleY(.7); } }
 @keyframes wingBeatR { from { transform: rotate(24deg) scaleY(1.1); } to { transform: rotate(-22deg) scaleY(.7); } }
 @keyframes birdFly { from { translate: 0 0; } to { translate: calc(100vw + 160px) -30px; } }
@@ -108,26 +113,33 @@ a.inline-flex:hover { animation: gomu .55s cubic-bezier(.3,1.6,.5,1); }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
+/* tepi kaca tebal ala liquid glass: kilau atas, pantulan samping, bayangan dalam di bawah */
+.nav-glass, .glass-card {
+  --glass-rim:
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 1px 0 0 rgba(255,255,255,0.6),
+    inset 0 12px 20px -14px rgba(255,255,255,0.95),
+    inset 0 -14px 24px -18px rgba(120,70,140,0.3),
+    inset 0 -1.5px 0 rgba(255,255,255,0.5);
+}
 /* nav glass */
 .nav-glass {
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.64) 0%, rgba(255,240,246,0.58) 55%, rgba(244,239,250,0.62) 100%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  backdrop-filter: blur(28px) saturate(190%);
+    linear-gradient(135deg, rgba(255,255,255,0.52) 0%, rgba(255,240,246,0.44) 55%, rgba(244,239,250,0.5) 100%);
+  -webkit-backdrop-filter: blur(24px) saturate(210%) brightness(1.06);
+  backdrop-filter: blur(24px) saturate(210%) brightness(1.06);
   border: 1px solid rgba(255,255,255,0.7);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -1px 0 rgba(255,255,255,0.3),
+    var(--glass-rim),
     0 10px 30px -14px rgba(42,27,51,0.28),
     0 2px 6px -3px rgba(42,27,51,0.1);
   transition: background-color .3s ease, box-shadow .3s ease;
 }
 .nav-glass.is-scrolled {
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.74) 0%, rgba(255,240,246,0.68) 55%, rgba(244,239,250,0.72) 100%);
+    linear-gradient(135deg, rgba(255,255,255,0.64) 0%, rgba(255,240,246,0.56) 55%, rgba(244,239,250,0.62) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,1),
-    inset 0 -1px 0 rgba(255,255,255,0.3),
+    var(--glass-rim),
     0 14px 36px -14px rgba(190,45,101,0.32),
     0 2px 8px -3px rgba(42,27,51,0.12);
 }
@@ -158,13 +170,12 @@ a.inline-flex:hover { animation: gomu .55s cubic-bezier(.3,1.6,.5,1); }
   position: relative;
   isolation: isolate;
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,244,249,0.66) 55%, rgba(246,241,252,0.74) 100%);
-  -webkit-backdrop-filter: blur(20px) saturate(175%);
-  backdrop-filter: blur(20px) saturate(175%);
+    linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,244,249,0.58) 55%, rgba(246,241,252,0.66) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(200%) brightness(1.05);
+  backdrop-filter: blur(22px) saturate(200%) brightness(1.05);
   border: 1px solid rgba(255,255,255,0.8);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -1px 0 rgba(255,255,255,0.35),
+    var(--glass-rim),
     0 0 0 1px rgba(240,221,232,0.55),
     0 16px 36px -20px rgba(42,27,51,0.28),
     0 2px 6px -3px rgba(42,27,51,0.08);

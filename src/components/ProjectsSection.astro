@@ -26,9 +26,22 @@ interface Project {
 
 const PROJECTS: Project[] = [
   {
-    id: "ruang-rasa",
+    id: "capstone-hi",
     num: "01",
-    // TODO(deploy): Ruang Rasa disebut "VPS Ubuntu" dan "AWS EC2" di tempat lain. Tanyakan mana yang benar, lalu samakan.
+    title: "Hii Stranger API",
+    subtitle: "Toko online streetwear · Go · Proyek capstone tim",
+    github: "https://github.com/y40368976-svg/hii-stranger",
+    detail: "/projects/capstone-hi/",
+    measured: "Hasil uji backend tim (5 Nov 2026): 130 dari 130 skenario API lolos di 55 endpoint, rata-rata respons 37 ms.",
+    tech: ["Go", "PostgreSQL", "pgx", "JWT"],
+    summary: "Backend toko online streetwear untuk klien nyata, pemilik brand Hii Stranger. Proyek capstone kampus, dikerjakan tim dengan Scrum dalam tiga sprint. Peran saya: backend Go, khususnya penguncian stok saat checkout.",
+    problem: "Stok varian tidak boleh minus saat beberapa pelanggan checkout varian yang sama bersamaan.",
+    built: "Bagian checkout di API Go milik tim (net/http + pgx): baris keranjang dan varian dikunci sebelum stok dikurangi.",
+    result: "Penguncian dengan SELECT … FOR UPDATE membuat dua checkout bersamaan untuk varian yang sama diproses bergantian.",
+  },
+  {
+    id: "ruang-rasa",
+    num: "02",
     title: "Ruang Rasa API",
     subtitle: "Reservasi restoran · Rust · Proyek pribadi",
     detail: "/projects/ruang-rasa/",
@@ -36,21 +49,8 @@ const PROJECTS: Project[] = [
     tech: ["Rust", "Axum", "PostgreSQL", "Docker Compose"],
     summary: "Backend untuk aplikasi Android Ruang Rasa yang menangani login OTP, pencarian restoran, dan reservasi meja.",
     problem: "Dua orang bisa memesan meja yang sama di jam yang sama, dan retry dari HP bisa membuat pesanan ganda.",
-    built: "Backend Rust dengan Axum di atas PostgreSQL, dijalankan dengan Docker Compose di VPS Ubuntu.",
+    built: "Backend Rust dengan Axum di atas PostgreSQL, dijalankan lokal dengan Docker Compose. Belum di-deploy.",
     result: "Reservasi dikunci dengan SELECT … FOR UPDATE dan Idempotency-Key supaya meja yang sama tidak terpesan dua kali.",
-  },
-  {
-    id: "capstone-hi",
-    num: "02",
-    title: "Hii Stranger API",
-    subtitle: "Toko online streetwear · Go · Proyek capstone tim",
-    detail: "/projects/capstone-hi/",
-    measured: "TODO: isi hasil terukur bagian checkout/stok (mis. jumlah tes, waktu respons)",
-    tech: ["Go", "PostgreSQL", "pgx", "JWT"],
-    summary: "Backend toko online untuk proyek capstone kampus, dikerjakan tim dengan Scrum dalam tiga sprint. Peran saya: backend Go, khususnya penguncian stok saat checkout.",
-    problem: "Stok varian tidak boleh minus saat beberapa pelanggan checkout varian yang sama bersamaan.",
-    built: "Bagian checkout di API Go milik tim (net/http + pgx): baris keranjang dan varian dikunci sebelum stok dikurangi.",
-    result: "Penguncian dengan SELECT … FOR UPDATE membuat dua checkout bersamaan untuk varian yang sama diproses bergantian.",
   },
   {
     id: "laundry-lastri",

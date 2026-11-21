@@ -126,7 +126,7 @@ export default function HeroIsland(): ReactElement {
           <motion.div variants={item} className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href="/#projects"
-              aria-label="Lihat proyek backend: Ruang Rasa, Hii Stranger, dan Laundry Lastri"
+              aria-label="Lihat proyek backend: Hii Stranger, Ruang Rasa, dan Laundry Lastri"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-deep text-sm font-semibold text-white transition-colors duration-200 hover:bg-ink"
             >
               Lihat proyek

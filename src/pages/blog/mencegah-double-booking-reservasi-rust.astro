@@ -289,7 +289,7 @@ loop {
     Kalau koneksi listener putus, hub menyambung ulang setelah 1 detik.
   </p>
   <p>
-    Saat ini Ruang Rasa berjalan dengan Docker Compose dan Caddy di satu VPS Ubuntu. Untuk ukuran itu,
+    Saat ini Ruang Rasa masih berjalan lokal dengan Docker Compose, dan targetnya cukup satu server kecil. Untuk ukuran itu,
     satu komponen yang tidak perlu dipasang berarti satu hal yang tidak perlu dipantau dan di-backup. Kalau API
     nanti dijalankan lebih dari satu instance, setiap instance cukup mendengarkan channel yang sama. Redis baru
     saya pertimbangkan kalau volume pesan mulai membebani PostgreSQL.
@@ -297,9 +297,7 @@ loop {
 
   <h2>Kode lengkap</h2>
   <p>
-    Semua potongan di atas berasal dari repo
-    <a href="https://github.com/Lananuranf/ruang-rasa-app" target="_blank" rel="noopener">github.com/Lananuranf/ruang-rasa-app</a>,
-    di folder <code>services/api</code>. Gambaran arsitektur, alur status reservasi, dan keputusan teknis lainnya
+    Semua potongan di atas berasal dari repo Ruang Rasa (privat), di folder <code>services/api</code>. Gambaran arsitektur, alur status reservasi, dan keputusan teknis lainnya
     saya tulis di <a href="/projects/ruang-rasa/">halaman proyek Ruang Rasa</a>.
   </p>
 </ArticleLayout>

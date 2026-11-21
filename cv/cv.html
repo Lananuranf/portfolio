@@ -59,8 +59,7 @@
     <li><b>Bahasa pemrograman:</b> PHP (Laravel), Go (dasar), Rust (dasar)</li>
     <li><b>Backend:</b> REST API, autentikasi OTP dan JWT, RBAC, validasi data (tingkat dasar)</li>
     <li><b>Database:</b> PostgreSQL, MySQL, migrasi skema, transaksi dan row locking (tingkat dasar)</li>
- <!-- TODO(deploy): Ruang Rasa disebut "VPS Ubuntu" dan "AWS EC2" di tempat lain. Tanyakan mana yang benar, lalu samakan. -->
-    <li><b>Deployment:</b> Docker (dasar), AWS EC2 (sedang belajar dengan free tier), GitHub Actions (dasar)</li>
+    <li><b>Docker &amp; CI:</b> Docker Compose (dasar), GitHub Actions untuk CI proyek capstone (dasar)</li>
     <li><b>Tools:</b> Git, GitHub, Postman</li>
   </ul>
 </section>
@@ -71,7 +70,7 @@
     <li><b>Manajemen Waktu:</b> menjalani kuliah semester 7 sambil mengerjakan tiga proyek backend.</li>
     <li><b>Belajar Mandiri:</b> mempelajari Go dan Rust dari dokumentasi resmi dan menerapkannya di proyek.</li>
     <li><b>Komunikasi Tertulis:</b> menulis README dan artikel teknis di lananuranf.my.id/blog.</li>
-    <li><b>Kerja Tim:</b> berkontribusi di sisi backend pada proyek capstone Hii Stranger bersama tim.</li>
+    <li><b>Kerja Tim:</b> mengerjakan backend capstone Hii Stranger bersama tim 4 orang dengan Scrum (tiga sprint, tiap sprint ditutup demo dan retrospektif).</li>
   </ul>
 </section>
 
@@ -79,21 +78,23 @@
   <h2>Proyek</h2>
 
   <div class="item">
+    <div class="item-head"><span class="item-title">Hii Stranger: API Toko Online (Capstone, Tim)</span><span class="meta">lananuranf.my.id/projects/capstone-hi</span></div>
+    <div class="stack">Go · PostgreSQL · JWT</div>
+    <ul>
+      <li>Toko online untuk klien nyata, pemilik brand streetwear Hii Stranger; dikerjakan tim dengan Scrum dalam tiga sprint.</li>
+      <li>Berkontribusi di backend Go: fitur produk, keranjang, order, dan pembayaran, serta migrasi database.</li>
+      <li>Menjaga stok tetap benar saat checkout dengan transaksi PostgreSQL dan row locking; stok dikembalikan saat order dibatalkan.</li>
+      <li>Setiap perubahan lewat PR dan CI GitHub Actions (go vet, test, scan keamanan); uji API tim lolos 130/130 skenario di 55 endpoint.</li>
+    </ul>
+  </div>
+
+  <div class="item">
     <div class="item-head"><span class="item-title">Ruang Rasa: API Reservasi Restoran (Proyek Pribadi)</span><span class="meta">lananuranf.my.id/projects/ruang-rasa</span></div>
     <div class="stack">Rust · Axum · PostgreSQL · Docker Compose</div>
     <ul>
       <li>Membangun backend untuk aplikasi reservasi restoran: login dengan OTP dan JWT, pencarian restoran, dan reservasi meja.</li>
       <li>Mencegah meja yang sama terpesan dua kali dengan transaksi PostgreSQL dan row locking.</li>
-      <li>Menjalankan backend dengan Docker Compose di VPS Ubuntu.</li>
-    </ul>
-  </div>
-
-  <div class="item">
-    <div class="item-head"><span class="item-title">Hii Stranger: API Toko Online (Capstone, Tim)</span><span class="meta">lananuranf.my.id/projects/capstone-hi</span></div>
-    <div class="stack">Go · PostgreSQL · JWT</div>
-    <ul>
-      <li>Berkontribusi di backend Go: fitur produk, keranjang, order, dan pembayaran, serta migrasi database.</li>
-      <li>Menjaga stok tetap benar saat checkout dengan transaksi PostgreSQL dan row locking; stok dikembalikan saat order dibatalkan.</li>
+      <li>Menjalankan backend dan PostgreSQL secara lokal dengan Docker Compose.</li>
     </ul>
   </div>
 
