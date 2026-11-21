@@ -44,25 +44,25 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
 
 /* ==== Hiasan hero: camar, bintang, bingkai foto, judul berkilau ==== */
 /* Burung realistis: lapisan tetap di layar, terbang melintasi semua bagian */
-.sky-fx { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
-.bird { position: absolute; top: var(--t); left: -80px; opacity: .55; scale: var(--sc, 1);
-  animation: birdFly var(--d, 30s) linear var(--dl, 0s) infinite; }
-.bird svg { display: block; fill: #5b5066; animation: birdBob 2.6s ease-in-out infinite; }
-.bird-rev { left: auto; right: -80px; animation-name: birdFlyRev; }
-.bird-rev svg { transform: scaleX(-1); }
-.bird .wl, .bird .wr { animation: wingBeat .55s ease-in-out infinite alternate; }
-.bird .wl { transform-origin: 30px 15px; }
-.bird .wr { transform-origin: 30px 15px; animation-name: wingBeatR; }
-/* HP: cukup dua burung, kecil dan samar, supaya tidak mengganggu bacaan */
+/* di belakang konten: ikon terlihat di sela kartu dan ikut ter-blur di balik kaca */
+.sky-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.sky-icon { position: absolute; top: var(--t); left: -80px; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center; opacity: .5; scale: var(--sc, 1);
+  background: rgba(255,255,255,.28); border: 1px solid rgba(255,255,255,.7);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.8), inset 0 -2px 4px rgba(120,140,180,.18), 0 4px 10px rgba(60,80,120,.12);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  animation: iconFly var(--d, 30s) linear var(--dl, 0s) infinite; }
+.sky-icon > span { width: 58%; height: 58%; display: block; animation: iconBob 2.6s ease-in-out infinite; }
+.sky-icon svg { display: block; width: 100%; height: 100%; }
+.sky-icon-rev { left: auto; right: -80px; animation-name: iconFlyRev; }
+/* HP: cukup dua ikon, kecil dan samar, supaya tidak mengganggu bacaan */
 @media (max-width: 767px) {
-  .bird:nth-of-type(n+3) { display: none; }
-  .bird { opacity: .28; scale: calc(var(--sc, 1) * .7); }
+  .sky-icon:nth-child(n+3) { display: none; }
+  .sky-icon { opacity: .3; scale: calc(var(--sc, 1) * .75); }
 }
-@keyframes wingBeat { from { transform: rotate(-24deg) scaleY(1.1); } to { transform: rotate(22deg) scaleY(.7); } }
-@keyframes wingBeatR { from { transform: rotate(24deg) scaleY(1.1); } to { transform: rotate(-22deg) scaleY(.7); } }
-@keyframes birdFly { from { translate: 0 0; } to { translate: calc(100vw + 160px) -30px; } }
-@keyframes birdFlyRev { from { translate: 0 0; } to { translate: calc(-100vw - 160px) -30px; } }
-@keyframes birdBob { 50% { translate: 0 -5px; } }
+@keyframes iconFly { from { translate: 0 0; } to { translate: calc(100vw + 160px) -30px; } }
+@keyframes iconFlyRev { from { translate: 0 0; } to { translate: calc(-100vw - 160px) -30px; } }
+@keyframes iconBob { 50% { translate: 0 -5px; } }
 .sky-fx .spark { position: absolute; width: 10px; height: 10px; background: #FFD66B; opacity: 0;
   clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
   animation: twinkle 3.6s ease-in-out infinite; }

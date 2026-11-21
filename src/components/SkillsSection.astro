@@ -102,7 +102,7 @@ const SOFT_SKILLS: { name: string; note: string; icon: string }[] = [
             {g.skills.map((s) => {
               const icon = techIcon(s.icon);
               return (
-                <li class="min-w-0 flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2.5 rounded-xl border border-line bg-white text-[13px] sm:text-sm font-medium text-ink transition-colors hover:border-pink-brand hover:bg-pink-soft/40">
+                <li class="min-w-0 flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2.5 rounded-xl glass-card text-[13px] sm:text-sm font-medium text-ink transition-colors ">
                   {icon ? (
                     <span class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 flex items-center justify-center [&>svg]:w-6 [&>svg]:h-6 sm:[&>svg]:w-7 sm:[&>svg]:h-7" set:html={icon.svg} />
                   ) : (
