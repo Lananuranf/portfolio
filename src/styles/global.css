@@ -29,6 +29,8 @@
 
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
+/* kode inline panjang (nama test, path) boleh dipatah supaya halaman tidak melebar di HP */
+:not(pre) > code { overflow-wrap: anywhere; }
 * { scroll-margin-top: 80px; }
 
 .text-gradient-brand {

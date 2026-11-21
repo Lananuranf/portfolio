@@ -13,6 +13,11 @@ const STATS = [
   { value: "12", label: "package fitur di backend" },
   { value: "6", label: "status order, termasuk batal" },
 ];
+const SPRINTS = [
+  { name: "Sprint 1 · minggu 9", desc: "Fitur dasar. Seluruh 15 use case prioritas Must beserta tabel inti database." },
+  { name: "Sprint 2 · minggu 10", desc: "Fitur lanjutan. Empat use case prioritas Should, salah satunya banner beranda." },
+  { name: "Sprint 3 · minggu 12", desc: "Pelengkap prioritas Could: pengaturan situs (termasuk mode maintenance), verifikasi email, dan reset password." },
+];
 
 const PACKAGES = [
   { name: "auth, user", desc: "Register, login, reset password, profil, dan kelola user oleh admin." },
@@ -24,7 +29,7 @@ const PACKAGES = [
 ];
 
 const ORDER_FLOW = [
-  { title: "Checkout", desc: "POST /orders mengunci baris keranjang dan varian dengan SELECT … FOR UPDATE, memeriksa stok, lalu membuat order berstatus pending_payment. Wilayah dan ongkir dihitung ulang di server, bukan dipercaya dari client." },
+  { title: "Checkout", desc: "POST /orders mengunci baris keranjang dan varian dengan SELECT … FOR UPDATE, memeriksa stok, lalu membuat order berstatus pending_payment. Wilayah dan ongkir dihitung ulang di server karena angka dari browser bisa diubah." },
   { title: "Tagihan dan bukti transfer", desc: "Pelanggan mendapat tagihan dengan kode unik 1–999 rupiah supaya transfer mudah dicocokkan, lalu mengunggah bukti bayar." },
   { title: "Verifikasi admin", desc: "Admin menyetujui atau menolak bukti. Saat disetujui, order dikunci dulu sebelum statusnya berubah menjadi paid." },
   { title: "Proses dan kirim", desc: "Admin mengubah status ke processing, lalu shipped. Nomor resi wajib diisi saat shipped, dan pelanggan menerima email berisi resi." },
@@ -48,7 +53,7 @@ const projectSchema = JSON.stringify({
   url: "https://lananuranf.my.id/projects/capstone-hi/",
   image: "https://lananuranf.my.id/og-image.png",
   inLanguage: "id",
-  dateModified: "2026-11-12",
+  dateModified: "2026-11-22",
   author: { "@type": "Person", name: "Maulana Nur Anfajm", alternateName: "Lananuranf", url: "https://lananuranf.my.id/" },
 });
 ---
@@ -74,12 +79,13 @@ const projectSchema = JSON.stringify({
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-pink-soft text-rose-deep border border-line">Backend API</span>
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-lavender-soft text-lavender-deep border border-line">Go</span>
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-lavender-soft text-lavender-deep border border-line">Proyek capstone tim</span>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-lavender-soft text-lavender-deep border border-line">Scrum, 3 sprint</span>
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-3">
           Hii Stranger API: <span class="text-gradient-brand">backend toko online</span>
         </h1>
         <p class="text-ink-muted text-base leading-relaxed">
-          Hii Stranger adalah toko online pakaian streetwear yang kami buat sebagai proyek capstone kampus. Repositorinya monorepo: backend Go dan frontend Next.js. Ini proyek tim. Peran saya: backend Go, khususnya penguncian stok saat checkout. {/* TODO(peran): halaman ini sebelumnya menyebut juga arsitektur per fitur, migrasi, pencarian pembayaran admin, dan panel admin responsif. Dihapus supaya tidak melebihi "stok locking saat checkout"; kembalikan bila memang bagian Anda. */}
+          Hii Stranger adalah toko online pakaian streetwear yang kami buat sebagai proyek capstone kampus. Repositorinya berupa monorepo berisi backend Go dan frontend Next.js. Tim kami bekerja dengan Scrum dalam tiga sprint, dan bagian saya adalah backend Go, terutama penguncian stok saat checkout. {/* TODO(peran): halaman ini sebelumnya menyebut juga arsitektur per fitur, migrasi, pencarian pembayaran admin, dan panel admin responsif. Dihapus supaya tidak melebihi "stok locking saat checkout"; kembalikan bila memang bagian Anda. */}
         </p>
         <p class="mt-6 flex items-center gap-2 rounded-2xl border border-line bg-white p-4 text-xs text-ink-muted">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 shrink-0 text-lavender-deep" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
@@ -115,6 +121,18 @@ const projectSchema = JSON.stringify({
           <div class="bg-white border border-line rounded-2xl p-5 text-ink-muted text-sm leading-relaxed flex flex-col gap-2">
             <p>Toko online kecil yang menerima transfer bank harus mencocokkan pembayaran secara manual. Tanpa sistem, admin sulit tahu order mana yang sudah dibayar, mana yang perlu dikirim, dan berapa stok yang tersisa.</p>
             <p>Dari sisi backend, risiko utamanya ada di checkout. Dua pelanggan bisa membeli varian terakhir pada saat yang sama, dan ongkir atau total yang dikirim dari browser tidak boleh dipercaya begitu saja.</p>
+          </div>
+        </section>
+        <section aria-labelledby="sprint">
+          <h2 id="sprint" class="text-xl font-bold mb-3">Cara kerja tim</h2>
+          <p class="text-sm text-ink-muted leading-relaxed mb-4">Backlog kami ambil dari use case di dokumen SDD, lalu dibagi ke tiga sprint menurut prioritas Must, Should, dan Could. Tiap sprint dibuka dengan rencana dan ditutup dengan demo serta retrospektif. Hasilnya dicatat di dokumen implementasi per sprint.</p>
+          <div class="grid sm:grid-cols-3 gap-3">
+            {SPRINTS.map((s) => (
+              <div class="bg-white border border-line rounded-2xl p-4">
+                <p class="text-sm font-semibold text-rose-deep">{s.name}</p>
+                <p class="text-sm text-ink-muted leading-relaxed mt-1">{s.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
         <section aria-labelledby="arsitektur">
@@ -177,7 +195,7 @@ const projectSchema = JSON.stringify({
 
       <div class="mt-12 p-6 bg-white border border-line rounded-2xl text-center">
         <p class="font-bold mb-1">Mau bahas proyek ini lebih jauh?</p>
-        <p class="text-sm text-ink-muted mb-4">Saya senang menjelaskan detail implementasinya, atau membicarakan peluang magang dan kerja di bidang backend.</p>
+        <p class="text-sm text-ink-muted mb-4">Detail implementasinya bisa saya jelaskan lewat email. Saat ini saya juga terbuka untuk magang atau kerja di bidang backend.</p>
         <div class="flex justify-center gap-3 flex-wrap">
           <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-ink text-white font-semibold rounded-xl text-sm hover:bg-lavender-deep transition-colors">Kirim Email</a>
 
