@@ -431,10 +431,13 @@ a.inline-flex:hover svg { transform: translateX(3px); }
 
 /* ==== Performa scroll di HP: backdrop-filter berat + animasi repaint dimatikan/diringankan ==== */
 @media (max-width: 1023.98px), (pointer: coarse) {
-  /* blur lebih kecil, tanpa saturate/brightness (mahal), kaca sedikit lebih pekat supaya tetap terbaca */
-  .glass-card, .nav-glass, .callout-glass { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-  .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,244,249,0.72) 55%, rgba(246,241,252,0.78)); }
+  /* blur asli tetap ada, tapi tanpa saturate/brightness dan radius lebih kecil */
+  .glass-card, .callout-glass, .nav-glass, .nav-glass.is-scrolled { -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
   .code-glass { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .sky-icon { filter: blur(3px); will-change: transform; opacity: .6; }
+  .hero-cloud, .ship, .wave, .sea::before, .sea::after, .float-soft { animation: none; }
+  .hero-cloud { opacity: var(--op, .7); }
+  .lift { transition: none; }
   /* animasi yang memicu repaint tiap frame (background-position, box-shadow, blob besar) dihentikan */
   .text-gradient-brand, #home .bg-gradient-brand, .glass-scene::before, .glass-scene::after { animation: none; }
   /* kartu masuk: fade-up sederhana, tanpa perspective 3D */
