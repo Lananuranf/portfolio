@@ -65,7 +65,7 @@ export default function HeroIsland(): ReactElement {
       className="relative overflow-hidden px-5 md:px-12 pt-32 pb-20 md:pt-40 md:pb-28"
       style={{
         background:
-          "radial-gradient(60% 50% at 85% 10%, #FFE4EF 0%, transparent 70%), radial-gradient(50% 45% at 0% 90%, #F1EBF8 0%, transparent 70%), #FFFBFD",
+          "radial-gradient(60% 50% at 85% 10%, #FFE4EF 0%, transparent 70%), radial-gradient(50% 45% at 0% 55%, #F1EBF8 0%, transparent 70%), #FFFBFD",
       }}
     >
       <div className="hero-clouds" aria-hidden="true">
@@ -85,7 +85,7 @@ export default function HeroIsland(): ReactElement {
         >
           <motion.a
             variants={item}
-            href="/#contact"
+            href="/kontak/"
             className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold text-ink transition-colors duration-200 hover:border-rose-brand hover:text-rose-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-deep"
           >
             <span className="h-2 w-2 rounded-full bg-rose-brand" aria-hidden="true" />

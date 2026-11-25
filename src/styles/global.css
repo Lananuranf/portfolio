@@ -209,7 +209,7 @@ a.inline-flex:hover { animation: gomu .55s cubic-bezier(.3,1.6,.5,1); }
 }
 
 /* ==== Blob warna lembut di belakang section (bahan "refraksi" kaca) ==== */
-.glass-scene { position: relative; isolation: isolate; overflow: clip; }
+.glass-scene { position: relative; isolation: isolate; overflow-x: clip; }
 .glass-scene::before, .glass-scene::after {
   content: "";
   position: absolute; z-index: -1;

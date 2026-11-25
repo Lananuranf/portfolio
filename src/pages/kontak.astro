@@ -1,0 +1,26 @@
+---
+// src/pages/kontak.astro — halaman kontak terpisah (tanpa footer, ikut pola halaman blog)
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+import ContactSection from "../components/ContactSection.astro";
+---
+
+<BaseLayout
+  title="Kontak | Lananuranf"
+  description="Hubungi Maulana Nur Anfajm (Lananuranf) untuk magang atau proyek freelance backend. Email, GitHub, dan LinkedIn."
+  canonicalURL="https://lananuranf.my.id/kontak/"
+  breadcrumbs={[{ name: "Kontak", url: "https://lananuranf.my.id/kontak/" }]}
+>
+  <MainLayout />
+  <main id="main-content" class="pt-24 min-h-screen glass-scene scene-sky">
+    <div class="max-w-5xl mx-auto px-5 md:px-12 pt-10">
+      <a href="/" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted hover:text-rose-deep transition-colors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Kembali ke Portfolio
+      </a>
+    </div>
+    <ContactSection />
+  </main>
+</BaseLayout>

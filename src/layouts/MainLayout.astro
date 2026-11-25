@@ -12,7 +12,7 @@ const LINKS = [
   { label: "Tentang",  href: "/#about",    icon: ICONS.user,      hint: "Tentang saya" },
   { label: "Keahlian", href: "/#skills",   icon: ICONS.layers,    hint: "Keahlian" },
   { label: "Blog",     href: "/blog/",     icon: ICONS.book,      hint: "Blog" },
-  { label: "Kontak",   href: "/#contact",  icon: ICONS.mail,      hint: "Kontak" },
+  { label: "Kontak",   href: "/kontak/",  icon: ICONS.mail,      hint: "Kontak" },
 ];
 ---
 
@@ -100,8 +100,10 @@ const LINKS = [
   };
   if (location.pathname.startsWith('/blog')) {
     setActive('/blog/');
+  } else if (location.pathname.startsWith('/kontak')) {
+    setActive('/kontak/');
   } else if (location.pathname === '/') {
-    const ids = ['home', 'about', 'skills', 'projects', 'blog', 'contact'];
+    const ids = ['home', 'about', 'skills', 'projects', 'blog'];
     const sections = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
