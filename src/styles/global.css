@@ -50,7 +50,6 @@ body { margin: 0; background: var(--color-surface); color: var(--color-ink); }
   display: grid; place-items: center; opacity: .5; scale: var(--sc, 1);
   background: rgba(255,255,255,.28); border: 1px solid rgba(255,255,255,.7);
   box-shadow: inset 0 1px 2px rgba(255,255,255,.8), inset 0 -2px 4px rgba(120,140,180,.18), 0 4px 10px rgba(60,80,120,.12);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   animation: iconFly var(--d, 30s) linear var(--dl, 0s) infinite; }
 .sky-icon > span { width: 58%; height: 58%; display: block; animation: iconBob 2.6s ease-in-out infinite; }
 .sky-icon svg { display: block; width: 100%; height: 100%; }
@@ -198,7 +197,7 @@ a.inline-flex:hover { animation: gomu .55s cubic-bezier(.3,1.6,.5,1); }
 }
 
 /* angkat saat hover (tilt ringan ditambah via JS di perangkat pointer halus) */
-.lift { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .2s ease; will-change: transform; }
+.lift { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .2s ease; }
 .lift:hover {
   transform: translateY(-4px);
   box-shadow:
@@ -428,4 +427,19 @@ a.inline-flex:hover svg { transform: translateX(3px); }
   .post-pop, #toc-mobile[open] [data-toc-list] { animation: none; }
   .code-glass, .code-glass:hover, .article-prose img, .article-prose img:hover { transform: none; transition: none; }
   .blog-toast, .tag-chip { transition: none; }
+}
+
+/* ==== Performa scroll di HP: backdrop-filter berat + animasi repaint dimatikan/diringankan ==== */
+@media (max-width: 1023.98px), (pointer: coarse) {
+  /* blur lebih kecil, tanpa saturate/brightness (mahal), kaca sedikit lebih pekat supaya tetap terbaca */
+  .glass-card, .nav-glass, .callout-glass { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,244,249,0.72) 55%, rgba(246,241,252,0.78)); }
+  .code-glass { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  /* animasi yang memicu repaint tiap frame (background-position, box-shadow, blob besar) dihentikan */
+  .text-gradient-brand, #home .bg-gradient-brand, .glass-scene::before, .glass-scene::after { animation: none; }
+  /* kartu masuk: fade-up sederhana, tanpa perspective 3D */
+  .js-reveal .glass-card[data-reveal].is-in, .js-reveal article[data-reveal].is-in,
+  .js-reveal .glass-card[data-reveal]:nth-child(even).is-in { animation: none; }
+  .glass-card::after { display: none; }
+  .lazy-section { contain-intrinsic-size: auto 700px; }
 }
