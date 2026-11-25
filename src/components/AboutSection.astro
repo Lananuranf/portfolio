@@ -34,15 +34,39 @@ const WAYS = [
     <div class="max-w-5xl mx-auto grid gap-12 md:grid-cols-[18rem_1fr] md:gap-14">
         <!-- Foto + fakta singkat -->
         <div class="flex flex-col gap-5" data-reveal>
-            <img
-                src="/about.png"
-                alt="Foto setengah badan Maulana Nur Anfajm"
-                class="block w-full max-w-sm mx-auto md:max-w-none md:mx-0 aspect-[4/3] object-cover object-top rounded-2xl border border-line bg-white"
-                width="586"
-                height="426"
-                loading="lazy"
-                decoding="async"
-            />
+            <div class="relative w-full max-w-sm mx-auto md:max-w-none md:mx-0">
+                <img
+                    src="/about.png"
+                    alt="Foto setengah badan Maulana Nur Anfajm"
+                    class="block w-full aspect-[4/3] object-cover object-top rounded-2xl border border-line bg-white"
+                    width="586"
+                    height="426"
+                    loading="lazy"
+                    decoding="async"
+                />
+                <!-- coretan tangan: murni dekorasi, statis (tanpa animasi supaya scroll tetap ringan), menghindari area wajah -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 300" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <g stroke="#FA699E" stroke-width="3">
+                        <path d="M38 24c0 11-6 17-17 17 11 0 17 6 17 17 0 -11 6-17 17-17-11 0-17-6-17-17z" fill="#FFE4EF" />
+                        <path d="M16 262c12-12 22 10 34-2s22 10 34-2" />
+                        <path d="M338 218c-8-14-30-6-24 9 5 12 24 18 24 18s19-6 24-18c6-15-16-23-24-9z" fill="#FFE4EF" transform="translate(6 10) rotate(8 338 230)" />
+                    </g>
+                    <g stroke="#7B5FA6" stroke-width="3">
+                        <path d="M338 30c-26-14-52 10-38 32 14 21 52 12 52-14 0-24-36-34-58-14" />
+                        <path d="M34 86c10 4 14 14 10 24" />
+                        <path d="M350 132c-18 6-34 2-42-10m0 0l4 14m-4-14l14-3" />
+                        <path d="M366 262l8-12 8 12 8-12" />
+                    </g>
+                    <g stroke="#E8A020" stroke-width="3">
+                        <path d="M372 96l0 14m-7-7l14 0" />
+                        <path d="M78 36l0 10m-5-5l10 0" />
+                        <circle cx="26" cy="140" r="3" fill="#FFD66B" />
+                        <circle cx="378" cy="180" r="3" fill="#FFD66B" />
+                    </g>
+                    <text x="22" y="190" font-family="JetBrains Mono, monospace" font-size="22" font-weight="600" fill="#BE2D65" stroke="none" transform="rotate(-10 22 190)">&lt;/&gt;</text>
+                    <text x="330" y="282" font-family="JetBrains Mono, monospace" font-size="20" font-weight="600" fill="#7B5FA6" stroke="none" transform="rotate(7 330 282)">&#123; &#125;</text>
+                </svg>
+            </div>
             <dl class="glass-card rounded-2xl p-5 flex flex-col gap-4 text-sm">
                 {FACTS.map((f) => (
                     <div>
