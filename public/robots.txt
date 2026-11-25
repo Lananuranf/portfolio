@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://lananuranf.my.id/sitemap.xml
 Sitemap: https://lananuranf.my.id/sitemap-index.xml
