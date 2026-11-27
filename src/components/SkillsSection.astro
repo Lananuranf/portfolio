@@ -4,11 +4,13 @@
 import { techIcon } from "../lib/icons";
 
 interface Skill { name: string; icon: string; note?: string }
-interface Group { title: string; desc: string; skills: Skill[] }
+interface Group { title: string; desc: string; skills: Skill[]; span: string; cols: string }
 
 const GROUPS: Group[] = [
   {
     title: "Bahasa & Framework Backend",
+    span: "md:col-span-2",
+    cols: "grid-cols-2 sm:grid-cols-3",
     desc: "Laravel yang paling sering saya pakai. Go dan Rust masih tahap dasar dan terus saya pelajari lewat proyek.",
     skills: [
       { name: "PHP", icon: "PHP" },
@@ -20,6 +22,8 @@ const GROUPS: Group[] = [
   },
   {
     title: "Database",
+    span: "",
+    cols: "grid-cols-2 md:grid-cols-1",
     desc: "Merancang skema, migrasi, dan transaksi dengan row locking untuk menjaga data tetap benar.",
     skills: [
       { name: "PostgreSQL", icon: "PostgreSQL" },
@@ -27,6 +31,8 @@ const GROUPS: Group[] = [
   },
   {
     title: "Infrastruktur & Deploy",
+    span: "",
+    cols: "grid-cols-1 sm:grid-cols-2 md:grid-cols-1",
     desc: "Masih tahap belajar: Docker dan GitHub Actions tingkat dasar. Saya memakainya lewat Docker Compose di Ruang Rasa dan CI di proyek capstone.",
     skills: [
       { name: "Docker (dasar)", icon: "Docker" },
@@ -35,6 +41,8 @@ const GROUPS: Group[] = [
   },
   {
     title: "Tools & Autentikasi",
+    span: "md:col-span-2",
+    cols: "grid-cols-2 sm:grid-cols-3",
     desc: "Git untuk kontrol versi, Postman untuk uji API, dan JWT untuk autentikasi.",
     skills: [
       { name: "Git", icon: "Git" },
@@ -79,12 +87,12 @@ const SOFT_SKILLS: { name: string; note: string; icon: string }[] = [
 ];
 ---
 
-<section id="skills" class="lazy-section glass-scene py-24 px-6" aria-labelledby="skills-heading">
+<section id="skills" class="lazy-section glass-scene py-16 md:py-20 px-6" aria-labelledby="skills-heading">
   <div class="max-w-5xl mx-auto">
 
     <div class="text-center mb-12" data-reveal>
-      <p class="text-xs font-semibold tracking-widest text-rose-deep uppercase mb-2">Yang saya pakai</p>
-      <h2 id="skills-heading" class="text-4xl font-extrabold text-ink mb-3">
+      <p class="section-eyebrow mb-2">Yang saya pakai</p>
+      <h2 id="skills-heading" class="text-4xl md:text-5xl font-bold text-ink mb-3">
         <span class="text-gradient-brand">Keahlian</span> Backend
       </h2>
       <p class="text-ink-muted text-sm max-w-xl mx-auto">
@@ -93,12 +101,12 @@ const SOFT_SKILLS: { name: string; note: string; icon: string }[] = [
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
       {GROUPS.map((g) => (
-        <div class="glass-card lift min-w-0 rounded-2xl p-4 sm:p-6" data-reveal data-tilt>
+        <div class={`bento min-w-0 p-4 sm:p-6 ${g.span}`} data-reveal>
           <h3 class="font-bold text-ink">{g.title}</h3>
           <p class="text-xs text-ink-muted mt-1 mb-5">{g.desc}</p>
-          <ul class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 list-none p-0 m-0">
+          <ul class={`grid ${g.cols} gap-2 sm:gap-2.5 list-none p-0 m-0`}>
             {g.skills.map((s) => {
               const icon = techIcon(s.icon);
               return (
@@ -118,7 +126,7 @@ const SOFT_SKILLS: { name: string; note: string; icon: string }[] = [
     </div>
 
     <div class="mt-10">
-      <p class="text-center text-xs font-semibold tracking-widest text-ink-muted uppercase mb-4">Soft skill</p>
+      <p class="text-center mb-4"><span class="section-eyebrow">Soft skill</span></p>
       <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 list-none p-0 m-0">
         {SOFT_SKILLS.map((s) => (
           <li class="glass-card lift flex items-start gap-3 p-4 rounded-2xl" data-reveal>

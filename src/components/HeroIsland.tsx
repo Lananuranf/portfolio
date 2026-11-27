@@ -75,7 +75,7 @@ export default function HeroIsland(): ReactElement {
           </svg>
         ))}
       </div>
-      <div className="relative max-w-5xl mx-auto grid gap-12 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="relative max-w-5xl mx-auto grid gap-12 md:grid-cols-[1.2fr_auto] md:items-center md:gap-16">
         {/* Teks */}
         <motion.div
           className="flex flex-col items-start gap-5 order-2 md:order-1"
@@ -94,11 +94,15 @@ export default function HeroIsland(): ReactElement {
           </motion.a>
 
           <motion.div variants={item}>
-            <h1
-              id="hero-heading"
-              className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05] text-ink"
-            >
-              Maulana Nur Anfajm
+            <h1 id="hero-heading" className="tracking-tight leading-[0.95] text-ink">
+              {/* gradien lebih gelap dari --brand-gradient supaya teks besar tetap >=3:1 di latar terang */}
+              <span
+                className="block text-6xl sm:text-7xl md:text-8xl font-bold text-gradient-brand pb-1"
+                style={{ backgroundImage: "linear-gradient(120deg, #BE2D65 0%, #D9437A 50%, #7B5FA6 100%)" }}
+              >
+                Maulana
+              </span>
+              <span className="block text-3xl sm:text-4xl md:text-5xl font-medium">Nur Anfajm</span>
             </h1>
             <p className="mt-3 text-lg md:text-xl font-semibold text-rose-deep">
               Junior Backend Developer di Jakarta
@@ -127,7 +131,7 @@ export default function HeroIsland(): ReactElement {
             <a
               href="/#projects"
               aria-label="Lihat proyek backend: Hii Stranger, Ruang Rasa, dan Laundry Lastri"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-deep text-sm font-semibold text-white transition-colors duration-200 hover:bg-ink"
+              className="btn-primary"
             >
               Lihat proyek
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" aria-hidden="true">
@@ -138,6 +142,9 @@ export default function HeroIsland(): ReactElement {
                 />
               </svg>
             </a>
+            <a href="/kontak/" className="btn-secondary">
+              Kontak
+            </a>
             <ul className="flex items-center gap-2" aria-label="Media sosial">
               {SOCIAL.map((s) => (
                 <li key={s.name}>
@@ -147,7 +154,7 @@ export default function HeroIsland(): ReactElement {
                     rel="noopener noreferrer"
                     aria-label={`${s.name} Maulana Nur Anfajm (tab baru)`}
                     title={s.name}
-                    className="grid h-10 w-10 place-items-center rounded-xl border border-line bg-white text-ink transition-colors duration-200 hover:border-rose-brand hover:text-rose-deep"
+                    className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white text-ink transition-colors duration-200 hover:border-rose-brand hover:text-rose-deep"
                   >
                     <svg viewBox={s.viewBox} fill="currentColor" className="h-[18px] w-[18px]" aria-hidden="true">
                       <path d={s.path} />
@@ -166,7 +173,8 @@ export default function HeroIsland(): ReactElement {
           animate={ready || reduce ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <div className="rounded-[2rem] bg-gradient-brand p-1.5 shadow-[0_24px_48px_-24px_rgba(217,67,122,0.55)]">
+          <div className="relative">
+          <div className="rounded-[2rem] bg-gradient-brand md:rotate-2 transition-transform duration-300 hover:rotate-0 p-1.5 shadow-[0_24px_48px_-24px_rgba(217,67,122,0.55)]">
             <img
               src="/Profile.jpg"
               alt="Foto Maulana Nur Anfajm (Lananuranf)"
@@ -176,7 +184,16 @@ export default function HeroIsland(): ReactElement {
               fetchPriority="high"
             />
           </div>
-          <p className="mt-4 text-center font-mono text-xs text-ink-muted">Jakarta, Indonesia</p>
+          {/* stiker dekoratif; info yang sama sudah ada di teks hero */}
+          <div className="absolute -left-4 bottom-6 -rotate-6" aria-hidden="true">
+            <span className="badge-float">Jakarta, Indonesia</span>
+          </div>
+          <div className="absolute -right-3 -top-3 rotate-6" aria-hidden="true">
+            <span className="badge-float font-mono" style={{ animationDelay: "-2s" }}>
+              {"</>"} Go · Rust
+            </span>
+          </div>
+          </div>
         </motion.div>
       </div>
     </section>

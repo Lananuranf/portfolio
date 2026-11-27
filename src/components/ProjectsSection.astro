@@ -71,10 +71,11 @@ const PROJECTS: Project[] = [
 const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo) : Promise.resolve(null)));
 ---
 
-<section id="projects" class="lazy-section glass-scene scene-sky px-4 sm:px-6 py-24" aria-labelledby="projects-heading">
+<section id="projects" class="lazy-section glass-scene scene-sky px-4 sm:px-6 py-16 md:py-20" aria-labelledby="projects-heading">
   <div class="max-w-6xl mx-auto">
 
     <div class="text-center mb-12" data-reveal>
+      <p class="section-eyebrow mb-2">Studi kasus</p>
       <h2 id="projects-heading" class="text-4xl font-extrabold text-ink">Proyek <span class="text-gradient-brand">Backend</span></h2>
       <p class="text-ink-muted mt-3 text-sm max-w-xl mx-auto leading-relaxed">
         Satu proyek pribadi dan dua proyek kampus. Semuanya berfokus pada sisi backend: skema database, API, dan aturan bisnis.
@@ -91,14 +92,14 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
           ...(import.meta.env.DEV || !p.measured.startsWith("TODO") ? [{ label: "Hasil terukur", text: p.measured }] : []),
         ];
         return (
-        <article data-reveal data-tilt class="glass-card lift rounded-2xl p-6 flex flex-col gap-4" aria-labelledby={`project-title-${p.id}`}>
+        <article data-reveal data-tilt class="glass-card lift rounded-3xl p-6 flex flex-col gap-4" aria-labelledby={`project-title-${p.id}`}>
           <div class="flex items-start gap-3">
-            <span class="text-2xl font-black text-gradient-brand leading-none">{p.num}</span>
+            <span class="shrink-0 grid place-items-center w-11 h-11 rounded-2xl bg-pink-soft border border-line text-lg font-black text-rose-deep leading-none">{p.num}</span>
             <div>
               <h3 id={`project-title-${p.id}`} class="text-lg font-bold text-ink leading-snug">{p.title}</h3>
               <p class="text-xs text-ink-muted mt-0.5">{p.subtitle}</p>
               {p.badge && (
-                <span class="inline-block mt-2 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-pink-soft text-rose-deep border border-line">{p.badge}</span>
+                <span class="badge-float mt-2 text-[11px] font-semibold bg-pink-soft text-rose-deep border border-line">{p.badge}</span>
               )}
             </div>
           </div>
@@ -122,7 +123,7 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
             {p.tech.map(label => {
               const icon = techIcon(label);
               return (
-                <li class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border border-line bg-surface text-ink">
+                <li class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border border-line bg-surface text-ink transition-colors hover:border-rose-brand hover:bg-pink-soft">
                   {icon && <span class="w-3.5 h-3.5 shrink-0 [&>svg]:w-full [&>svg]:h-full" set:html={icon.svg} />}
                   {label}
                 </li>
@@ -153,19 +154,19 @@ const proofs = await Promise.all(PROJECTS.map(p => p.repo ? getRepoProof(p.repo)
             )}
             <div class="flex flex-wrap gap-2">
               {p.detail && (
-                <a href={p.detail} aria-label={`Studi kasus ${p.title}`} class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-ink text-white text-xs font-semibold hover:bg-lavender-deep transition-colors">
+                <a href={p.detail} aria-label={`Studi kasus ${p.title}`} class="btn-primary text-sm">
                   Studi kasus <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
                 </a>
               )}
               {(p.github || proof) && (
                 <a href={p.github ?? `https://github.com/${GITHUB_USER}/${proof.repo}`} target="_blank" rel="noopener noreferrer" aria-label={`Repo GitHub ${p.title} (tab baru)`}
-                  class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-line text-ink text-xs font-semibold hover:border-rose-brand hover:text-rose-deep transition-colors">
+                  class="btn-secondary text-sm">
                   Repo GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
                 </a>
               )}
               {p.demo && (
                 <a href={p.demo} target="_blank" rel="noopener noreferrer" aria-label={`Demo ${p.title} (tab baru)`}
-                  class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-line text-ink text-xs font-semibold hover:border-rose-brand hover:text-rose-deep transition-colors">
+                  class="btn-secondary text-sm">
                   Demo
                 </a>
               )}

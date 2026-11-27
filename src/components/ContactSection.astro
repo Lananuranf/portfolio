@@ -42,28 +42,32 @@ const CONTACTS = [
 <section id="contact" class="px-5 md:px-12 py-12 md:py-20" aria-labelledby="contact-heading">
     <div class="max-w-5xl mx-auto grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-center">
         <div data-reveal>
-            <p class="text-xs font-semibold tracking-widest uppercase text-rose-deep mb-2">Kontak</p>
-            <h1 id="contact-heading" class="text-3xl md:text-4xl font-extrabold tracking-tight text-ink">
+            <p class="section-eyebrow mb-2">Kontak</p>
+            <h1 id="contact-heading" class="text-4xl md:text-5xl font-extrabold tracking-tight text-ink">
                 Mari ngobrol
             </h1>
             <p class="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
                 Saya terbuka untuk magang dan proyek freelance di bidang backend. Kalau Anda ingin ngobrol soal
                 Go, Rust, atau PostgreSQL, jangan sungkan kirim pesan lewat salah satu kanal berikut ya.
             </p>
+            <a href={CONTACTS[0].href} class="btn-primary mt-6">
+                Kirim email
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+            </a>
         </div>
 
         <ul class="grid gap-3 sm:grid-cols-2">
-            {CONTACTS.map((c) => (
-                <li data-reveal>
+            {CONTACTS.map((c, i) => (
+                <li data-reveal class:list={[i === 0 && "sm:col-span-2"]}>
                     <a
                         href={c.href}
                         target={c.external ? "_blank" : undefined}
                         rel={c.external ? "noopener noreferrer" : undefined}
                         aria-label={`${c.name}: ${c.value}${c.external ? " (tab baru)" : ""}`}
-                        class="glass-card lift group flex items-center gap-4 rounded-2xl p-4"
+                        class="glass-card lift group flex items-center gap-4 rounded-3xl p-4 sm:p-5"
                     >
                         <span
-                            class="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-line bg-surface"
+                            class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-line bg-surface transition-transform group-hover:-rotate-6 group-hover:scale-105 motion-reduce:rotate-0 motion-reduce:scale-100"
                             aria-hidden="true"
                         >
                             <svg viewBox={c.viewBox} class="h-6 w-6" fill={c.hex}>
@@ -71,14 +75,14 @@ const CONTACTS = [
                             </svg>
                         </span>
                         <span class="min-w-0 flex-1">
-                            <span class="block text-sm font-semibold text-ink">{c.name}</span>
-                            <span class="block truncate text-sm text-ink-muted">{c.value}</span>
+                            <span class="block font-display text-base font-semibold text-ink">{c.name}</span>
+                            <span class="block break-words text-sm text-ink-muted">{c.value}</span>
                         </span>
                         <svg
                             viewBox="0 0 20 20"
                             fill="currentColor"
                             aria-hidden="true"
-                            class="h-5 w-5 shrink-0 text-ink-muted transition-colors group-hover:text-rose-deep"
+                            class="h-5 w-5 shrink-0 text-ink-muted transition group-hover:translate-x-1 group-hover:text-rose-deep motion-reduce:translate-x-0"
                         >
                             <path
                                 fill-rule="evenodd"

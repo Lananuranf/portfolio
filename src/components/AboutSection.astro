@@ -30,15 +30,15 @@ const WAYS = [
 ];
 ---
 
-<section id="about" class="lazy-section glass-scene scene-sky px-5 md:px-12 py-20 md:py-28" aria-labelledby="about-heading">
-    <div class="max-w-5xl mx-auto grid gap-12 md:grid-cols-[18rem_1fr] md:gap-14">
+<section id="about" class="lazy-section glass-scene scene-sky px-5 md:px-12 py-16 md:py-20" aria-labelledby="about-heading">
+    <div class="max-w-5xl mx-auto grid gap-12 md:grid-cols-12 md:gap-x-12">
         <!-- Foto + fakta singkat -->
-        <div class="flex flex-col gap-5" data-reveal>
+        <div class="flex flex-col gap-5 md:col-span-5 md:order-2 md:mt-24" data-reveal>
             <div class="relative w-full max-w-sm mx-auto md:max-w-none md:mx-0">
                 <img
                     src="/about.png"
                     alt="Foto setengah badan Maulana Nur Anfajm"
-                    class="block w-full aspect-[4/3] object-cover object-top rounded-2xl border border-line bg-white"
+                    class="block w-full aspect-[4/3] object-cover object-top rounded-3xl border border-line bg-white md:-rotate-2"
                     width="586"
                     height="426"
                     loading="lazy"
@@ -67,9 +67,9 @@ const WAYS = [
                     <text x="330" y="282" font-family="JetBrains Mono, monospace" font-size="20" font-weight="600" fill="#7B5FA6" stroke="none" transform="rotate(7 330 282)">&#123; &#125;</text>
                 </svg>
             </div>
-            <dl class="glass-card rounded-2xl p-5 flex flex-col gap-4 text-sm">
-                {FACTS.map((f) => (
-                    <div>
+            <dl class="grid grid-cols-2 gap-3 text-sm">
+                {FACTS.map((f, i) => (
+                    <div class:list={["bento p-4", i % 2 ? "tilt-b" : "tilt-a", i === 0 && "col-span-2"]}>
                         <dt class="font-mono text-xs uppercase tracking-wider text-ink-muted">{f.label}</dt>
                         <dd class="mt-1 font-medium text-ink">{f.value}</dd>
                     </div>
@@ -78,10 +78,10 @@ const WAYS = [
         </div>
 
         <!-- Teks -->
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 md:col-span-7 md:order-1">
             <div data-reveal>
-                <p class="text-xs font-semibold tracking-widest uppercase text-rose-deep mb-2">Tentang saya</p>
-                <h2 id="about-heading" class="text-3xl md:text-4xl font-extrabold tracking-tight text-ink">
+                <p class="section-eyebrow mb-2">Tentang saya</p>
+                <h2 id="about-heading" class="text-4xl md:text-5xl font-bold tracking-tight text-ink">
                     Senang di balik layar aplikasi
                 </h2>
             </div>
@@ -101,27 +101,28 @@ const WAYS = [
                 </p>
             </div>
 
-            <ul class="grid gap-4 sm:grid-cols-2" aria-label="Cara saya bekerja">
-                {WAYS.map((w) => (
-                    <li class="glass-card lift rounded-2xl p-5" data-reveal>
-                        <span class="grid h-10 w-10 place-items-center rounded-xl bg-lavender-soft text-lavender-deep" aria-hidden="true">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="h-5 w-5"
-                            >
-                                <path d={w.d} />
-                            </svg>
-                        </span>
-                        <h3 class="mt-4 font-bold text-ink">{w.title}</h3>
-                        <p class="mt-1.5 text-sm leading-relaxed text-ink-muted">{w.desc}</p>
-                    </li>
-                ))}
-            </ul>
         </div>
+
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 md:col-span-12 md:order-3" aria-label="Cara saya bekerja">
+            {WAYS.map((w) => (
+                <li class="glass-card lift rounded-2xl p-5 sm:even:mt-8" data-reveal>
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-lavender-soft text-lavender-deep" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="h-5 w-5"
+                        >
+                            <path d={w.d} />
+                        </svg>
+                    </span>
+                    <h3 class="mt-4 font-bold text-ink">{w.title}</h3>
+                    <p class="mt-1.5 text-sm leading-relaxed text-ink-muted">{w.desc}</p>
+                </li>
+            ))}
+        </ul>
     </div>
 </section>
